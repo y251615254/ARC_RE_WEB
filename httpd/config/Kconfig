@@ -1,0 +1,21 @@
+config HTTPD_TOKEN_CHECK_SUPPORT
+       bool "HTTPD Token support"
+       depends on PACKAGE_httpd
+config HTTPD_SUPPORT_TOKEN_DISABLE
+       bool "HTTPD support runtime disable Token"
+       depends on PACKAGE_httpd
+config HTTPD_SUPPORT_LOGIN_SHA512
+       bool "HTTPD Login Password encrypted with SHA512"
+       depends on PACKAGE_httpd
+config HTTPD_SUPPORT_AES256
+       bool "HTTPD support AES256"
+       depends on PACKAGE_httpd
+config HTTPD_SUPPORT_CFG_ENCRYPTED
+       bool "HTTPD support Encrytion for Configuration file"
+       depends on PACKAGE_httpd
+config HTTPD_HTTPS_SUPPORT
+       bool "HTTPD support HTTPS/SSL"
+       depends on PACKAGE_httpd
+config HTTPD_Security_Attack_Protect
+       bool "HTTPD_Security_Attack_Protect"
+       depends on PACKAGE_httpd

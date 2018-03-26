@@ -1,0 +1,61 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=AU, ST=syd, L=syd, O=telstra, OU=telstra, CN=TA-Mesh-WLAN.home/emailAddress=telstra@gmail.com
+        Validity
+            Not Before: Dec 31 16:14:42 2015 GMT
+            Not After : Dec 26 16:14:42 2035 GMT
+        Subject: C=AU, ST=syd, O=telstra, OU=telstra, CN=TA-Mesh-WLAN.home/emailAddress=telstra@gmail.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:bf:bc:35:b8:39:19:2c:a4:a3:83:38:33:d0:b4:
+                    a8:9c:22:d9:ec:2b:fd:b8:c9:f3:84:aa:86:f1:53:
+                    01:dd:05:11:93:86:45:7a:85:b8:3f:a7:e8:3e:24:
+                    b2:a2:a6:f6:81:83:81:ea:27:13:b6:90:49:83:e4:
+                    c2:48:89:e9:81:fa:d0:ee:f1:11:12:25:aa:e3:53:
+                    ea:7e:d7:b5:72:d0:a8:01:e3:5d:46:d1:cb:5c:8b:
+                    b6:ef:7b:1a:9d:2a:8e:2b:92:c2:ef:6b:17:b6:64:
+                    53:ad:e7:9e:75:1c:27:39:f4:d1:e7:63:56:4f:31:
+                    a9:2e:4f:ec:c8:c0:b1:fd:c7
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                90:BB:2B:72:F9:66:54:FB:35:15:44:C0:5E:B9:47:E4:31:42:3D:F7
+            X509v3 Authority Key Identifier: 
+                keyid:E7:B3:F7:11:5C:9C:BE:9F:A6:A0:02:8A:DB:AF:9A:66:46:2B:7E:E2
+
+    Signature Algorithm: sha1WithRSAEncryption
+         6f:59:65:47:1b:e3:91:10:94:d6:80:fe:f3:98:c6:d4:31:d3:
+         0f:d2:d7:72:0b:6e:e1:e6:0f:2d:9f:21:3f:45:eb:e6:88:8d:
+         bc:79:5e:97:f9:54:fb:a5:ae:49:7b:b0:38:12:bc:66:67:23:
+         34:4b:1b:a9:08:e8:fa:38:96:db:a0:07:a9:08:c1:64:ab:be:
+         f3:e8:30:60:e3:c6:a0:f1:89:e0:ad:8d:d4:bc:81:7f:2d:4d:
+         53:33:52:56:02:1f:4e:26:7c:53:79:93:81:13:28:3f:fb:c0:
+         30:c8:3a:93:e2:e1:a7:28:bb:17:cd:f3:38:79:0c:00:ad:22:
+         3f:ec
+-----BEGIN CERTIFICATE-----
+MIIC+jCCAmOgAwIBAgIBATANBgkqhkiG9w0BAQUFADCBizELMAkGA1UEBhMCQVUx
+DDAKBgNVBAgMA3N5ZDEMMAoGA1UEBwwDc3lkMRAwDgYDVQQKDAd0ZWxzdHJhMRAw
+DgYDVQQLDAd0ZWxzdHJhMRowGAYDVQQDDBFUQS1NZXNoLVdMQU4uaG9tZTEgMB4G
+CSqGSIb3DQEJARYRdGVsc3RyYUBnbWFpbC5jb20wHhcNMTUxMjMxMTYxNDQyWhcN
+MzUxMjI2MTYxNDQyWjB9MQswCQYDVQQGEwJBVTEMMAoGA1UECAwDc3lkMRAwDgYD
+VQQKDAd0ZWxzdHJhMRAwDgYDVQQLDAd0ZWxzdHJhMRowGAYDVQQDDBFUQS1NZXNo
+LVdMQU4uaG9tZTEgMB4GCSqGSIb3DQEJARYRdGVsc3RyYUBnbWFpbC5jb20wgZ8w
+DQYJKoZIhvcNAQEBBQADgY0AMIGJAoGBAL+8Nbg5GSyko4M4M9C0qJwi2ewr/bjJ
+84SqhvFTAd0FEZOGRXqFuD+n6D4ksqKm9oGDgeonE7aQSYPkwkiJ6YH60O7xERIl
+quNT6n7XtXLQqAHjXUbRy1yLtu97Gp0qjiuSwu9rF7ZkU63nnnUcJzn00edjVk8x
+qS5P7MjAsf3HAgMBAAGjezB5MAkGA1UdEwQCMAAwLAYJYIZIAYb4QgENBB8WHU9w
+ZW5TU0wgR2VuZXJhdGVkIENlcnRpZmljYXRlMB0GA1UdDgQWBBSQuyty+WZU+zUV
+RMBeuUfkMUI99zAfBgNVHSMEGDAWgBTns/cRXJy+n6agAorbr5pmRit+4jANBgkq
+hkiG9w0BAQUFAAOBgQBvWWVHG+OREJTWgP7zmMbUMdMP0tdyC27h5g8tnyE/Revm
+iI28eV6X+VT7pa5Je7A4ErxmZyM0SxupCOj6OJbboAepCMFkq77z6DBg48ag8Yng
+rY3UvIF/LU1TM1JWAh9OJnxTeZOBEyg/+8AwyDqT4uGnKLsXzfM4eQwArSI/7A==
+-----END CERTIFICATE-----

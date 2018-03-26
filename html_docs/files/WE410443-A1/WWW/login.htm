@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset="/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<link rel="shortcut icon" href="images/logoico.png" type="image/x-icon">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var CGIs=["login"];</script>
+<script language="javascript">var LangJ=["login","top"];</script>
+<script language="javascript">var G_top=-2;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style>
+body {
+	margin: 30px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.arc_green {
+	/*background-color:#55379b;*/
+	background-color:#7BC143;
+	-moz-border-radius:4px;
+	-webkit-border-radius:4px;
+	border-radius:4px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Calibri, Helvetica,Times New Roman;
+	font-size:16px;
+	/*font-weight:bold;*/
+	padding:5px 22px;
+	text-decoration:none;
+}
+.arc_green:hover {
+	background-color:#D88F55;
+}
+.arc_green:active {
+	position:relative;
+	top:1px;
+}
+</style>
+
+
+<script type="text/javascript"> 
+
+var IEVersion=999;
+function checkIEVersion()
+{
+	if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/7./i)=="7.") 
+	{ 
+		//alert("IE 7.0");
+		IEVersion = 7;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/8./i)=="8.") 
+	{ 
+		//alert("IE 8.0"); 
+		IEVersion = 8;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/9./i)=="9.") 
+	{ 
+		//alert("IE 9.0");
+		IEVersion = 9;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/10./i)=="10.") 
+	{ 
+		//alert("IE 10.0");
+		IEVersion = 10;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer") 
+	{ 
+		//alert("IE 6.0");
+		IEVersion = 6;
+	} 
+
+	return IEVersion;
+}
+
+function setLoginButStyle()
+{
+	var tmp = checkIEVersion();
+	if(tmp == 7 || tmp == 6)
+	{
+		document.getElementById("loginButtonID").style.cssText = "padding-left:170px;padding-bottom:50px;"; 
+	}
+	
+}
+</script>
+
+
+
+<script language="JavaScript">
+top.ItemIdx=-1;
+if( (window.top !=window.self)){
+   window.top.location.href="login.htm";
+}
+
+var company="<font class='txt1'>A1</font>";
+document.onkeypress=kDown;
+if (document.layers) window.captureEvents(Event.KEYDOWN);
+
+function kDown(e)
+{
+    var key = 0 ;
+    if(window.event)  key = window.event.keyCode;
+    else if(e)        key = e.which ;
+    if(key==13) {checkfwVersion(); return false;}
+}
+
+function kDownnull(e)
+{
+    var key = 0 ;
+    if(window.event)  key = window.event.keyCode;
+    else if(e)        key = e.which ;
+    if(key==13) {return false;}
+}
+
+function checkfwVersion(){
+	SetCookie("popup",1);
+	curTime = new Date();
+	
+	//document.tF2.name.value = document.tF.ui_user.value;
+	//check err_login number for A1 20160602
+
+	document.tF2.pws.value =ArcMD5(document.tF.ui_pws.value);
+
+
+	document.tF2.action="login.cgi";
+/*DEMO*/
+	document.tF2.action="index.htm";
+/*END_DEMO*/
+
+	if(document.tF.ui_pws.value == ""){
+		SetCookie("login_empty_flag", 1);
+		window.location.href="login.htm";
+		}
+
+	return subForm({
+			frm:document.tF2,
+			genfrm:0, //no generate form
+			noprogress:1,
+			wait: 5
+	});
+}
+
+function check_block(){
+	//if(!GetCookie("pwderr"))
+	{
+		window.location.href="login.htm";
+	}
+}
+
+/*
+window.setInterval(logout_token_alert, 5000); 
+function logout_token_alert() 
+{ 
+	var f=document.tF;
+	var token_url = window.location.href;
+	//var token_url = "http://192.168.1.1/login.htm?t=1475895975462";
+	var token_flag = token_url.indexOf("?t=");
+	if(token_flag != "-1")//  not find the string ?t= 	 return -1. 
+	{
+		//alert("have torken" + token_url );
+		DisplayObject("token_out_id");
+		DisableObject(f.ui_pws);
+		DisplayObject("login_ok_disable_buttonID");
+		HiddenObject("login_ok_enable_buttonID");
+	}
+} 
+*/
+	
+//when user logout,in login page, 10mins later,it will show logout information 
+window.setTimeout("init_logout_token_alert()","600000");// 600000  = 10mins    540000=9mins
+function init_logout_token_alert() 
+{ 
+	var f=document.tF;
+	DisplayObject("token_out_id");
+	DisableObject(f.ui_pws);
+	DisplayObject("login_ok_disable_buttonID"); 
+	HiddenObject("login_ok_enable_buttonID");
+	HiddenObject("login_ok_enable_buttonID_IE");
+} 
+function init_login_css_button_for_ie()
+{
+	var tmp = checkIEVersion();
+	//alert(tmp);
+	if(tmp <= 8)
+	{
+		HiddenObject("login_ok_enable_buttonID");
+		DisplayObject("login_ok_enable_buttonID_IE");
+	}
+}
+
+
+function init(){
+	var f=document.tF;
+	HiddenObject("token_out_id");  
+	HiddenObject("login_ok_disable_buttonID"); 
+	HiddenObject("login_ok_enable_buttonID_IE");
+	init_login_css_button_for_ie();
+	if(GetCookie("login_empty_flag") == "1")
+	{
+		DisplayObject("u_errpaswd");
+		HiddenObject("u_errpaswd2");
+		HiddenObject("u_errpaswd1");
+		DisplayObject("u_errpaswd0");
+		DeleteCookie("login_empty_flag");
+	}
+	else
+	{
+	  if(login_info.error>0)
+		{
+			var errtimes = login_info.error_count;
+			if(errtimes)
+			{
+				DisplayObject("u_errpaswd");
+				if((parseInt(errtimes) >= 5))   
+				{
+				 if(login_info.error_wait > 0)
+				 {
+					DisplayObject("u_errpaswd");
+					var min = parseInt(errtimes)-5+1;
+					if(min > 15)
+					min = 15;
+					DisplayObject("u_errpaswd2");   
+					
+				 var langselect=getCfg("languages");//if use english 0 g 4
+                                    
+					if(min > 1){
+						if(langselect==0)
+						setIdVal("toomanyfail",  'Too many failed attempts. Please wait '+min+' minutes and try again.');
+						else
+						setIdVal("toomanyfail",  'Zu viele falsche Eingaben. Bitte warten Sie '+min+' Minute und versuchen Sie es erneut.');                                       
+					}
+					else{
+						if(langselect==0)	
+						setIdVal("toomanyfail",  'Too many failed attempts. Please wait '+min+' minute and try again.');
+						else
+						setIdVal("toomanyfail",  'Zu viele falsche Eingaben. Bitte warten Sie '+min+' Minute und versuchen Sie es erneut.');     
+					}
+					
+					HiddenObject("u_errpaswd1");
+					HiddenObject("u_errpaswd0");
+					DisableObject(f.ui_pws);
+					DisplayObject("login_ok_disable_buttonID");
+					HiddenObject("login_ok_enable_buttonID");       
+					document.onkeypress=kDownnull;  
+					setInterval(function () {check_block();}, login_info.error_wait * 1000);
+                   }
+				}
+				else
+				{
+					DisplayObject("u_errpaswd");
+					DisplayObject("u_errpaswd1");
+					HiddenObject("u_errpaswd2");
+					HiddenObject("u_errpaswd0");
+				}
+			}
+		}
+	}
+	DeleteCookie("login_empty_flag");
+
+	f.fwversion1.value = getCfg("fwversion1");
+	f.fwversion2.value = getCfg("fwversion2");
+	
+	ShowMenuLogin();
+	SetTitle(getLangM("120"));
+
+	setLoginButStyle();
+
+	//NOTE:
+	//   if single password focus it, if exist user field set focus
+	document.tF.ui_pws.focus();
+
+	//document.tF.ui_user.focus();
+
+}
+</script>
+</head>
+<body class="background_body" onload="pre_init()">
+<table width="100%"  height="100%" border="0" cellspacing="0" cellpadding="0" id="contentbody" style="display:none">
+<div>
+	<iframe name="topFrame" src="setup_top_login.htm" scrolling="no" noresize frameborder="0" border="0" marginwidth="0"  marginheigh="0" align="top" hspace="0" vspace="0"  cellspacing="0" style=" border:none" width="100%" height="50"></iframe>
+</div>
+<tr>
+  <td colspan="2" width="100%" bgcolor="white" class="header_section">
+	<!-- main page-->
+		<form action="/cgi-bin/login.exe" method="post" name="tF" target="_top">
+  		<input type="hidden" name="fwversion1" value="">
+  		<input type="hidden" name="fwversion2" value="">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" bgcolor="#F0F0F0">
+		<tr>
+			<td valign="top" align="center">
+				<div align="center"><br><br>
+				<!-- login -->
+				<table width="450" border="0" cellspacing="1" cellpadding="5" align="center">		
+				 <colgroup>
+					<col width="10%">
+					<col width="30%">
+					<col width="50%">
+					<col width="10%">
+				  </colgroup>		
+				  
+				<tr>
+					<td height="10" colspan="4" align="center"><font class="arcFont4" id="120"></font></td><!--Log in to your A1 Wi-Fi system-->
+				</tr>
+				
+				<!---->
+				<!-- Username 
+				<tr>
+					<td>&nbsp;</td>
+					<td class="tdText"><font id=121></font></td>  
+					<td class="tdText">
+						<input type="text" maxLength="12" name="ui_user" value="">
+					</td>					
+					<td >&nbsp;</td>
+				</tr>
+				<!---->
+				
+				<tr>
+					<td colspan="4">&nbsp;</td>					
+				</tr>
+				<tr>
+					<td >&nbsp;</td>
+					<td colspan="2" align="center"  class="arcFont2">
+						<font id=126></font>
+					</td>
+					<td >&nbsp;</td>
+					
+				</tr>
+				<tr>
+					<td colspan="4">&nbsp;</td>					
+				</tr>
+				<tr><!--Password-->
+					<td>&nbsp;</td>
+					
+				
+					<td class="arcFont2" align="right"><font id=122></font></td>
+					<td class=tdText>
+						<input type="password" maxLength=20 size="12" name="ui_pws" value="">
+					</td>
+					<td>&nbsp;</td>
+				</tr>			
+				<tr><!--OK (Button)-->
+					<td colspan="3" align="center" id="loginButtonID"  style="padding-left:30px;padding-bottom:50px;"><br>						
+						<div id="login_ok_enable_buttonID_IE"><!--Only work for IE<=8 , default hide -->
+						   <input type="button" class="green" value="" id="127" onClick="checkfwVersion()">
+						 </div>
+
+						<div id="login_ok_enable_buttonID">
+						    <a href="#" class="arc_green"  id="127" value="OK" onClick="checkfwVersion()">OK</a>
+						</div>		
+						 
+					    <div id="login_ok_disable_buttonID">
+					    	<input type="button" class="green" disabled="disabled" id="127" value="OK" onClick=""> 
+					    </div>
+
+						<!--
+						<input type="button" value="" id="125" onClick="javascript:window.location.reload();">
+						-->
+					</td>
+				</tr>				
+				<tr>
+					<td colspan="4" align=center>
+						<span style="display:none" id="u_errpaswd">
+							<div id="u_errpaswd0">
+								<font class="arcFont10"  id="128"></font>
+							</div>
+							<div id="u_errpaswd1">
+								<font class="arcFont10"  id="129"></font>
+							</div>
+							<div id="u_errpaswd2">
+								<font class="arcFont10"  id="toomanyfail"></font>
+							</div>
+						</span>
+					</td>
+				</tr>
+
+				<tr>
+					<td colspan="4" align=center id="token_out_id">
+						<div id="token_out_id">
+							<font class="arcFont10"  id="131"></font>
+							<a  onClick="javascript:window.location.href='login.htm' "><font class="arcFont10" style="color:blue" id="132"></font></a>
+						</div>
+					</td>
+				</tr>
+				 <tr>
+					<td height="370">&nbsp;</td>
+				</tr>
+				</table>
+				<!-- login -->
+			</td>
+		</tr>
+		</table>
+		</form>
+	<!-- main page-->
+  </td>
+</tr>
+</table>
+<form id="myForm" action="/cgi-bin/login.exe" method="post" name="tF2" target="_top">
+<input type="hidden" name="url" value="">
+<input type="hidden" name="name" value="">
+<input type="hidden" name="pws" value="">
+</form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

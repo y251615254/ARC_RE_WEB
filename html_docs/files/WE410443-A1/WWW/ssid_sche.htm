@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["status_lan_device","wifi_bt"];var CGIs=["wifi_bt"];</script>
+<script language="javascript">var G_top=1;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+
+
+function ShowDevices()
+{
+/*
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,c6,c7,c8;
+	var pic;
+
+	c1="1";
+	c2="";
+	c3="";
+	c4="";
+	c5="";
+	c6="";
+	c7="";
+	c8="";
+		
+	for(var i=0; i< 24; i++)
+	{			
+
+		var msg_onclick = "chgbg(" + i +  ")>";
+		var msg_rename_img = "<input type='image' src='images/rename.png' style='height:10px;width:10px;' onClick=" + msg_onclick;
+		var msg = "<div id=re_device_" + i +  ">"  + 
+							"<span id='re_device_span_" + i + "'>" + "<span id='re_device_name'>" +   +"</span>" + "&nbsp;&nbsp;" + 
+						  	"</sapn>" + 
+					   "</div>";
+
+	
+		var c1 = i + " - " + (i+1);
+			
+		RowCell=[[1,c1],[1,msg],[1,c3],[1,c4],[1,c5],[1,c6],[1,c7],[1,c8],[null,null]];
+		re_rowcnt+=Table_add_row("station_info",[[7,re_rowcnt,1],RowCell]);
+		
+	}
+
+	
+	return;
+*/
+}
+
+var select_all_flag=0;
+function select_all()
+{
+	select_all_flag = !select_all_flag;
+	var obj=window.document.getElementsByName("sehedule_cell");
+	for(var i=0; i< obj.length; i++)
+	{
+		var obj_cell = obj[i];
+		var bg=obj_cell.style.backgroundColor;
+		if(select_all_flag == 1) 
+			obj_cell.style.backgroundColor='#8BC34A';
+		else 
+			obj_cell.style.backgroundColor='';
+	}
+}
+
+
+
+var select_day_flag=0;
+function select_day(index)
+{
+/*
+	var obj=window.document.getElementsByName("sehedule_cell");
+	for(var i=0; i< obj.length; i++)
+	{
+		var id_index = obj[i].id.substring(0,1);
+		if(id_index == index)
+		{
+			var obj_cell = obj[i];
+			var bg=obj_cell.style.backgroundColor;
+
+			if(obj_cell=='') 
+				obj_cell.style.backgroundColor='#8BC34A';
+			else 
+				obj_cell.style.backgroundColor='';
+		}
+
+	}
+*/
+}
+
+function chgbg(id)
+{
+	//alert(id);
+	var obj=window.document.getElementById(id);
+	var bg=obj.style.backgroundColor;
+	if(bg=='') 
+		obj.style.backgroundColor='#8BC34A';//#C5C5C5 4B286D
+	else 
+		obj.style.backgroundColor='';	
+}
+
+function chgbg_by_day(id,flag)
+{
+	
+	var obj=window.document.getElementById(id);
+	var bg=obj.style.backgroundColor;
+	if(flag == 1) 
+	{
+		obj.style.backgroundColor='#8BC34A';//#C5C5C5 4B286D
+	}
+	else if(flag == 0) 
+	{
+		obj.style.backgroundColor='';	
+	}
+
+	var ddddddddddd=0;
+}
+
+
+function schedule_td(id)
+{
+	var table_date= "#"+id;	
+	var msg1 = "<td><font> "+ id + "</font></td>";
+
+	var s = id.substring(0,2);
+	var e = id.substring(3,5);
+
+	//alert(s);
+	//alert(e);
+
+	var id_msg = s+"_"+e;
+	//alert(id_msg);
+
+	$(table_date).append("<td><font>"+id+"</font></td>\
+							<td name=\"sehedule_cell\" width=10% id=7_"+id_msg+"  onclick=chgbg('7_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=1_"+id_msg+" onclick=chgbg('1_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=2_"+id_msg+" onclick=chgbg('2_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=3_"+id_msg+" onclick=chgbg('3_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=4_"+id_msg+" onclick=chgbg('4_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=5_"+id_msg+" onclick=chgbg('5_"+id_msg+"');><font></font></td>\
+							<td name=\"sehedule_cell\" width=10% id=6_"+id_msg+" onclick=chgbg('6_"+id_msg+"');><font></font></td>\
+							");
+}
+
+function  show_schedule_table()
+{
+	var i=0;
+//	var id="";
+
+	for(i=0; i < 24; i++)
+	{
+		var id=i;
+
+		if(i<10)
+			id="0"+i;//00
+		
+		var id_e = i+1;//1
+		if(id_e < 10)
+			id_e="0" + id_e;//01
+
+		id=id + "-" + id_e;
+		//alert(id);
+		schedule_td(id);
+
+	}
+
+}
+
+
+function init_schedule_time()
+{
+
+    var start_time = document.getElementById ("time_select_start_id");
+    var end_time = document.getElementById ("time_select_end_id");
+     
+    for ( var i = 0; i < 24; i++)
+    {
+        var opt = document.createElement("option");
+        opt.value = i;
+		if(i < 10)
+		{
+        	opt.innerText = "0"+ i + ":00";
+		}
+		else
+		{
+        	opt.innerText = i + ":00";
+		}
+        start_time.appendChild(opt);
+    }
+     
+    for ( var i = 0; i < 24; i++)
+    {
+        var opt = document.createElement("option");
+        opt.value = i;
+        if(i < 10)
+		{
+        	opt.innerText = "0"+ i + ":00";
+		}
+		else
+		{
+        	opt.innerText = i + ":00";
+		}
+        end_time.appendChild(opt);
+    }   
+}
+
+
+
+function time_select_onchange()
+{
+
+	//var options=$("#time_select_start_name option:selected"); 
+	//var options_val =  options.val();
+
+	update_schedule_table();
+
+	
+	refresh_schedule_show();
+
+
+}
+
+
+
+function week_checkbox_onchange(weekday)
+{	
+	var f = document.tF0;
+	var week_id_msg = "week_" + weekday + "_id";
+	//	alert(week_id_msg);
+	//	alert(week_name_msg);
+
+	var tmp = document.getElementById(week_id_msg);
+	if(tmp.checked)
+	{
+		tmp.value = 1;
+		update_schedule_table();
+	}
+	else
+	{
+		//alert(weekday);
+		tmp.value = 0;
+		update_clean_schedule_table(weekday);
+
+	}		
+}
+
+
+
+
+
+
+
+
+
+
+var schedule_table_array = new Array();
+
+function init_schedule_table_array()
+{
+	for(var k=0; k <= 7; k++)
+	{  
+		schedule_table_array[k]=new Array();  
+
+		for(var j=0; j < 24; j++)
+		{ 
+			schedule_table_array[k][j]=0;    
+	 	}
+	}
+
+	var ff =0;
+
+}
+
+
+
+function clean_schedule_table_array()
+{
+	init_schedule_table_array();
+}
+
+function clean_schedule_table_one_day(index_day)
+{
+	if(1 < index_day < 8)
+	{
+		for(var i =0; i < 24; i++)
+		{
+			schedule_table_array[index_day][i] = 0; 
+
+		}
+	}
+}
+
+
+
+function exe_cmd()
+{
+
+	init_schedule_table_array();
+//	clean_schedule_table_array();
+
+
+
+
+}
+
+
+function update_schedule_one_day(w,s,e)
+{
+	//alert(w + "/"+s+"/"+e);
+
+	var int_w = parseInt(w);
+	var int_s = parseInt(s);
+	var int_e = parseInt(e);
+	clean_schedule_table_one_day(int_w);
+
+	if(1 <= int_w <= 7) // 7 sunday   1 monday ....
+	{
+		if(int_s < int_e)
+		{
+			for(var i=0; i <= (int_e - int_s) ; i++)
+			{
+				schedule_table_array[int_w][int_s+i] = 1;
+			}
+		}
+		else
+		{
+
+		}
+	}	
+
+	var iixsaa =0;
+}
+
+
+
+
+function update_clean_schedule_one_day(w,s,e)
+{
+	//alert(w + "/"+s+"/"+e);
+
+	var int_w = parseInt(w);
+	var int_s = parseInt(s);
+	var int_e = parseInt(e);
+	clean_schedule_table_one_day(int_w);
+
+	if(1 <= int_w <= 7) // 7 sunday   1 monday ....
+	{
+		if(int_s < int_e)
+		{
+			for(var i=0; i <= (int_e - int_s) ; i++)
+			{
+				schedule_table_array[int_w][int_s+i] = 0;
+			}
+		}
+		else
+		{
+
+		}
+	}	
+
+	var iixsaa =0;
+}
+
+function update_clean_schedule_table(day_index)
+{
+
+	var f = document.tF0;
+
+	var start_hour_value = f.time_select_start_name.value;
+	var end_hour_value = f.time_select_end_name.value;
+	var index = parseInt(day_index);
+	var s = parseInt(start_hour_value);
+	var e = parseInt(end_hour_value);
+	
+
+	update_clean_schedule_one_day(index,s,e);
+
+
+	
+	refresh_schedule_show();
+
+	var ii =0;
+}
+
+
+function update_schedule_table()
+{
+
+	var f = document.tF0;
+
+	//var week_mon_value = f.week_1.value;
+	//var week_tue_value = f.week_2.value;
+	var start_hour_value = f.time_select_start_name.value;
+	var end_hour_value = f.time_select_end_name.value;
+	var s = parseInt(start_hour_value);
+	var e = parseInt(end_hour_value);
+	
+	if(f.week_1.checked)
+	{
+		update_schedule_one_day(1,s,e)
+	}
+	if(f.week_2.checked)
+	{
+		update_schedule_one_day(2,s,e)
+	}
+	if(f.week_3.checked)
+	{
+		update_schedule_one_day(3,s,e)
+	}
+	if(f.week_4.checked)
+	{
+		update_schedule_one_day(4,s,e)
+	}	
+	if(f.week_5.checked)
+	{
+		update_schedule_one_day(5,s,e)
+	}
+	if(f.week_6.checked)
+	{
+		update_schedule_one_day(6,s,e)
+	}
+	if(f.week_7.checked)
+	{
+		update_schedule_one_day(7,s,e)
+	}
+
+
+	
+	refresh_schedule_show();
+
+	var ii =0;
+}
+
+
+function refresh_schedule_show()
+{
+
+	for(var i=1; i <= 7; i++ )
+	{
+		for(var j=0; j < 24; j++)
+		{
+			var schedule_cell = schedule_table_array[i][j];
+			if( 1 == 1)
+			{
+				if(j < 10)
+				{
+					var id_s = "0" + j; //01
+					var id_e = "0" + (j + 1);//02
+					if(id_e.length == 3) //for 010
+					{
+						id_e = id_e.substring(1,3);
+					}
+				}
+				else
+				{
+					var id_s = j; //10
+					var id_e = j + 1;//11
+				}
+
+				var sec_id = i + "_" + id_s + "_" + id_e;// 1_00_01
+				chgbg_by_day(sec_id, schedule_cell);
+			}			
+		}
+	}
+}
+
+function schedule_function()
+{	
+	var f = document.tF0;
+	var tmp = document.getElementById("schedule_id");
+	
+	if(tmp.checked)
+	{
+		//alert("checked");
+		DisplayObject("fw_polling_time_id");
+		DisplayObject("polling_time_week_id");
+		DisplayObject("tb_all_device");
+
+	}
+	else
+	{
+		HiddenObject("fw_polling_time_id");
+		HiddenObject("polling_time_week_id");
+		HiddenObject("tb_all_device");
+		//alert("! checked");
+	}		
+}
+
+
+var schedule_save_arr = new Array();
+var sch_date_arr = new Array();
+function schedule_save()
+{
+	for(var i=1; i <= 7; i++ )
+	{
+		var sch_date = "";
+
+		for(var j=0; j < 24; j++)
+		{
+			var id_s = j;
+			if(j<10)
+				id_s = "0"+j;//00
+			var id_e = j + 1;//1
+			if(id_e < 10)
+				id_e = "0" + id_e;//01
+
+			var id_s_e=id_s + "_" + id_e;
+			var day_id = i + "_" + id_s_e;//7_05_06
+			//console.log(day_id); 
+		
+			var obj=window.document.getElementById(day_id);
+			var bg=obj.style.backgroundColor;
+			//console.log(bg);
+			console.log(sch_date.length);
+			if(bg != "")//the day id enable
+			{
+				schedule_save_arr.push(day_id);
+				sch_date +=  "1";
+			}
+			else
+			{
+				sch_date +=  "0";
+
+			}
+
+		}
+		console.log(sch_date.length);
+		console.log(sch_date);
+	//	var  xx = (parseInt(sch_date,2)) ;//转成十进制
+	//	console.log(xx);
+	//	console.log(xx.toString(2)); //转成二进制 
+		sch_date_arr.push(sch_date);
+	}
+	//console.log(schedule_save_arr);
+	var data = sch_date_arr.toString();
+	console.log(data);
+	console.log(data.length);
+
+
+	var f=document.tF0;
+	var schedule_tmp = document.getElementById("schedule_id");
+	//alert(tmp);
+	if(schedule_tmp.checked)
+	{
+		setCfg("wlan_schedule", 1);
+	}else
+	{
+		setCfg("wlan_schedule", 0);
+	}
+
+	return subForm({
+		frm:f,
+		cmd: subFormWiFiAPConf,
+ 					cmdparam:"0",
+ 					wait:5
+	});	
+
+}
+
+
+
+function  init_schedule_enable()
+{
+
+	var wlan_schedule = getCfg("wlan_schedule");
+	//wlan_schedule = 1;
+	if(wlan_schedule == 0)
+	{
+		HiddenObject("fw_polling_time_id");
+		HiddenObject("polling_time_week_id");
+		HiddenObject("tb_all_device");
+	}
+	else
+	{
+		DisplayObject("fw_polling_time_id");
+		DisplayObject("polling_time_week_id");
+		DisplayObject("tb_all_device");
+		$("#schedule_id").attr("checked",true);
+
+	}	
+}
+
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+	var ssid = getCfg("get24gname0");
+	document.getElementById("ORIGESSID").innerHTML=ssid;
+	
+	
+	
+	//ShowDevices();
+	init_schedule_time();
+	show_schedule_table();
+	init_schedule_table_array();
+	init_schedule_enable();
+
+	ShowMenu();
+	
+
+}
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<!-- Page left-->
+
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+
+
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+<tr id="orig_ssid">
+	<td class="normalTextRight"  ><font class="arcFont2" id="100"></font></td>
+	
+	<td class="tdTextBt_20" colspan="2" ><font class="arcFont2" id="ORIGESSID" ></font></td>
+
+
+</tr>
+
+
+<tr>
+	<td class="normalTextLeft" ><font class="arcFont2" id="113"></font></td><!--schedule_id-->
+	
+	<td class="tdTextBt_20" colspan="2" >	
+		<input type="checkbox" name="schedule"  id="schedule_id" value="0" onClick="schedule_function()">
+	</td>
+</tr>
+			
+<tr id="fw_polling_time_id"><!--Polling time-->
+	<td class="normalTextLeft"><font class="arcFont2" id="">Time range:</font></td>
+	
+	<td class="tdTextBt_20">
+		<select id="time_select_start_id" name="time_select_start_name" onChange="time_select_onchange()">
+		</select>
+		<font>&nbsp;&nbsp;&nbsp; ~ &nbsp;&nbsp;&nbsp; </font> 
+		<select id="time_select_end_id" name="time_select_end_name" onChange="time_select_onchange()">
+		</select>
+	</td>
+
+</tr>
+
+<tr id="polling_time_week_id">
+	<td class="normalTextLeft" ><font class="arcFont2" id="">Week:</font></td><!--Polling Week-->
+	<td class="tdTextBt_20" >
+	<input type="checkbox" name="week_1"  id="week_1_id" value="0" onClick="week_checkbox_onchange(1)">Mon  &nbsp;&nbsp;
+	<input type="checkbox" name="week_2"  id="week_2_id" value="0" onClick="week_checkbox_onchange(2)">Tue  &nbsp;&nbsp;
+	<input type="checkbox" name="week_3"  id="week_3_id" value="0" onClick="week_checkbox_onchange(3)">Wed  &nbsp;&nbsp;
+	<input type="checkbox" name="week_4"  id="week_4_id" value="0" onClick="week_checkbox_onchange(4)">Thu  &nbsp;&nbsp;
+	<input type="checkbox" name="week_5"  id="week_5_id" value="0" onClick="week_checkbox_onchange(5)">Fri  &nbsp;&nbsp;
+	<input type="checkbox" name="week_6"  id="week_6_id" value="0" onClick="week_checkbox_onchange(6)">Sat  &nbsp;&nbsp;
+	<input type="checkbox" name="week_7"  id="week_7_id" value="0" onClick="week_checkbox_onchange(7)">Sun  &nbsp;&nbsp;
+	</td>
+</tr>
+</table>
+
+
+
+<table width="60%" border="0" cellspacing="0" cellpadding="10" align="center" id="tb_all_device">
+<tr>
+		<td colspan="2" valign="top">
+			<font  class=btFont2 id="" ></font><font class=btFont2 id="offline_clients_num"></font>
+			<table class="vox20_sehedule_tablec" width=80% height=100% cellspacing=1 cellpadding=50 border=1 id="station_info">
+				<tr>
+					<td width=12% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_all()">Select All</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(7)">Sun</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(1)">Mon</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(2)">Tue</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(3)">Wed</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(4)">Thu</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(5)">Fri</font></td>
+					<td width=10% style="cursor:pointer"><font id="" class=btFontBold2  onclick="select_day(3)">Sat</font></td>
+				</tr>
+				<tr id="00-01"></tr>
+				<tr id="01-02"></tr>
+				<tr id="02-03"></tr>
+				<tr id="03-04"></tr>		
+				<tr id="04-05"></tr>
+				<tr id="05-06"></tr>
+				<tr id="06-07"></tr>
+				<tr id="07-08"></tr>
+				<tr id="08-09"></tr>
+				<tr id="09-10"></tr>
+				<tr id="10-11"></tr>
+				<tr id="11-12"></tr>	
+				<tr id="12-13"></tr>
+				<tr id="13-14"></tr>
+				<tr id="14-15"></tr>	
+				<tr id="15-16"></tr>
+				<tr id="16-17"></tr>
+				<tr id="17-18"></tr>
+				<tr id="18-19"></tr>
+				<tr id="19-20"></tr>
+				<tr id="20-21"></tr>
+				<tr id="21-22"></tr>
+				<tr id="22-23"></tr>
+				<tr id="23-24"></tr>
+
+			</table>
+		</td>
+</tr>	
+</table>
+
+
+
+</form>
+
+<form>
+<br>
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td align="center">
+			<input type="button" class="green" onClick="schedule_save()" name="" id="100001">&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

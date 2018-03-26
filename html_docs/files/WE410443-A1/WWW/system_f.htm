@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var G_top=1;G_key=1;</script>
+<script language="javascript">var LangJ=["tl_sys_fw"];var CGIs=["st","lan","toplogy_info","internet"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+//===================================
+// Submit
+//===================================
+
+var g_progress = 0;
+var fmw_prg=[-1,-1,-1,-1,-1,-1,-1-1];
+var fake_cnt=[0,0,0,0,0,0,0,0];
+var fmw_wait=120;
+var only_one=0;
+function Check_FMW_Download(_cb_sucess, _cb_fail, _prog_div, cgi_url, id)
+{
+	var progress_tmp=$('#'+_prog_div);
+	var factor=(fmw_wait/2);
+	/*DEMO*/
+	factor=fmw_wait/40;
+	/*END_DEMO*/
+	if(fmw_prg[id]==-1){
+		progress_tmp.stop().clearQueue();
+		progress_tmp.css('width','0%');
+		progress_tmp.animate({'width':'0%'},'fast');
+		fake_cnt[id]=0;
+		fmw_prg[id]=0;
+	}
+	 //console.log('Check_Download1:'+cgi_url);
+	 //console.log('id:'+id);
+	$.getScript(cgi_url, function(){
+		//Firmware download satte
+		// FMWLoad={"Status":'<size>;<download size>;<percent>'}; finish <percent> is "100%"
+		/*
+		 *    -1: AUTOFW_DOWNLOAD_FAIL
+		 *    -2: AUTOFW_DOWNLOAD_CHKSUM
+		 *   -99: inprogress
+		 *  0-99: AUTOFW_DOWNLOAD_PROGRESS
+		 *   100: AUTOFW_DOWNLOAD_SUCCESS
+		 *   999: AUTOFW_DOWNLOAD_CHECKSUM_OK
+		 */
+		 //console.log('Check_Download2:'+cgi_url);
+		var Status=['100','100','100', '100','100','100', '100','100'];
+		 //console.log('FMWLoad.Status:'+FMWLoad.Status);
+		if(FMWLoad.Status.length){
+			Status= FMWLoad.Status.split(";");
+			//Status= FMWLoad.Status[id];
+		}else{
+		    // Why ? due to DUT not ready to download,the stat will empty
+		    // we need waiting till state is not empty(FMWLoad.Status.length is 0)
+		    // the waiting time almost 20s.....
+		    setTimeout(function(){
+		 				Check_FMW_Download(_cb_sucess, _cb_fail, _prog_div, cgi_url, id);
+		 	},1000);
+		 	return;
+		}
+		 //console.log('id0:'+id);
+		 //console.log('Status:'+Status[id]);
+		var prog_st=Status[id]+'%';//(Status[0]<0)?Status[0]:Status[2];
+		var prog=parseInt(prog_st,10);
+
+//		fake_cnt+=Math.ceil(100/(fmw_wait/2)); // timer is 100s/2s=50, 100/50=2
+		if(fake_cnt[id] > prog){
+			prog_st=fake_cnt[id]+"%";
+		}else{
+			fake_cnt[id]=prog;
+		}
+		//console.log('prog:'+prog);
+		switch(true){
+		default:
+		case ( (prog >= 0) && (prog <= 99)): //in downloading
+			//console.log('slow:'+prog_st);
+			progress_tmp.animate({'width': prog_st},'slow');
+			setTimeout(function(){
+							Check_FMW_Download(_cb_sucess, _cb_fail, _prog_div, cgi_url, id);
+					  }, 1000* 2);
+			break;
+		case (prog >= 100) :
+			progress_tmp.animate({'width': '100%'},'fast');
+			//console.log('fast');
+			var reboot=1;
+			var f=document.webForm;
+			for(var i=0; i<toplogy_info.nodes.length; i++)
+				if(Status[i] < 100)
+					reboot = 0;
+			if(reboot == 1)
+			{
+				if(only_one == 0)
+					setTimeout(function(){
+						subForm({
+						         frm:f,
+						         uploadtype: 1, 
+						         isfwdl: 1,
+						            wait: 200,
+						            done:function(){Show_Manually();}
+						         });
+					}, 1000);	
+				only_one = 1;
+				return;
+			}
+			
+			if(prog == 999){
+			if(_cb_sucess){ _cb_sucess();}
+			fmw_prg[id]=0;//reset
+			return;
+			}
+			// even download is ready we need waiting system check firmware is ready or not
+			//  if ready "999" will set, otherwise "-2" will return
+			setTimeout(function(){
+					Check_FMW_Download(_cb_sucess, _cb_fail, _prog_div, cgi_url, id);
+			}, 1000* 2);
+			break;
+		case (prog < 0): // no need upgrade, or some thing error
+			// NOTE:
+			//  first time it is -99;0;0, if any error shown -1, or -400,...error code.
+			//console.log('prg_err');
+		    if(prog != -99){
+		    	if(_cb_fail){ _cb_fail(prog);}//prog < 0
+				progress_tmp.stop().clearQueue();
+				fmw_prg[id]=0;//reset
+		    	return;
+			}else{
+				setTimeout(function(){
+								Check_FMW_Download(_cb_sucess, _cb_fail, _prog_div, cgi_url, id);
+					  	   }, 1000* 2);
+			}
+			break;
+		}
+	}).fail(function(){
+				progress_tmp.stop().clearQueue();
+				fmw_prg[id]=0;//reset
+				if(_cb_fail){ _cb_fail(-1);}
+				return;
+	});
+}
+
+function Show_Manually()
+{
+}
+function check_FW_and_jump()
+{
+	show_uploadloaing('#uploadloaing');
+	$.getScript('cgi/fw_download_prg.js', function(){
+		//console.log('LoadingStatus:'+FMWLoad.LoadingStatus);
+		if(FMWLoad.LoadingStatus == 0)
+		{
+			window.top.location.href="fw_upgrade.htm";	
+			return true;
+		}
+		else
+			setTimeout(function(){
+							check_FW_and_jump();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						check_FW_and_jump();
+					}, 1000* 2);
+				return;
+	});
+}
+
+function get_autoFW_version()
+{
+	
+	show_uploadloaing('#autofw_uploadloaing');	
+	//console.log('get_autoFW_version');
+	$.getScript('cgi/autofw_version.js', function(){
+		//console.log('nowait:'+autofw.nowait);
+		if(autofw.nowait == 0)
+		{
+			HiddenObject("loading1");
+			setIdVal("last_version",  autofw.version);
+		//	console.log('runtime_version:'+runtime_version);
+		//	console.log('autofw.version:'+autofw.version);
+			if(autofw.available == 0)
+				DisplayObject("notes3");
+			else
+			{
+			//	console.log('autoFW');
+				if(autofw.version != '')
+				{
+					DisplayObject("notes2");
+					HiddenObject("autofw_disabled_id");
+					DisplayObject("autofw_enable_id");
+				}
+	
+			}
+			return true;
+		}
+		else
+			setTimeout(function(){
+							get_autoFW_version();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						get_autoFW_version();
+					}, 1000* 2);
+				return;
+	});
+}
+
+
+function show_GUI2320()
+{
+}
+function chk_Download_FMW(id, device_ip){
+	Check_FMW_Download(function(){
+							//Download FMW OK
+							setTimeout("show_GUI2320()", 1000); // more delay, the progress bar will shown 100%
+						},function(){
+							//Download FMW fail
+							// NOTE:
+							//  first time it is -99;0;0, if any error shown -1, or -400,...error code.
+							return Show_Manually(null,-1); //auto err
+						}, 'Progress'+ id, 'cgi/fw_download_prg.js', id);
+}
+
+function chk_Download_FMW_start()
+{
+	var id;
+	var allnewest=1;
+	$.getScript('cgi/fw_download_prg.js', function(){
+		//console.log('LoadingStatus:'+FMWLoad.LoadingStatus);
+		if(FMWLoad.LoadingStatus == 0)
+		{
+			var FWupdate=['0','0','0', '0','0','0', '0','0'];
+			if(FMWLoad.FWupdate.length)
+				FWupdate= FMWLoad.FWupdate.split(";");			
+			HiddenObject("loading");
+			
+			
+			for(id=0; id < toplogy_info.nodes.length; id++)
+			{
+				//console.log('FWupdate:'+FWupdate[id]);
+				if(FWupdate[id] == 0)
+				{
+					DisplayObject('fwinfo' + id);
+				}
+				else
+				{
+					allnewest = 0;
+					DisplayObject('p' + id);
+					//console.log('Download:'+id);
+					chk_Download_FMW(id, toplogy_info.nodes[id].device_ip);	
+				}
+			}
+			if(allnewest == 1)
+			{
+				DisplayObject("updatebutton");
+				return;
+			}
+		}
+		else
+			setTimeout(function(){
+							chk_Download_FMW_start();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						chk_Download_FMW_start();
+					}, 1000* 2);
+				return;
+	});
+	
+
+}
+
+function doConfirm(){
+	if(ConfirmM(440)) {
+		AlertM(441);
+			return true;
+	}
+	return false;
+}
+
+function autofw_check()
+{
+	var f=document.webForm3;
+	f.action="fwcheck.cgi";
+	f.encType="multipart/form-data";
+	
+	return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+			 uploadtype: 0,
+			wizard:1,
+		        wait: 2,
+		        done:function(){get_autoFW_version();}
+		         });
+}
+
+function autofw_evaltF()
+{
+	var f=document.webForm3;
+		
+	if( doConfirm() ){
+		if( g_progress == 0 ){
+			g_progress = 1;
+			f.action="upload.cgi";
+			f.ENCTYPE='multipart/form-data';
+/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+		
+		
+	}
+	return false;
+}
+
+function evaltF()
+{
+	var f=document.webForm;
+	
+	if(f.owlfile.value.length == 0){
+		AlertM(439);
+		return false;
+	}
+	/*
+	var filename = f.owlfile.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(442);
+		return false;
+	}
+	*/
+	
+	var filename = f.owlfile.value;
+	var header = "WE410443-A1_";
+	
+	if( filename.length<header.length ) 
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	if((filename.indexOf(header) == -1) || (filename.indexOf("aldk_uImage_web") == -1) )
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	f.resetFlag.checked = true;
+	f.reset.value = "1";
+
+		
+	if( doConfirm() ){
+		
+		HiddenObject("submit_enabled_id");
+		DisplayObject("submit_disabled_id");
+		
+		if( g_progress == 0 ){
+			g_progress = 1;
+			f.action="upload.cgi";
+			f.ENCTYPE='multipart/form-data';
+/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+		
+		
+	}
+	return false;
+}
+//==============Backup===============
+function evaltFback(){
+	// FIXME: old design is put under CGI, we no retrieve every time, but by request
+	//
+	var iframe; 
+	do_jload([["cgi/cgi_sys_bk.js"]],function(){
+		var configFile_URL='/tmp/'+cgi_bkup_file;
+		configFile_URL=URLToken(configFile_URL);	
+		//use iframe to download files because  location.replace can't success by edge.
+		//location.replace(configFile_URL);
+		iframe = document.createElement('iframe');
+		iframe.src = configFile_URL;
+		iframe.style.display = "none";
+		document.body.appendChild(iframe);
+	});	
+	return false;
+}
+//=============ReBackup==============
+function evaltFReback(){
+	var f=document.tfReb;
+	if(f.restore.value.length == 0){
+		AlertM(529);
+		return false;
+	}
+	var filename = f.restore.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(533);
+		return false;
+	}
+	if(ConfirmM(530)) {
+		AlertM(531);
+		f.action="upload.cgi";
+		f.encType="multipart/form-data";
+		return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:"SYS_PROF",
+ 					wait:120
+		});
+	}
+	return false;
+}
+//=============Restore==============
+function evaltFRestore(){
+	return doConfirmRes();
+}
+
+function doConfirmRes(){
+	if(ConfirmM(426)) {
+		AlertM(427);
+		top.G_IP=getCfg("def_lanip");
+		top.G_URL="https://"+top.G_IP+"/index.htm"; // change IP as default value
+		return subForm({
+ 					frm:document.tF,
+ 					next: "index.htm",
+ 					cmd:subFormSYSReset,
+ 					wait:120
+		});
+	} else {
+		AlertM((428));
+	 return false;
+	}
+}
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading1" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function show_progress(dv)
+{
+	var id;
+	var h=[];
+	for(id =0; id < 8; id++)
+	{
+		h.push('<div id="p' + id + '" style="padding:10px;display:none">');
+		h.push('<div class="pad30">');
+		h.push('<div class="row">');
+		if(id < toplogy_info.nodes.length){
+			//console.log('device_name:'+toplogy_info.nodes[id].device_name);
+			h.push('<p class="prgname"><span span class="dvname_info" tid="gtFreshest">'+ toplogy_info.nodes[id].device_name +':</span></p>');
+			}
+		else
+			h.push('<p class="prgname"><span span class="dvname_info" tid="gtFreshest">'+ id +'</span></p>');
+		h.push('<div class="installation" id="ProgBar' + id + '">');
+		h.push('<span class="progress" id="Progress'+ id+ '" style="width:0%"></span>');
+		h.push('</div>');
+		h.push('</div>');
+		h.push('</div>');
+		h.push('</div>');
+		h.push('<div id="fwinfo' + id + '" style="display:none">');
+		if(id < toplogy_info.nodes.length){
+			//console.log('device_mac2:'+toplogy_info.nodes[id].device_name);
+			h.push('<p class="prgname"><span tid="gtFreshest">'+ toplogy_info.nodes[id].device_name +': is the newest FW</span></p>');
+			}
+		else
+			h.push('<p class="prgname"><span tid="gtFreshest">'+ id +':  is the newest FW</span>&hellip;</p>');
+		h.push('</div>');
+	}
+	$(dv).html(h.join(''));
+}
+
+
+function init_check_fw_status()
+{
+	var internetflag=getCfg("internet_enable"); // 1 internet_ok, 0 internet_disconnect_connection
+	var uplink_status_flag=getCfg("uplink_status");// 0 : No Uplink, 1: WiFi 2G, 2: WiFi 5G, 3: Ethernet
+	//alert("uplink_status_flag:" + uplink_status_flag);
+	//internetflag=0;
+	//alert(internetflag);
+	
+	if(internetflag == 0 || uplink_status_flag != 3)
+	{
+		DisplayObject("notes4");
+		HiddenObject("checkfwID");
+		DisplayObject("checkfw_disabledID");
+		//EnableObject("checkfwID");
+		//HiddenObject("checkfwID");
+	}
+}
+
+//===================================
+// Init
+//===================================
+function init(){
+	var f=document.webForm;
+	HiddenObject("upgrade");  
+	HiddenObject("hidden_reset");  
+	HiddenObject("notes1");
+	HiddenObject("notes2");
+	HiddenObject("notes3");
+	HiddenObject("notes4");
+	HiddenObject("autofw_enable_id");
+	HiddenObject("submit_disabled_id");
+	HiddenObject("checkfw_disabledID");
+	init_check_fw_status();//device cannot be connected to the Internet via a network cable.check fw will be disabled.
+	if( G_top==1){ addFieldValue(f, "devtag",1);} //hacking
+	setIdVal("u_runver",runtime_code_version);
+	ShowMenu();
+	show_progress('#progressList');
+	setIdVal("fw_version",  runtime_version);
+	setIdVal("last_version",  "");
+	
+	reSetHelpUrl("FirmwareUpdateID");	
+}
+
+</script>
+
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="443" class="arcFont4"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-left: 0px;">
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm1" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset1" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<p class=normalText><font class="arcFont2" id="431"></font></p>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm2" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset2" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td width="150">						
+						<font class="arcFont2" id="604"></font>
+					</td>
+					<td>						
+						<font class="arcFont2" id="fw_version"></font>
+					</td>
+				</tr>
+				<tr>
+					<td width="150">						
+						<font class="arcFont2" id="605"></font>
+					</td>
+					<td>						
+						<font class="arcFont2" id="last_version"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm3" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="owlfile_auto" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="autofw">
+						<td class="tdText" width="50%" align="right" id="checkfwID">
+							<input type="button" class="green" onClick="autofw_check()" name="checkfw" id="601">&nbsp;
+						</td>
+						
+						<td class="tdText" width="50%" align="right" id="checkfw_disabledID">
+							<input type="button" class="green" onClick="autofw_check()" disabled="true" name="checkfw" id="601">&nbsp;
+						</td>
+						
+						<td class="tdText" id="autofw_disabled_id" width="50%" align="left">
+							<input type="button" class="green" onClick="autofw_evaltF()" name="autoupgrade" id="438" disabled="true">&nbsp;
+						</td>
+						<td class="tdText" id="autofw_enable_id" width="50%" align="left">
+							<input type="button" class="green" onClick="autofw_evaltF()" name="autoupgrade" id="438">&nbsp;
+						</td>
+	      			</tr>
+			</table>
+			<div id='autofw_uploadloaing'></div>
+		</form>
+	</td>
+</tr>	      			
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm4" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset3" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="notes1">
+					<td>						
+						<font class="arcFont2" id="606"></font>
+					</td>
+				</tr>
+				<tr id="notes2">
+					<td>						
+						<font class="arcFont2" id="432"></font>
+					</td>
+				</tr>
+				<tr id="notes3">
+					<td>						
+						<font class="arcFont2" id="607"></font>
+					</td>
+				</tr>
+				<tr id="notes4">
+					<td>						
+						<font class="arcFont2" id="609" style="color:red"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr id="upgrade">
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<b><font class="arcFont1" id="602"></font></b>
+					</td>
+				</tr>
+				<tr>
+					<td>						
+						<font class="arcFont2" id="603"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="vox20_table_nbl" border="0" cellspacing="0" cellpadding="5" width="50%" style="margin-left: 0px;">
+							<tr>
+								<td nowrap class="tdText">
+									<font class="arcFont2" id="437"></font>
+								</td>
+								<td nowrap class="tdText">
+									<input class="arcFont3" type="file" size="50" maxlength="31" name="owlfile">
+								</td>
+							</tr>
+							<tr id='hidden_reset'>
+								<td colspan="2" align="center" nowrap class="tdText">
+									<font class="arcFont2" id="600"></font>
+									<input type="checkbox" name="resetFlag" value="1" NOCHECK="0">
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr id="updatebutton">
+					<td align="center" id="submit_disabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="upgrade" id="438" disabled="true">&nbsp;
+					</td>
+					<td align="center" id="submit_enabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="upgrade" id="438">&nbsp;
+					</td>
+	      			</tr>
+	      	</table>
+	      	<div id='uploadloaing'></div>
+		<div id='progressList'></div>
+			</form>
+	</td>
+</tr>
+</table>
+
+	<!-- main page-->
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

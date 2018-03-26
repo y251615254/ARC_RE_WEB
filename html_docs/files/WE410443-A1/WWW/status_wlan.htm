@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["status_lan_device"];var CGIs=["toplogy_info"];</script>
+<script language="javascript">var G_top=1;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+
+//var wifi_radio_info={ "radiostats": [ { "mac": "E0:52:63:A0:8D:35", "wrst": [ { "bid": "0", "bs": "12306", "br": "26367", "ps": "88", "pr": "357", "es": "0", "er": "0", "dps": "0", "dpr": "130", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" }, { "bid": "10", "bs": "0", "br": "0", "ps": "0", "pr": "0", "es": "0", "er": "0", "dps": "0", "dpr": "0", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" } ] } ] };
+//var wifi_radio_info={ "radiostats": [ { "mac": "E0:52:63:A0:8D:35", "wrst": [ { "bid": "0", "bs": "12306", "br": "26367", "ps": "88", "pr": "357", "es": "0", "er": "0", "dps": "0", "dpr": "130", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" }, { "bid": "10", "bs": "0", "br": "0", "ps": "0", "pr": "0", "es": "0", "er": "0", "dps": "0", "dpr": "0", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" } ] },{ "mac": "E0:52:63:A0:8D:33", "wrst": [ { "bid": "0", "bs": "12306", "br": "26367", "ps": "88", "pr": "357", "es": "0", "er": "0", "dps": "0", "dpr": "130", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" }, { "bid": "10", "bs": "0", "br": "0", "ps": "0", "pr": "0", "es": "0", "er": "0", "dps": "0", "dpr": "0", "plcpec": "0", "fcsec": "0", "imacc": "0", "por": "0", "n": "0" } ] } ] };
+
+
+function get_device_name_by_mac(mac_val)
+{
+
+	for (var i=0; i < toplogy_info.nodes.length; i++) 
+	{
+		var mac_tmp = toplogy_info.nodes[i].device_mac;
+		var name_tmp = toplogy_info.nodes[i].device_name;
+		if(mac_tmp == mac_val)
+		{
+			return name_tmp;
+		}
+	}
+	return 0;
+	
+}
+
+
+
+
+function ShowRepeter()
+{
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,c6;
+	var mac,wifiband,bytes_send,bytes_received,packets_sent,packets_received,device_name;
+
+	
+	for (var i=0;i < wifi_radio_info.radiostats.length;i++) 
+	{
+		//if(wifi_radio_info.radiostats[i].mac != "")
+		//	mac = wifi_radio_info.radiostats[i].mac;
+
+		for(var j=0; j < wifi_radio_info.radiostats[i].wrst.length; j++)
+		{
+			mac = wifi_radio_info.radiostats[i].mac;
+
+		
+			device_name = get_device_name_by_mac(mac);
+
+		
+			if(wifi_radio_info.radiostats[i].wrst[j].bid == 10)
+			{
+				wifiband = "2.4G";
+				bytes_send = wifi_radio_info.radiostats[i].wrst[0].bs;
+				bytes_received = wifi_radio_info.radiostats[i].wrst[0].br;
+				packets_sent = wifi_radio_info.radiostats[i].wrst[0].ps;
+				packets_received = wifi_radio_info.radiostats[[i]].wrst[0].pr;
+			}
+			else if(wifi_radio_info.radiostats[i].wrst[j].bid == 0)
+			{
+				wifiband = "5G";
+				mac ="";
+				device_name="";
+				bytes_send = wifi_radio_info.radiostats[i].wrst[1].bs;
+				bytes_received = wifi_radio_info.radiostats[i].wrst[1].br;
+				packets_sent = wifi_radio_info.radiostats[i].wrst[1].ps;
+				packets_received = wifi_radio_info.radiostats[[i]].wrst[1].pr;
+			}
+
+
+
+			re_rowcnt=0;
+			
+			//c1 = mac;
+			c1 = device_name;
+			c2 = wifiband;
+			c3 = bytes_send;
+			c4 = bytes_received;
+			c5 = packets_sent;
+			c6 = packets_received;
+
+			RowCell=[[1,c1],[1,c2],[1,c3],[1,c4],[1,c5],[1,c6],[null,null]];
+			re_rowcnt+=Table_add_row("tb_station_info",[[9,re_rowcnt,1],RowCell]);
+		}
+
+	}	
+
+
+	return;
+}
+
+
+
+
+function saveNameRE(index){
+
+	if(checkNameValue(index) != true) //no find same name
+	{
+	    var f=document.tF0;
+		var httoken_val = ArcBase._t();	
+		var device_mac = toplogy_info.nodes[index].device_mac;
+		var wifiExtName = device_mac + "?";
+		var select_obj = document.getElementById("selcetRenameID" + index);
+		var select_index = select_obj.selectedIndex;	// get select indexNumber
+	
+		if(select_index != 0)
+		{
+			wifiExtName += select_obj.options[select_index].text;;
+		}
+		else
+		{
+			if(toplogy_info.nodes.length == 1)
+				wifiExtName += f.saveNameValue.value;
+			else
+				wifiExtName += f.saveNameValue[index].value;
+		}
+		
+		$.ajax({
+				type: "POST",
+				url: "/cgi-bin/toplogy.cgi",
+				dataType: "text",
+				data: { httoken:httoken_val,
+							cmd:"syncdevicename",
+							data:wifiExtName
+					  }
+				})			
+		.done(function( data ){
+			if(data == "ok"){                               
+		        return subForm({
+					frm:f,
+					next: 'status_lan_device.htm',
+					uploadtype: 0, 
+					wait: 5
+		            });   
+			}else{
+				alert("set and reboot error.");                        
+				return false;  
+			}
+		});	
+
+	}
+}
+
+function write_device_table(){
+	//for(var i=0; i<1; i++ )
+	var i = 0;
+	{		
+		$('#tb_all_device').append('\
+		<tr>\
+			<td colspan="2" valign="top">\
+				<table class="vox20_tablec" width=80% cellspacing=1 cellpadding=5 border=0 id="tb_station_info">\
+					<tr>\
+						<td width=20% nowrap ><font id="202" class=arcFontBold2></font></td>\
+						<td width=20% nowrap ><font id="205" class=arcFontBold2></font></td>\
+						<td width=20% nowrap ><font id="225" class=arcFontBold2></font></td>\
+						<td width=20% nowrap ><font id="226" class=arcFontBold2></font></td>\
+						<td width=20% nowrap ><font id="227" class=arcFontBold2></font></td>\
+						<td width=20% nowrap ><font id="228" class=arcFontBold2></font></td>\
+					</tr>\
+				</table>\
+			</td>\
+		</tr>');
+	}	
+}
+
+	
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+	write_device_table();
+	ShowRepeter();
+	ShowMenu();
+	initSelect();
+}
+
+function refreshfun() {
+	location.href = "status_wlan.htm";
+	return false;
+}
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font  class="arcFont4" id="231"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/statusprocess.exe" method="post" target="OUTfrm">
+<table width="100%" border="0" cellspacing="0" cellpadding="10" align="center" id="tb_all_device">
+</table>
+</form>
+
+<form>
+<br>
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		
+		<td align="center">
+			<input type="button" class="green" onClick="refreshfun()" name="refresh" id="100003">&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+
+

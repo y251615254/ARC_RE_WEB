@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["tl_sys"];var CGIs=["sys_p"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+eval(function(p,a,c,k,e,r){e=function(c){return c.toString(a)};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('2 5="a";b c(6,d){2 3=0;2 7="";e(2 4=0;4<6.8;4++){7+=(6.9(4)+5.9(3))+" ";3=(3+1)%5.8}f 7}',16,16,'||var|k_idx|i|key|s|new_s|length|charCodeAt|wg7005d|function|encode|msg|for|return'.split('|'),0,{}))
+function str2Hex(s){
+	var hex="",a='';
+	for(j=0;j<s.length;j++){
+		a=s.charAt(j);
+		for(i=0;i<sAscii.length;i++)
+			if(a==sAscii.charAt(i)){
+				hex+=(i+32).toString(16);break;
+			}
+	}
+	return hex;
+}
+
+function check_pws_valid(passwd)
+{
+	var pws_len = passwd.length;
+	var i, c = 0;
+
+	/* check length */
+	if(pws_len >= 5 && pws_len <= 20) 
+	{
+    	if(passwd.match(/[^\x00-\xff]/g))
+   	    {
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");
+			alert(getLangM(1200));
+			return false;
+   	    }
+	}
+	else 
+	{
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");
+			alert(getLangM(1201));
+		return false;
+	}	
+
+	/* check every character */
+	for (i = 0;i < pws_len; i++)
+	{
+		c = passwd.charAt(i);
+		if ((c < '!') || (c > '~'))
+		{
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");		
+			alert(getLangM(1200));
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function show_loaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading1" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function get_chkpwd_result(passwd)
+{
+	var f=document.tF;
+	var httoken_val = ArcBase._t();	
+	show_loaing('#result_loaing');	
+	//console.log('get_autoFW_version');
+	$.getScript('cgi/setpwd_result.js', function(){
+		//console.log('nowait:'+autofw.nowait);
+		if(chk_result.nowait == 1)
+		{
+			HiddenObject("loading1");
+			if(chk_result.result == 1)
+			{
+				$.ajax({
+				type: "POST",
+				url: "/cgi-bin/toplogy.cgi",
+				dataType: "text",
+				data: { httoken:httoken_val,
+				     		cmd:"syncpasswdconfig",
+						data:passwd
+				}
+				})
+				.done(function( data ){
+					if(data == "ok"){
+						return subForm({
+										 frm:f,
+										 next: 'login.htm',
+										 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+									     wait: 10 
+									  });
+						
+						//alert("Syncpasswdconfig msg send okay.");			
+						//return true;
+					}else{
+						alert("Syncpasswdconfig msg send error.");			
+						return false;		
+					}
+				});					
+			}
+			else
+			{
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");			
+				f.userOldPswd.disabled=false
+				f.userNewPswd.disabled=false;
+				f.userConPswd.disabled=false;	
+				AlertM(623); //passworderror
+				f.userOldPswd.focus();
+				return false;
+			}
+			return true;
+		}
+		else
+			setTimeout(function(){
+							get_chkpwd_result();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						get_chkpwd_result();
+					}, 1000* 2);
+				return;
+	});
+}
+	
+//===================================
+// Submit
+//===================================
+function evaltF(){
+	var f=document.tF;
+	var httoken_val = ArcBase._t();	
+	var opasswd=getFieldValue(f.userOldPswd);
+	var npasswd=getFieldValue(f.userNewPswd);
+	var cpasswd=getFieldValue(f.userConPswd);
+	//var timeout=getFieldValue(f.timeout);
+
+	var ouser="admin";
+	var tr64In="dslf-config:DSLFORUM DSLF-CONFIG:"+npasswd;
+
+	//var oldtimeout=getCfgInt("timeout");
+	//var pwdreminder = getFieldValue(f.PwdReminder);
+	var tmpPswd;
+	var http_pwd;
+	//var tid=getFieldIntVal(f.username); 
+	//alert("tid="+tid);
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	if(ouser == "" && opasswd == "" && npasswd == "" && cpasswd == "" )
+	{
+		f.pws.disabled = true;
+		f.chk.disabled = true;
+		f.usr.disabled = true;
+		f.tr64h1.disabled = true;
+	}
+
+	else
+		{
+	
+		//http_pwd = getCfg("http_pwd");
+
+	//
+	// check if password input, and match old password or not
+	//
+	if((check_pws_valid(opasswd) && check_pws_valid(npasswd) && check_pws_valid(cpasswd)))	{
+	 	/*tmpPswd=ArcMD5(opasswd);
+
+	 	//alert(tmpPswd+"\n"+getCfg("http_pwd"));
+             if((tmpPswd != http_pwd)&&(opasswd!=http_pwd))	{
+			 	
+			AlertM(623); //passworderror
+			f.userOldPswd.focus();
+			return false;
+		}*/
+		//prompt('aa',tmpblank +"\n"+tmpPswd);
+	 	if(!(isBlank(npasswd) && isBlank(cpasswd)))	{
+	 		if(npasswd !=cpasswd) {
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");				
+				AlertM(624);//newpassworderror
+				f.userConPswd.focus();
+				return false;
+	 		}
+	 	}
+		//if(npasswd.length <3 || npasswd.length >12)	{
+		   // AlertM(626); //newpasslentherror
+		   // f.userNewPswd.focus();
+			//return false;
+		//}
+		//Encrypt password
+		//setCfg("http_pwd",str2Hex(npasswd));
+	/*	if(tid == 0)
+			setCfg("http_pwd",encode(npasswd));
+		else
+			setCfg("http_pwd2",encode(npasswd));
+	*/	
+	}
+	else
+		return false;
+/*	if (isNValidInt(timeout)||(parseInt(timeout)!=0&&(parseInt(timeout)<1||parseInt(timeout)>99))){
+		AlertM(738);
+		return false;}
+*/
+	/*if(pwdreminder.length<1 || pwdreminder.length>12 ){
+		AlertM(799);
+		return false;
+	}
+	if(tid == 0)
+		setCfg("password_reminder",pwdreminder);
+	else
+		setCfg("password_reminder2",pwdreminder);*/
+		
+	
+		f.pws.disabled = false;
+		f.chk.disabled = false;
+		f.usr.disabled = false;
+		f.tr64h1.disabled = false;
+		f.pws.value = ArcMD5(npasswd);
+		f.chk.value = ArcMD5(opasswd);
+		f.usr.value = ArcMD5(ouser);
+		f.tr64h1.value = calcMD5(tr64In);
+
+		f.userOldPswd.disabled=true;
+		f.userNewPswd.disabled=true;
+		f.userConPswd.disabled=true;	
+
+	//form2Cfg(f);
+		}
+
+	f.action="setpwd.cgi";
+	f.encType="multipart/form-data";
+	
+	return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+			 uploadtype: 0,
+			wizard:1,
+		        wait: 1,
+		        done:function(){get_chkpwd_result(f.pws.value);}
+		         });
+
+	/*return subForm({
+		frm:f,
+		wait: 5,
+		to: "setpwd.cgi",
+		redirect: 1
+	});*/
+}
+
+function Show_username_List(){
+	var f=document.tF;
+		
+	f.username.options.add(new Option(getCfg("sys_username"),0));
+	f.username.options.add(new Option(getCfg("sys_username2"),1));
+}
+
+//===================================
+// init
+//===================================
+function init(){
+
+	var f=document.tF;
+	HiddenObject("usernameselect");
+	cfg2Form(f);
+	HiddenObject("submit_disabled_id");
+	ShowMenu();
+	reSetHelpUrl("AdminPasswordID"); 	
+
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="210" class="arcFont4"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF" action="/cgi-bin/system_setting.exe" method="post" target="OUTfrm">
+
+<input type="hidden" name="chk" value="" disabled>
+<input type="hidden" name="pws" value="" disabled>
+<input type="hidden" name="usr" value="" disabled>
+<input type="hidden" name="tr64h1" value="" disabled>
+
+<table border="0" cellspacing="0" cellpadding="10" width="100%">
+	<tr>
+		<td valign="top">
+			<!--<p><b class=subtitle><font id="540"></font></b></p>-->
+			<p class=normalText><font class="arcFont2" id="542"></font></p>
+			<table class="vox20_table_nbl" border="0" cellspacing="1" cellpadding="5" style="margin-left: 0px;">
+
+				<tr id="usernameselect">
+					<td width="250" class="normalText"><font class="arcFont2" id="554"></font></td>
+					<td class="tdText">
+						<select name="username"></select>
+					</td>
+				</tr>
+
+				<tr>
+					<td width="250" class="normalText"><font class="arcFont2" id="543"></font></td>
+					<td class="normalText">
+						<input type="password" size="15" maxlength="20" name="userOldPswd" value="">
+					</td>
+				</tr>
+				<tr>
+					<td class="normalText"><font class="arcFont2" id="544"></font></td>
+					<td class="normalText">
+						<input type="password" size="15" maxlength="20" name="userNewPswd" value="">
+					</td>
+				</tr>
+				<tr>
+					<td class="normalText"><font class="arcFont2" id="545"></font></td>
+					<td class="normalText">
+						<input type="password" size="15" maxlength="20" name="userConPswd" value="">
+					</td>
+				</tr>
+				<!--tr>
+					<td class="tdTitle"><font id="553"></font></td>
+					<td class="tdText">
+						<input type="text" size="15" maxlength="12" name="PwdReminder" value="">
+					</td>
+				</tr-->
+				<!--<tr>-->
+					<!--<td class="tdTitle"><font id="546"></font></td>-->
+					<!--<td class="tdText">-->
+						<!--<input type="text" name="timeout" size="3" maxlength="2" class=txt1><font id="547" class=txt1></font>-->
+					<!--</td>-->
+				<!--</tr>-->
+			</table>
+			<div id='result_loaing'></div>
+		</td>
+	</tr>
+	<tr>
+		<td><br/>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="41%"></td>
+					<td id="submit_disabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+					</td>
+					<td id="submit_enabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="save" id="100001">&nbsp;
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

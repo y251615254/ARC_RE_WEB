@@ -1,0 +1,62 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: sha1WithRSAEncryption
+        Issuer: C=CA, ST=Alberta, L=Edmonton, O=TELUS, OU=Technology Strategy, CN=TELUSWiFi.home/emailAddress=ts.pmo@telus.com
+        Validity
+            Not Before: Oct 29 16:18:59 2016 GMT
+            Not After : Oct 27 16:18:59 2026 GMT
+        Subject: C=CA, ST=Alberta, O=TELUS, OU=Technology Strategy, CN=TELUSWiFi.home/emailAddress=ts.pmo@telus.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:cb:4d:17:39:5e:63:52:07:83:3b:69:b9:46:b8:
+                    7d:89:76:bf:7a:fd:d1:c8:15:17:4e:51:f4:c1:88:
+                    10:64:96:46:03:1c:ac:30:87:d0:54:b0:c0:cd:eb:
+                    4d:03:a5:ae:50:55:30:3a:71:ae:b0:8d:ff:03:80:
+                    dd:d3:e1:b7:d0:2c:ac:44:02:97:ea:6b:7b:df:47:
+                    f3:a5:76:a1:14:4d:2a:26:18:ac:6a:b0:df:f6:96:
+                    24:c8:3d:fa:1c:30:26:29:7f:6c:de:e3:e7:09:83:
+                    65:f3:14:89:5b:6d:a2:30:27:60:ca:d2:8c:08:32:
+                    c6:52:5e:a6:f2:ff:b0:2a:5f
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                92:54:4B:C6:A1:49:91:C8:3D:1D:D0:F7:1C:D5:F9:82:AF:72:63:18
+            X509v3 Authority Key Identifier: 
+                keyid:4B:81:FF:7C:D4:BC:8C:8E:59:E5:73:3E:3E:08:64:1A:49:00:05:BB
+
+    Signature Algorithm: sha1WithRSAEncryption
+         a2:27:04:df:46:b4:d5:51:8b:08:e4:c9:fe:ec:ae:96:78:a9:
+         81:c3:ab:08:f8:dd:88:e5:ed:ae:e3:dd:e5:21:fb:5e:4e:a8:
+         fc:50:7f:e4:30:06:3a:fe:96:5a:c1:fc:c8:89:d5:8a:4b:df:
+         30:f3:f7:0c:57:4e:50:ce:43:78:f1:87:28:34:24:0f:79:e0:
+         7a:74:c8:be:d3:28:a5:f4:f6:a6:7d:fb:02:fc:e9:29:ea:a0:
+         b5:f6:22:78:f6:c2:2c:c4:db:87:eb:13:4d:1a:6f:78:50:c0:
+         f5:cc:b5:26:7c:7d:4c:07:51:13:67:d5:d6:f3:78:7c:1b:69:
+         29:7b
+-----BEGIN CERTIFICATE-----
+MIIDFDCCAn2gAwIBAgIBATANBgkqhkiG9w0BAQUFADCBmjELMAkGA1UEBhMCQ0Ex
+EDAOBgNVBAgMB0FsYmVydGExETAPBgNVBAcMCEVkbW9udG9uMQ4wDAYDVQQKDAVU
+RUxVUzEcMBoGA1UECwwTVGVjaG5vbG9neSBTdHJhdGVneTEXMBUGA1UEAwwOVEVM
+VVNXaUZpLmhvbWUxHzAdBgkqhkiG9w0BCQEWEHRzLnBtb0B0ZWx1cy5jb20wHhcN
+MTYxMDI5MTYxODU5WhcNMjYxMDI3MTYxODU5WjCBhzELMAkGA1UEBhMCQ0ExEDAO
+BgNVBAgMB0FsYmVydGExDjAMBgNVBAoMBVRFTFVTMRwwGgYDVQQLDBNUZWNobm9s
+b2d5IFN0cmF0ZWd5MRcwFQYDVQQDDA5URUxVU1dpRmkuaG9tZTEfMB0GCSqGSIb3
+DQEJARYQdHMucG1vQHRlbHVzLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkC
+gYEAy00XOV5jUgeDO2m5Rrh9iXa/ev3RyBUXTlH0wYgQZJZGAxysMIfQVLDAzetN
+A6WuUFUwOnGusI3/A4Dd0+G30CysRAKX6mt730fzpXahFE0qJhisarDf9pYkyD36
+HDAmKX9s3uPnCYNl8xSJW22iMCdgytKMCDLGUl6m8v+wKl8CAwEAAaN7MHkwCQYD
+VR0TBAIwADAsBglghkgBhvhCAQ0EHxYdT3BlblNTTCBHZW5lcmF0ZWQgQ2VydGlm
+aWNhdGUwHQYDVR0OBBYEFJJUS8ahSZHIPR3Q9xzV+YKvcmMYMB8GA1UdIwQYMBaA
+FEuB/3zUvIyOWeVzPj4IZBpJAAW7MA0GCSqGSIb3DQEBBQUAA4GBAKInBN9GtNVR
+iwjkyf7srpZ4qYHDqwj43Yjl7a7j3eUh+15OqPxQf+QwBjr+llrB/MiJ1YpL3zDz
+9wxXTlDOQ3jxhyg0JA954Hp0yL7TKKX09qZ9+wL86SnqoLX2Inj2wizE24frE00a
+b3hQwPXMtSZ8fUwHURNn1dbzeHwbaSl7
+-----END CERTIFICATE-----

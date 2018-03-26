@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="shortcut icon" href="images/logoico.png" type="image/x-icon">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<script language="javascript">var LangJ=["steer"];CGIs=["steer"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style type="text/css">
+/*A1 start*/
+.arcFont1		{color:#666666; font-size: 14pt; font-family:Calibri;}
+.arcFont2		{color:#666666; font-size: 12pt; font-family:Calibri;}
+.arcFont3		{color:#666666; font-size: 10pt; font-family:Calibri;}
+.arcFont4		{color:#7BC143; font-size: 14pt; font-family:Calibri;font-weight: bold;}
+.arcFont5		{color:#7BC143; font-size: 12pt; font-family:Calibri;}
+.arcFont6		{color:#7BC143; font-size: 10pt; font-family:Calibri;}
+.arcFont7		{color:#999999; font-size: 14pt; font-family:Calibri;}
+.arcFont8		{color:#999999; font-size: 12pt; font-family:Calibri;}
+.arcFont9		{color:#999999; font-size: 10pt; font-family:Calibri;}
+.arcFont10		{color:#FF0000; font-size: 12pt; font-family:Calibri;}
+.arcFont11		{color:#7BC143; font-size: 18pt; font-family:Calibri;}
+.arcFontBold2	{color:#666666; font-size: 12pt; font-family:Calibri; font-weight: bold;}
+.arcFontBold3	{color:#666666; font-size: 10pt; font-family:Calibri; font-weight: bold;}
+/*A1 end*/
+</style>
+
+<style>
+body {
+	margin: 0px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	font-family: arial;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.background_body {
+	margin: 0;
+	padding: 0;
+	background: #D0D0D0;
+	/*background-image: url(./images/background.jpg);*/
+	background-repeat: repeat;
+}
+
+.table_yj{
+	border-radius:5px;
+	overflow:hidden;
+}
+.topic{
+	font-weight: bold;
+	color: #0000ff;
+}
+.up{
+	font-weight: normal;
+	color: #6464c3;
+}
+.up_noraml{
+	/*font-weight: normal;*/
+	/*color: #6464c3;*/
+	color: blue;
+	margin-left:50px; 
+	font-size: 13px;
+}
+.up_title{
+	font-weight: bold;
+	color: blue;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.help_body {
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 13px;
+	width: 75%;
+	min-width: 640px !important;
+	line-height: 15px;
+	color: #036;
+	border-radius:30px;
+	overflow:hidden;
+	background: #FFFFFF
+}
+
+.backtop{
+	display:block;
+	width:32px;
+	height:43px;
+	/*color: #FFFFFF;
+	font-size: 18px;
+	line-height: 50px;
+	text-align: center;
+	background: #F96;*/
+	cursor: pointer;
+	position:fixed;
+	right:30px;
+	bottom:20px;
+	background-image:url(images/backtop3243.png);
+}
+
+.topic {
+	font-weight: bold;
+	color: blue;
+	font-family: arial;
+	font-size: 15px;
+}
+
+.topic_2 {
+	font-weight: bold;
+	color: blue;
+	margin-left:50px; 
+}
+
+</style>
+
+<script language="javascript">
+function doLegacySteeringChange()
+{
+	var f = document.tF;
+	if(f.leg_steer_cap.selectedIndex == 0)
+		{
+			f.all_steer_cap.selectedIndex = 0;
+		}
+	else if(f.leg_steer_cap.selectedIndex == 1)
+		{
+			if(f.band_steer_cap.selectedIndex == 1)
+				{
+					f.all_steer_cap.selectedIndex = 1;
+				}
+			else if(f.band_steer_cap.selectedIndex == 0)
+				{
+					f.all_steer_cap.selectedIndex = 0;
+				}			
+		}	
+	$(f.all_steer_cap).arcTransSelect({force:true});	
+}
+
+function doBandSteeringChange()
+{
+	var f = document.tF;
+	if(f.band_steer_cap.selectedIndex == 0)
+		{
+			f.all_steer_cap.selectedIndex = 0;
+		}
+	else if(f.band_steer_cap.selectedIndex == 1)
+		{
+			if(f.leg_steer_cap.selectedIndex == 1)
+				{
+					f.all_steer_cap.selectedIndex = 1;
+				}
+			else if(f.leg_steer_cap.selectedIndex == 0)
+				{
+					f.all_steer_cap.selectedIndex = 0;
+				}			
+		}
+	$(f.all_steer_cap).arcTransSelect({force:true});	
+}
+
+function doAllSteeringChange()
+{
+	var f = document.tF;
+	if(f.all_steer_cap.selectedIndex == 0)
+		{
+			f.leg_steer_cap.selectedIndex = 0;
+			f.band_steer_cap.selectedIndex = 0;	
+		}
+	else if(f.all_steer_cap.selectedIndex == 1)
+		{
+			f.leg_steer_cap.selectedIndex = 1;
+			f.band_steer_cap.selectedIndex = 1;	
+		}
+	$(f.leg_steer_cap).arcTransSelect({force:true});
+	$(f.band_steer_cap).arcTransSelect({force:true});
+}
+
+function evaltF()
+{
+	var f = document.tF;
+	var httoken_val = ArcBase._t();	
+	var datatmp;
+	var steer_capability;
+
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	
+	if((f.leg_steer_cap.selectedIndex == 1)&&(f.band_steer_cap.selectedIndex == 1)&&(f.all_steer_cap.selectedIndex == 1))
+	{
+		steer_capability = "0";
+	}	
+	else if((f.leg_steer_cap.selectedIndex == 1)&&(f.band_steer_cap.selectedIndex == 0)&&(f.all_steer_cap.selectedIndex == 0))
+	{
+		steer_capability = "1";
+	}
+	else if((f.leg_steer_cap.selectedIndex == 0)&&(f.band_steer_cap.selectedIndex == 1)&&(f.all_steer_cap.selectedIndex == 0))
+	{
+		steer_capability = "2";
+	}
+	else if((f.leg_steer_cap.selectedIndex == 0)&&(f.band_steer_cap.selectedIndex == 0)&&(f.all_steer_cap.selectedIndex == 0))
+	{
+		steer_capability = "3";
+	}
+	
+	datatmp = steer_capability;
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/toplogy.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncwifisteer",
+	      		data:datatmp
+	}
+	})
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+							 frm:f, 
+							 uploadtype: 0,  
+						     wait: 15
+						  }); 
+		}else{
+			alert("cmd_syncwifisteer msg send error.");			
+			return false;		
+		}
+	}) 	
+}
+
+function init()
+{
+	var f = document.tF;
+	var steer_capability = getCfg("steer_capability");
+	if(steer_capability=="0")
+	{
+		f.leg_steer_cap.selectedIndex = 1;
+		f.band_steer_cap.selectedIndex = 1;
+		f.all_steer_cap.selectedIndex = 1;
+	}
+	else if(steer_capability=="1")
+	{
+		f.leg_steer_cap.selectedIndex = 1;
+		f.band_steer_cap.selectedIndex = 0;
+		f.all_steer_cap.selectedIndex = 0;
+	}
+	else if(steer_capability=="2")
+	{
+		f.leg_steer_cap.selectedIndex = 0;
+		f.band_steer_cap.selectedIndex = 1;
+		f.all_steer_cap.selectedIndex = 0;
+	}	
+	else if(steer_capability=="3")
+	{
+		f.leg_steer_cap.selectedIndex = 0;
+		f.band_steer_cap.selectedIndex = 0;
+		f.all_steer_cap.selectedIndex = 0;
+	}	
+	HiddenObject("submit_disabled_id");
+	ShowMenu();
+	//reSetHelpUrl("WirelessSteeringID");
+}
+</script>
+</head>
+<body class="background_body" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<form name="tF" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+<a name='TOP'></a>
+<div>
+	<iframe name="topFrame" src="setup_top_help.htm" target="leftFrame" scrolling="no" noresize="" frameborder="0" border="0" marginwidth="0" marginheigh="0" align="top" hspace="0" vspace="0" cellspacing="0" style="border:none" width="100%" height="50"></iframe>
+</div>
+<br>
+<script>ShowPageMenu();</script>
+<!-- Page left-->	
+	
+<table class="help_body" height="100%" align="center" cellspacing="10" cellpadding="0" width="60%" border="0" ID="Table3">
+	<tr>
+		<td valign="top">
+	        <p style="margin-left:10px"><font id="800" class="arcFont11"></font></p>
+	   </td>
+	</tr>
+	<tr>
+		<td valign="top">
+	        <p class="arcFont1" style="margin-left:10px; line-height:20px;"><font id="801"></font></p>
+	   </td>
+	</tr>
+	<tr>
+		<td valign="top">
+			<table border="0" cellspacing="1" cellpadding="0" id="legacy_steering">
+				<tr>
+					<td width="150" class="normalText"><font class="arcFont1" id="804" style="margin-left:10px"></font></td>
+					<td class="tdTextBt_20">
+						<select name="leg_steer_cap" size="1" onchange="doLegacySteeringChange()">
+						<option value="1" id="802"></option>
+						<option value="0" id="803"></option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<p class=arcFont2 style="margin-left:10px"><font id="807"></font></p>
+		</td>
+	</tr>	
+	<tr>
+		<td valign="top">
+			<table border="0" cellspacing="1" cellpadding="0" id="band_steering">
+				<tr>
+					<td width="150" class="normalText"><font class="arcFont1" id="805" style="margin-left:10px"></font></td>
+					<td class="tdTextBt_20">
+						<select name="band_steer_cap" size="1" onchange="doBandSteeringChange()">
+						<option value="1" id="802"></option>
+						<option value="0" id="803"></option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<p class=arcFont2 style="margin-left:10px"><font id="808"></font></p>
+		</td>
+	</tr>	
+	<tr>
+		<td valign="top">
+			<table border="0" cellspacing="1" cellpadding="0" id="all_steering">
+				<tr>
+					<td width="150" class="normalText"><font class="arcFont1" id="806" style="margin-left:10px"></font></td>
+					<td class="tdTextBt_20">
+						<select name="all_steer_cap" size="1" onchange="doAllSteeringChange()">
+						<option value="1" id="802"></option>
+						<option value="0" id="803"></option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>	
+	<tr>
+		<td>
+			<p class=arcFont2 style="margin-left:10px"><font id="809" ></font></p>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table border=0 cellspacing=0 cellpadding=0 width="100%">
+				<tr>
+					<td align="center" id="submit_disabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+					</td>
+					<td align="center" id="submit_enabled_id">
+						<input type="button" class="green" onClick="evaltF()" name="save" id="100001">&nbsp;
+					</td>
+      			</tr>
+  		</table>
+		</td>
+	</tr>	
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+

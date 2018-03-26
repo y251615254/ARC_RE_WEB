@@ -1,0 +1,61 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number: 1 (0x1)
+    Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C=EN, ST=Landon, L=Landon, O=BT, OU=BT, CN=mybtdevice.home/emailAddress=bt@gmail.com
+        Validity
+            Not Before: Aug 25 07:03:16 2016 GMT
+            Not After : Aug 23 07:03:16 2026 GMT
+        Subject: C=EN, ST=Landon, O=BT, OU=BT, CN=mybtdevice.home/emailAddress=bt@gmail.com
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (1024 bit)
+                Modulus:
+                    00:ce:1a:2d:b1:bd:8a:14:f0:33:df:2a:f2:e6:55:
+                    2b:69:a3:e9:e6:a1:0c:1e:54:b3:e9:8e:4b:f9:c2:
+                    27:31:e9:4d:25:0d:3e:9e:f5:ce:bb:e5:f1:da:fe:
+                    36:47:56:db:8d:2c:7a:69:69:1e:ea:15:52:ac:a6:
+                    14:75:2c:ee:ec:2d:30:6a:3a:1b:21:d3:82:99:8c:
+                    58:d7:66:0c:e8:47:84:47:df:38:ac:25:f4:d8:a5:
+                    08:d1:08:35:eb:47:78:17:e5:7f:7a:d1:de:15:7b:
+                    49:3c:12:93:a5:f7:d4:d1:ca:d2:1b:b0:4b:ee:de:
+                    54:df:96:f8:8b:13:e7:8b:1d
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            Netscape Comment: 
+                OpenSSL Generated Certificate
+            X509v3 Subject Key Identifier: 
+                4D:7A:ED:5B:D5:47:D5:54:9C:CD:2B:ED:0D:CE:E9:A2:5D:C9:A9:D8
+            X509v3 Authority Key Identifier: 
+                keyid:42:73:71:2E:F3:34:54:74:AC:91:62:C0:32:1D:8E:BE:FD:9C:DA:21
+
+    Signature Algorithm: sha256WithRSAEncryption
+         af:57:ea:68:e6:46:16:8e:47:21:05:88:ae:8f:3a:ae:ef:f1:
+         4c:04:2e:48:bf:5c:03:97:9f:1b:51:af:85:e2:db:21:d5:47:
+         60:03:4c:62:de:9d:85:fc:f9:f7:12:47:20:17:1e:9a:43:38:
+         29:02:e9:a9:69:4b:b8:d7:1c:6d:4f:92:88:26:6b:03:b9:c6:
+         8e:71:fd:4f:8a:c4:e1:a5:dd:52:36:a4:e5:7c:59:a5:97:5c:
+         ea:9a:44:3f:0f:d2:d9:be:7f:ab:a1:b1:97:19:80:30:af:04:
+         99:cf:bf:9d:0c:67:4a:de:37:4a:8e:b2:61:eb:a6:2d:2a:b3:
+         d5:78
+-----BEGIN CERTIFICATE-----
+MIIC4TCCAkqgAwIBAgIBATANBgkqhkiG9w0BAQsFADCBgDELMAkGA1UEBhMCRU4x
+DzANBgNVBAgMBkxhbmRvbjEPMA0GA1UEBwwGTGFuZG9uMQswCQYDVQQKDAJCVDEL
+MAkGA1UECwwCQlQxGDAWBgNVBAMMD215YnRkZXZpY2UuaG9tZTEbMBkGCSqGSIb3
+DQEJARYMYnRAZ21haWwuY29tMB4XDTE2MDgyNTA3MDMxNloXDTI2MDgyMzA3MDMx
+NlowbzELMAkGA1UEBhMCRU4xDzANBgNVBAgMBkxhbmRvbjELMAkGA1UECgwCQlQx
+CzAJBgNVBAsMAkJUMRgwFgYDVQQDDA9teWJ0ZGV2aWNlLmhvbWUxGzAZBgkqhkiG
+9w0BCQEWDGJ0QGdtYWlsLmNvbTCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEA
+zhotsb2KFPAz3yry5lUraaPp5qEMHlSz6Y5L+cInMelNJQ0+nvXOu+Xx2v42R1bb
+jSx6aWke6hVSrKYUdSzu7C0wajobIdOCmYxY12YM6EeER984rCX02KUI0Qg160d4
+F+V/etHeFXtJPBKTpffU0crSG7BL7t5U35b4ixPnix0CAwEAAaN7MHkwCQYDVR0T
+BAIwADAsBglghkgBhvhCAQ0EHxYdT3BlblNTTCBHZW5lcmF0ZWQgQ2VydGlmaWNh
+dGUwHQYDVR0OBBYEFE167VvVR9VUnM0r7Q3O6aJdyanYMB8GA1UdIwQYMBaAFEJz
+cS7zNFR0rJFiwDIdjr79nNohMA0GCSqGSIb3DQEBCwUAA4GBAK9X6mjmRhaORyEF
+iK6POq7v8UwELki/XAOXnxtRr4Xi2yHVR2ADTGLenYX8+fcSRyAXHppDOCkC6alp
+S7jXHG1PkogmawO5xo5x/U+KxOGl3VI2pOV8WaWXXOqaRD8P0tm+f6uhsZcZgDCv
+BJnPv50MZ0reN0qOsmHrpi0qs9V4
+-----END CERTIFICATE-----

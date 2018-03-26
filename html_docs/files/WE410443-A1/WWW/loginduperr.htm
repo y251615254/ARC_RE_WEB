@@ -1,0 +1,33 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" href="styles.css" type='text/css' />
+<script language="javascript">var G_top=1;var G_counter=0;var LangJ=["login"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript">
+function init(){
+/*DEMO*/
+	var ip="192.168.2.100";
+/*END_DEMO*/
+/*REAL
+	var ip="<%CGI_LOGIN_ADMIN(0);%>";
+REAL*/
+	setIdVal("admin_ip",ip);
+	ShowMenu(0);
+
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="init()">
+	<!-- main page-->
+		<BLOCKQUOTE>
+		<center>
+		<h1><br><font id=60></font><br>
+		<font id=61></font> &nbsp;<span id="admin_ip"></span>&nbsp;<font id=62></font><br><br>
+		</center>
+		</h1>
+		</BLOCKQUOTE>
+	<!-- main page-->
+</body>
+</html>

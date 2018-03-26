@@ -1,0 +1,180 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<link rel="shortcut icon" href="images/logoico.png" type="image/x-icon">
+<style>
+body {
+	margin: 0px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	font-family: arial;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.background_body {
+	margin: 0;
+	padding: 0;
+	background: #ffffff;
+	
+}
+/*background-repeat: repeat;*/
+/*background-image: url(./images/background.jpg);*/
+
+</style>
+<!-- why? due to access from is slow, pre-cache here-->
+<!--DEMO-->
+<script language="JavaScript" src="cgi/cgi_from.js"></script>
+<!--END_DEMO-->
+<script language="JavaScript">
+/*REAL
+var cgi_acc_from="<% get_http_from(port) %>";
+REAL*/
+var G_counter=0;
+var G_top=-2;
+top.ItemIdx=0;
+if( (window.top !=window.self)){
+   window.top.location.href="index.htm";
+}
+
+/* FIXME: this is a bug for IE9, some iframe height % not work
+   for IE8, we must set CSS"white-space:nowrap;mini-width:240px" otherwise, will overlay...
+*/
+function resize_iframe()
+{
+   var h_offset=87+30;
+   var frm,w_height=window.innerWidth;//Firefox
+   if (document.body.clientHeight)
+   {
+      w_height=document.body.clientHeight;//IE
+   }
+   frm=document.getElementById("frm_left");
+   frm.style.height=parseInt(w_height- frm.offsetTop-h_offset)+"px";
+   frm=document.getElementById("frm_main2");
+   frm.style.height=parseInt(w_height- frm.offsetTop-h_offset)+"px";
+
+
+}
+   
+  function GetCookie (name) {
+
+	var i,x,y,co=document.cookie.split(";");
+	var clen=co.length;
+	for (i=0;i<clen;i++)  {
+	  x=co[i].substr(0,co[i].indexOf("="));
+	  y=co[i].substr(co[i].indexOf("=")+1);
+	  x=x.replace(/^\s+|\s+$/g,"");
+	  if (x==name)  {
+		return unescape(y);
+	  }
+	}
+	return null;
+}
+
+
+/*
+Just Fix [WHWR-70] Header Bar Layout Issue on Mobile Browser (iOS/Safari)....start 
+*/
+function top_frame_width() {   
+/*
+	var w1= document.body.clientWidth;
+	var w2=  document.body.offsetWidth;
+	var w3=document.body.scrollWidth;
+	var ifm_width=window.innerWidth;//+ gdt
+	var ifm_width1= document.body.clientWidth;
+	var gg = document.getElementById("frame_main_id").clientWidth;
+	var top_ifm_width=document.getElementById("frm_top"); 
+	var main_ifm_width=document.getElementById("frm_main").clientWidth; 
+	//var test1 = top_ifm_width.width;
+	//var ff = $('#frame_main_id').width();
+	//var t = $("#frame_main_id").offset().top;
+*/
+
+	var top_ifm_width=document.getElementById("frm_top"); 
+	var frame_main_width = document.getElementById("frame_main_id").clientWidth;
+	var test = top_ifm_width.width;
+	if(frame_main_width != null) 
+	{
+		top_ifm_width.width = (frame_main_width);
+	}  
+
+} 
+
+function set_top_frame_width() {
+	
+	var mobile_info = navigator.userAgent;
+	var ddd = mobile_info.toLowerCase();
+	var mobile_flag = mobile_info.toLowerCase().indexOf("mobile");
+	if(mobile_flag != "-1")//  not find the string ?t= 	 return -1. 
+	{	
+		//alert("-1");
+		top_frame_width();
+	}
+}  
+//Just Fix [WHWR-70] Header Bar Layout Issue on Mobile Browser (iOS/Safari)....end 
+
+
+function DeleteCookie(name){
+	var exp=new Date();
+	exp.setTime=(exp.getTime()-(60*60*1000)); // dirty move to previous time
+	var cval = GetCookie (name);
+	document.cookie = name + "=; expires=" + exp.toGMTString() + "; path=/";
+}
+function init(){
+	// this will resize the iframe every time you change the size of the window.
+	//window.onresize=resize_iframe;
+	DeleteCookie("pwderr");
+	DeleteCookie("pwderrtimes");
+	set_top_frame_width();//just for mobile browser Header Bar Layout Issue
+}
+</script>
+</head>
+<body class="background_body" onload="init()">
+<div>
+	<iframe name="topFrame" src="setup_top.htm" id="frm_top" target="leftFrame" scrolling="no" noresize frameborder="0" border="0" marginwidth="0"  marginheigh="0" align="top" hspace="0" vspace="0"  cellspacing="0" style=" border:none" width="100%" height="50"></iframe>
+</div>
+<!--
+<table width="100%" height="94%" border="0" cellspacing="0" cellpadding="0" style="padding:30" bgcolor="#D0D0D0">
+-->
+<div width="100%" id="frm_main">
+<!--[if !IE]><!-->
+<table width="100%" height="94%" id="frame_main_id" border="0" cellspacing="0" cellpadding="0" style="padding:30" bgcolor="#D0D0D0">
+<!--<![endif]-->  
+
+<!--Only for IE-->
+<!--[if IE]>
+<table width="100%" height="94%" style="padding-top: 30px; padding-bottom: 30px; " bgColor="#d0d0d0" border="0" cellSpacing="0" cellPadding="0">
+<![endif]-->  
+
+	<tr>
+	  <!--[if IE]>
+	  <td width="240" height="100%" style="white-space:nowrap;min-width:240px; padding-left:30px">
+	  <![endif]-->  
+	  
+	  <!--[if !IE]><!-->
+	  <td width="240" height="100%" style="white-space:nowrap;min-width:240px; padding-left:0px">
+	  <!--<![endif]-->  
+	  		<iframe name="leftFrame" id="frm_left"  src="menu.htm"  target="main2" noresize frameborder="0" border="0"  marginwidth="0" valign="top" hspace="0" vspace="0"  cellspacing="0" width="240" height="100%"></iframe>
+	  </td>
+
+	  <!--[if IE]>
+	  <td height="100%" style="width:100%;position: relative;min-width:800px;padding-right:30px">
+	  <![endif]-->
+	  <!--[if !IE]><!-->
+	  <td height="100%" style="width:100%;position: relative;min-width:800px;padding-right:0px">
+	  <!--<![endif]-->  
+	  
+	  		<iframe name="main2" id="frm_main2" src="about:blank" frameborder="0" border="1"  marginwidth="0" hspace="0" vspace="0" valign="top" height="100%" width="100%" ></iframe>
+	  </td>
+	</tr>
+
+</table>
+</div>
+<!--REAL <%IMG_TOKEN(r)%> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

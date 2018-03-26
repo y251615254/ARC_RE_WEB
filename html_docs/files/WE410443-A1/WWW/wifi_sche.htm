@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["status_lan_device","wifi_bt","access_control"];var CGIs=["sche"];</script>
+<script language="javascript">var G_top=1;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+
+
+
+<script language="JavaScript">
+
+
+
+
+
+function check_endtime_select(){
+	var f=document.tF0;
+	if(document.getElementById("endtime_h").value==24){
+		HiddenObject("endtime_m_normal");
+		DisplayObject("endtime_m_00");
+		}
+	else{
+		DisplayObject("endtime_m_normal");
+		HiddenObject("endtime_m_00");
+	}
+
+}
+
+var wifi_config_arr = new Array();
+var wifi_config_interface_arr = new Array();
+function AddOptWiFiList()
+{
+	var f=document.tF0;
+	//var dev_name, dev_mac,dev_interface;
+	//'278':"User-WiFi",
+	//'279':"Guest-WiFi",
+	
+	var user_string = getLangM(278);
+	var guest_string = getLangM(279);
+	
+	f.wifilist.options.add(new Option(user_string,"100"));
+	f.wifilist.options.add(new Option(guest_string,"116"));
+}
+
+
+//0 guest   1 user
+function get_select_wifi_value()
+{
+	var dev_interface =document.getElementById("wifilist").value; 
+	if( (116 <= dev_interface && dev_interface <= 123) || (216 <= dev_interface && dev_interface <=223) )//guest
+	{
+		return 0;
+	}
+	if( (100 <= dev_interface && dev_interface <=115) || (200 <= dev_interface  && dev_interface <=215) )//user
+	{
+		return 1;
+	}	
+}
+
+function wifi_select_onchange()
+{
+	init_checkbox();
+	var pid_tmp = get_select_wifi_value();
+	/*if(pid_tmp == 0) //guest
+	{	
+		init_checkbox_by_profie("guest");
+	}
+	else if(pid_tmp == 1) //user
+	{
+		init_checkbox_by_profie("user");
+	}
+	*/
+}
+
+
+function transfer_secs_to_special_format(secs)
+{
+	var hour = parseInt(secs/3600);
+	var minute = parseInt(secs/60)%60;		
+	var sec = secs%60;	
+
+	if(hour>12){
+		var hour_pm=hour-12;
+		if(hour_pm<10)
+			hour_pm="0"+hour_pm;
+	}
+	
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	if(sec<10)
+		sec="0"+sec;	
+	
+	var last_time;
+	last_time=hour+":"+minute;
+
+/*	
+	var last_time;
+	if(hour<12)
+		last_time=hour+":"+minute+"AM";
+	else if(hour==12)
+		last_time=hour+":"+minute+"PM";
+	else 
+		last_time=hour_pm+":"+minute+"PM";	
+*/
+	return last_time;
+}
+
+
+/*
+interface string The wifi interface 
+100~115. 2.4GHz user interface
+116~123. 2.4GHz guest
+124~127. 2.4GHz backhal(Hide)
+200~215 5GHz user interface
+216~223 5GHz guest
+224~227 5GHz backhal(Hide)
+*/
+function filter_wifi_interface_by_pid(wifi_name)
+{
+	var filter_wifi_interface_guest_arr = new Array();
+	var filter_wifi_interface_user_arr = new Array();
+
+	for(var i in wifi_config.wifi_config)
+	{
+	
+		var dev_name = wifi_config.wifi_config[i].ssid;		
+		var dev_interface = wifi_config.wifi_config[i].interface;
+		dev_interface = parseInt(dev_interface); 
+		if( (116 <= dev_interface && dev_interface <= 123) || (216 <= dev_interface && dev_interface <=223) )//guest
+		{
+			filter_wifi_interface_guest_arr.push(dev_interface);
+		}
+		if( (100 <= dev_interface && dev_interface <=115) || (200 <= dev_interface  && dev_interface <=215) )//user
+		{
+			filter_wifi_interface_user_arr.push(dev_interface);
+		}	
+	}
+
+	var filter_wifi_interface_guest_arr_string = filter_wifi_interface_guest_arr.length + "@" + filter_wifi_interface_guest_arr.join("@");
+	var filter_wifi_interface_user_arr_string = filter_wifi_interface_user_arr.length +  "@" + filter_wifi_interface_user_arr.join("@");
+
+	if(wifi_name == "guest")
+	{
+		return filter_wifi_interface_guest_arr_string;
+	}
+	else if(wifi_name == "user")
+	{
+		return filter_wifi_interface_user_arr_string;
+
+	}
+
+}
+
+function evaltF_set_wifi_pid()
+{
+	var f = document.tF;
+	var httoken_val = ArcBase._t();	
+	var password_check="";
+	var interface="";
+	var pid="";
+	var wifi_config_pid = "guest";
+	
+	var pid_tmp = get_select_wifi_value();
+	var access_control_profile_string=JSON.stringify(access_control_profile);
+	if(pid_tmp == 0)
+	{
+		wifi_config_pid = "guest";
+		var set_pid_datatmp = wifi_config_pid + "@" + filter_wifi_interface_by_pid("guest");
+	}
+	else if(pid_tmp == 1)
+	{
+		wifi_config_pid ="user";
+		var set_pid_datatmp = wifi_config_pid + "@" + filter_wifi_interface_by_pid("user");
+	}	
+
+
+	var return_url = "wifi_sche.htm?=" + wifi_config_pid;
+
+	//alert(set_pid_datatmp);
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_wifi_config_for_sche.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"wifi_sche_pid",
+	      		data:set_pid_datatmp
+	}
+	})
+	.done(function( data ){
+		if(data == "ok"){
+   				return subForm({
+                                    frm:f,
+                                    next: return_url,
+                                    uploadtype: 0, 
+                              	    wait: 8
+                                 });
+		
+			return true;
+		}
+		else
+		{
+           alert("set_wifi_sche_pid error.");                        
+           return false;  
+		}
+	});	
+}
+
+
+
+function filter_wifi_config_interface(wifi_name)
+{
+	var wifi_interface_guest_arr = new Array();
+	var wifi_interface_user_arr = new Array();
+
+	for(var i in wifi_config.wifi_config)
+	{
+		var dev_name = wifi_config.wifi_config[i].ssid;		
+		var dev_interface = wifi_config.wifi_config[i].interface;
+		dev_interface = parseInt(dev_interface); 
+		if( (116 <= dev_interface && dev_interface <= 123) || (216 <= dev_interface && dev_interface <=223) )//guest
+		{
+			wifi_interface_guest_arr.push(dev_interface);
+		}
+		if( (100 <= dev_interface && dev_interface <=115) || (200 <= dev_interface  && dev_interface <=215) )//user
+		{
+			wifi_interface_user_arr.push(dev_interface);
+		}	
+	}
+
+	if(wifi_name == "guest")
+	{
+		return wifi_interface_guest_arr;
+	}
+	else if(wifi_name == "user")
+	{
+		return wifi_interface_user_arr;
+	}
+
+}
+
+function checkSaveTime(pid,config_day,config_st,config_et,config_id){
+	
+		for(var day=0;day<7;day++){
+				for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+
+					var tmp = status_profile_all_info_arry[i];
+					var tmp_arry = tmp.split('@');
+					
+						if((pid==tmp_arry[0])&&(config_id!=tmp_arry[1]))
+						{
+							var tmp_day=tmp_arry[5];			
+							if((tmp_day[day]==1)&&(config_day[day]==1)){
+								if((config_et<=tmp_arry[6])||(config_st>=tmp_arry[7])){
+										continue;
+								}
+								else
+									return false;
+								}
+							
+						}	
+					}	
+		}
+	return true;
+
+
+}
+
+function evaltF_wifi_schedule()
+{
+
+	var f = document.tF;
+	var httoken_val = ArcBase._t();	
+	var wifi_select,datatmp;
+	var schedule_enable=0, Mon="0", Tus="0", Wen="0",Thu ="0",Fri ="0",Sta ="0",Sun ="0",S_Time="0",E_Time="0";
+	var act = 0; // 0 add 1 modify 2 del
+	var pid = "guest";
+	var n = "NULL";
+	var config_act=0;
+	var config_enable=1;
+	var config_type=4;
+	var config_day = 0;
+	var config_st = 0;
+	var config_et = 0;
+	var config_note = "NULL";
+
+
+	var config_id=80000;
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+	
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		if(config_id<tmp_arry[1])
+			var config_id = tmp_arry[1];	
+	}
+	config_id=parseInt( config_id)+1;
+
+	var wifi_sche_enbale = 0;
+	
+	//if ( $(schedule_enable_id).is(":checked") == true){var schedule_enable = 1;}
+	if ( $(week_1).is(":checked") == true){var Mon = "1";}
+	if ( $(week_2).is(":checked") == true){var Tus = "1";}
+	if ( $(week_3).is(":checked") == true){var Wen = "1";}
+	if ( $(week_4).is(":checked") == true){var Thu = "1";}
+	if ( $(week_5).is(":checked") == true){var Fri = "1";}
+	if ( $(week_6).is(":checked") == true){var Sta = "1";}
+	if ( $(week_7).is(":checked") == true){var Sun = "1";}
+
+	//config_day= Mon + Tus + Wen + Thu + Fri + Sta + Sun;
+	config_day= Sun + Sta + Fri + Thu + Wen + Tus + Mon;
+
+
+	if(config_day == "0000000")
+	{
+	
+		AlertM(275);
+		return 0;
+	}
+
+    config_st=document.getElementById("starttime_h").value*3600+document.getElementById("starttime_m").value*60;
+	if(document.getElementById("endtime_h").value<24)
+		config_et=document.getElementById("endtime_h").value*3600+document.getElementById("endtime_m").value*60;
+	else
+		config_et=document.getElementById("endtime_h").value*3600;
+
+
+
+
+	var pid_tmp = get_select_wifi_value();
+	var access_control_profile_string=JSON.stringify(access_control_profile);
+	if(pid_tmp == 0)//0 guest  1 user
+	{
+		pid = "guest";
+		config_type=4;
+
+		if( (access_control_profile_string.indexOf("guest")) != -1)//find guest
+		{
+			act = 1;//modify
+		}
+	}
+	else if(pid_tmp == 1)
+	{
+		pid ="user";
+		config_type=5;
+		if( (access_control_profile_string.indexOf("user")) != -1)//find guest
+		{
+			act = 1;//modify
+		}
+	}
+
+	if(config_et <= config_st)
+	{
+	alert("The end time should be greater than the start time.");
+	return 0;
+	}
+
+	if(!checkSaveTime(pid,config_day,config_st,config_et,config_id)){
+
+		alert(getLangM(283));
+		return false;
+
+		}
+	if(!checkSaveNumber(pid)){
+		if(pid=="user")
+		alert(getLangM(284));
+		else
+		alert(getLangM(285));
+		return false;
+
+	}
+
+	
+	datatmp = act +  '?$[+' + pid + '?$[+'  + n + '?$[+' + config_act + '?$[+' + config_id + '?$[+' +
+	          config_enable + '?$[+' + config_type + '?$[+' + config_day + '?$[+' + config_st + '?$[+' + 
+	          config_et + '?$[+' + config_note ;
+	//alert(datatmp);
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_access_control.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncaccesscontrol",
+	      		data:datatmp
+	}
+	})
+	.done(function( data ){
+		if(data == "ok"){     
+			evaltF_set_wifi_pid();//if post profile ok, post wifi config,for bind it together by pid
+			return true;
+		}
+		else
+		{
+           alert("set_access_control error.");                        
+           return false;  
+		}
+	});	
+}
+
+
+
+function DeleteWifiProfile(del_pid)
+{
+
+	var f = document.tF;
+	var httoken_val = ArcBase._t();	
+	var wifi_select,datatmp;
+	var schedule_enable=0, Mon="0", Tus="0", Wen="0",Thu ="0",Fri ="0",Sta ="0",Sun ="0",S_Time="0",E_Time="0";
+	var act = 1;  // 1 modify 2 del
+	var n = "NULL";
+	var pid = "guest";
+	var config_act=2;  // 1 modify 2 del
+	var config_enable=1;
+	var config_type=4;
+	var config_day = 0;
+	var config_st = 0;
+	var config_et = 0;
+	var config_note = "NULL";
+
+
+	var pid_tmp =del_pid.toString();
+	var pid_tmp2 = pid_tmp.charAt(0);
+
+	var config_id_str = pid_tmp.substring(1,6);
+	var config_id = config_id_str;
+
+	//alert(config_id_str);
+
+	
+	if(pid_tmp2 == 2)
+	{
+		pid = "guest";
+		config_type=4;
+		
+	}
+	else if(pid_tmp2 == 1)
+	{
+		pid ="user";
+		config_type=5;
+
+	}
+
+	var return_url = "wifi_sche.htm?=" + pid;
+	//alert(pid);
+
+
+
+	datatmp = act +  '?$[+' + pid + '?$[+'  + n + '?$[+' + config_act + '?$[+' + config_id + '?$[+' +
+	          config_enable + '?$[+' + config_type + '?$[+' + config_day + '?$[+' + config_st + '?$[+' + 
+	          config_et + '?$[+' + config_note ;
+	//alert(datatmp);
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_access_control.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncaccesscontrol",
+	      		data:datatmp
+	}
+	})
+	.done(function( data ){
+		if(data == "ok"){     
+   				return subForm({
+                                    frm:f,
+                                    next: return_url,
+                                    uploadtype: 0, 
+                              	    wait: 5
+                                 });
+			return true;
+		}
+		else
+		{
+           alert("set_access_control error.");                        
+           return false;  
+		}
+	});	
+}
+
+
+
+var status_profile_all_info_arry = new Array();
+function get_profile_info_by_profileid()
+{
+
+	var acp_length= access_control_profile.profile.length;
+	for(var i=0; i < acp_length; i++)
+	{
+		var pid_value = access_control_profile.profile[i].pid;
+		if(pid_value == "guest" || pid_value == "user")
+		{
+			var profile_configs_length = access_control_profile.profile[i].configs.length;
+			for(var j=0; j< profile_configs_length; j++)
+			{
+				var profile_configs_id = access_control_profile.profile[i].configs[j].id;
+				var profile_configs_eable = access_control_profile.profile[i].configs[j].enable;
+				var profile_configs_active = access_control_profile.profile[i].configs[j].ss;
+				var profile_configs_type = access_control_profile.profile[i].configs[j].type;
+				var profile_configs_day = access_control_profile.profile[i].configs[j].day;
+				var profile_configs_stime = access_control_profile.profile[i].configs[j].st;
+				var profile_configs_etime = access_control_profile.profile[i].configs[j].et;
+				var profile_configs_note = access_control_profile.profile[i].configs[j].note;
+
+				
+				var profile_configs_total = profile_configs_id+ "@"+ profile_configs_eable + "@" + profile_configs_active + '@' + profile_configs_type + '@' + 
+											profile_configs_day + '@' + profile_configs_stime + '@' +  profile_configs_etime;
+				var tmp_total = pid_value + '@' + profile_configs_total;
+				status_profile_all_info_arry.push(tmp_total);
+			}
+
+
+		}
+	}
+
+	//console.log(status_profile_all_info_arry);
+}		
+
+
+var access_conrtrol_info_arry = new Array();
+function check_access_conrtrol_info()
+{
+
+	check_profile_info();
+/*status_profile_all_info_arry
+//  name              mac           pid   connect_type    enable     type     day      st   et
+//"pseudo0   @ AA:BB:CC:00:00:00  @  group0001  @  Ether       @   1     @   2   @ 1000000  @  1800  @  3600"
+*/
+
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++)
+	{
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var total_1 = tmp_arry[0];//name
+		var total_2 = tmp_arry[1];//mac
+		var total_3 = tmp_arry[4];//active Status
+		if(total_3 == "1")
+		{
+			total_3 = "Active";
+		}
+		else
+		{
+			total_3 = "Inactive";
+		}
+
+		var total_4_1 = tmp_arry[5];//Type
+		var total_4_2 = tmp_arry[9];//note
+		var total_4;
+		if(total_4_1 == "0")
+		{
+			total_4 = "Block";
+		}
+		else if(total_4_1 == "1")
+		{
+			total_4 = "Timed";
+		}
+		else if(total_4_1 == "2")
+		{
+			if(total_4_2 == "NULL")
+				total_4 = "Schedule";
+			else
+				total_4 = "Schedule" + ' - ' + total_4_2;
+		}
+		else
+		{
+			total_4 = "Pause immediately";
+		}
+
+		
+		var total_5_1 = tmp_arry[6];//day
+		var day_string = "";
+
+		if(total_5_1.charAt(0) == '1')
+		{
+			day_string += " Sun";
+		}
+		if(total_5_1.charAt(6) == '1')
+		{
+			day_string += " Mon";
+		}		
+		if(total_5_1.charAt(5) == '1')
+		{
+			day_string += " Tue";
+		}	
+		if(total_5_1.charAt(4) == '1')
+		{
+			day_string += " Wed";
+		}		
+		if(total_5_1.charAt(3) == '1')
+		{
+			day_string += " Thu";
+		}		
+		if(total_5_1.charAt(2) == '1')
+		{
+			day_string += " Fri";
+		}				
+		if(total_5_1.charAt(1) == '1')
+		{
+			day_string += " Sat";
+		}
+
+		if(total_5_1 == "1111111")
+			day_string = " Daily";
+		
+		if(day_string == "")
+		{
+			total_5_1 = "Null value"
+		}
+		else
+		{
+			total_5_1 = day_string;	
+		}
+
+		
+		var total_5_2 = parseInt(tmp_arry[7]);//stime
+		var total_5_3 = parseInt(tmp_arry[8]);//etime
+		var st = transfer_secs_to_special_format(total_5_2);
+		var et = transfer_secs_to_special_format(total_5_3);
+		var s_et = st + '-' + et;
+		
+		var	total_5 
+		if(total_4_1 == "1")
+			total_5 = "Until " + et;
+		else if(total_4_1 == "2")
+			total_5 = total_5_1 + ', ' + s_et;
+		else
+			total_5 = '-';
+		
+		var	total_6 = tmp_arry[3];//connect_type
+
+		var total = total_1 + '@' +
+					total_2 + '@' +
+					total_3 + '@' +
+					total_4 + '@' +					
+					total_5 + '@' +					
+					total_6; 
+		access_conrtrol_info_arry.push(total);
+
+	}
+
+}
+
+
+
+
+var show_control_table_date = new Array();
+function show_access_control_table()
+{
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,c6,c7,c8,cpic;
+	var pic,del_info;
+	var select_flag = get_select_wifi_value();
+
+	for(var i = 0; i < status_profile_all_info_arry.length; i++)
+	{
+		
+		re_rowcnt=0;
+
+		//guest@00001@1@0@4@1000000@4200@7200
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		
+	
+		c1=tmp_arry[0];//guest.normal wifi
+		c2=tmp_arry[1];//id
+		c3=tmp_arry[2];//profile_configs_eable
+		c4=tmp_arry[3];//profile_configs_active //active Status
+		c5=tmp_arry[4];//profile_configs_type
+		c6=tmp_arry[5];//profile_configs_day
+		c6 = transfer_day_to_format(c6);
+
+
+
+		if(c4 == "1")
+		{
+			//c4 = "Active";
+ 			c4 = getLangM(261);
+
+		}
+		else
+		{
+			c4 = "Inactive";
+			c4 = getLangM(262);
+		}
+		
+		if(tmp_arry[0] == "guest")
+		{
+			del_info = "2"+c2;
+		
+		}
+		else if(tmp_arry[0] ="user")
+		{
+			del_info = "1"+c2;
+		}
+		
+
+		if(c1 == "guest")
+		{
+ 			c1 = "Guest";
+		}
+		
+		if(c1 == "user")
+		{
+ 			c1 = "User";
+		}
+
+
+		c7=transfer_secs_to_special_format(tmp_arry[6]) + "/" + transfer_secs_to_special_format(tmp_arry[7]);//st
+		//c7=tmp_arry[6];//et
+
+
+		c5="<td><input type='button' class='green' onClick='EditWifiProfile("+c2+")' id='256'></td>";
+		
+		c8="<td><input type='button' class='green' onClick='DeleteWifiProfile("+del_info+")' id='257'></td>";
+		var show_control_table_col = tmp_arry[0] + "_" + tmp_arry[1] + "_" + tmp_arry[5] + "_" + tmp_arry[6] + "_" + tmp_arry[7];
+		show_control_table_date.push(show_control_table_col);
+		//alert(select_flag);
+
+		if( select_flag == 0 && (c1.toLowerCase () == "guest") ) //guest
+		{	
+			 RowCell=[[1,c1],[1,c4],[1,c6],[1,c7],[1,c5],[1,c8],[null,null]];	
+			 re_rowcnt+=Table_add_row("tb_station_info",[[9,re_rowcnt,1],RowCell]);	
+		}
+		else if(select_flag == 1  && (c1.toLowerCase () == "user") ) //user
+		{
+		  	RowCell=[[1,c1],[1,c4],[1,c6],[1,c7],[1,c5],[1,c8],[null,null]];
+		      re_rowcnt+=Table_add_row("tb_station_info",[[9,re_rowcnt,1],RowCell]);	
+		}
+	
+/*
+	if(select_flag == 1)
+	{
+
+		if(c1.toLocaleLowerCase() == "user")
+		{
+			alert(c1);
+		   RowCell=[[1,c1],[1,c4],[1,c6],[1,c7],[1,c5],[1,c8],[null,null]];
+		   re_rowcnt+=Table_add_row("tb_station_info",[[9,re_rowcnt,1],RowCell]);	
+		}
+	}
+*/
+
+	 //  RowCell=[[1,c1],[1,c4],[1,c6],[1,c7],[1,c5],[1,c8],[null,null]];
+	//  re_rowcnt+=Table_add_row("tb_station_info",[[9,re_rowcnt,1],RowCell]);			
+
+	}
+	return 0;
+}
+
+function init_checkbox()
+{
+	EnableObject("week_1");	
+	EnableObject("week_2");	
+	EnableObject("week_3");	
+	EnableObject("week_4");	
+	EnableObject("week_5");	
+	EnableObject("week_6");	
+	EnableObject("week_7");	
+
+
+//	$("input:checkbox").removeAttr("checked");				
+
+	$("#week_1").removeAttr("checked");	
+	$("#week_2").removeAttr("checked");	
+	$("#week_3").removeAttr("checked");	
+	$("#week_4").removeAttr("checked");	
+	$("#week_5").removeAttr("checked");	
+	$("#week_6").removeAttr("checked");		
+	$("#week_7").removeAttr("checked");		
+
+}
+
+function transfer_day_to_format(day)
+{
+
+	var day_string = "";
+
+	if(day.charAt(0) == '1')
+	{
+		//day_string += " Sun";
+ 		day_string += getLangM(269);
+	 }
+	if(day.charAt(6) == '1')
+	{
+		//day_string += " Mon";
+		day_string += getLangM(263);
+	}		
+	if(day.charAt(5) == '1')
+	{
+		//day_string += " Tue";
+		day_string += getLangM(264);
+	}	
+	if(day.charAt(4) == '1')
+	{
+		//day_string += " Wed";
+		day_string += getLangM(265);
+	}		
+	if(day.charAt(3) == '1')
+	{
+		//day_string += " Thu";
+		day_string += getLangM(266);
+	}		
+	if(day.charAt(2) == '1')
+	{
+		//day_string += " Fri";
+		day_string += getLangM(267);
+	}				
+	if(day.charAt(1) == '1')
+	{
+		//day_string += " Sat";
+		day_string += getLangM(268);
+	}
+
+	if(day == "1111111")
+	{
+		//day_string = " Daily";
+		day_string = getLangM(270);
+	}
+	if(day == "")
+	{
+		day = "Null value"
+	}
+	else
+	{
+		day = day_string;	
+	}
+
+	return day_string;
+}
+
+function EditWifiProfile(id)
+{
+	//alert(id);
+	//console.log(show_control_table_date);
+/*
+"guest_81211_1100000_7200_21600"
+"guest_21709_0011000_14400_19500"
+"user_91199_0010000_14400_1500"
+*/
+	for(var i=0; i< show_control_table_date.length; i++)
+	{
+		var tmp = show_control_table_date[i].split('_');
+		var date_id = tmp[1];
+
+		if(date_id == id)
+		{
+			var date=show_control_table_date[i];
+		}
+
+	}
+
+ 	var f=document.tF0;
+	 window.location.href="./wifi_sche_edit.htm?date="+date;
+
+}
+
+
+function init_checkbox_by_profie(flag)
+{
+
+	for(var i = 0; i < status_profile_all_info_arry.length; i++)
+	{
+		//guest@00001@1@0@4@1000000@4200@7200
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var flag_tmp = tmp_arry[0];//guest or user
+		var day=tmp_arry[5];//day
+
+		if(flag == flag_tmp)
+		{
+	
+			for(var j=0; j<day.length; j++)
+			{
+				var check_box_value = day.charAt(j);
+				var week_id = "week_" + j;
+				if(check_box_value == 1)
+				{
+					if(j==0)
+					{
+						//$("#week_1").attr("checked",true);
+						DisableObject("week_7");	
+					
+					}
+					if(j==1)
+					{
+						//$("#week_2").attr("checked",true);
+						DisableObject("week_6");					
+					}				
+					if(j==2)
+					{
+						//$("#week_3").attr("checked",true);
+						DisableObject("week_5");					
+					}
+					if(j==3)
+					{
+						//$("#week_4").attr("checked",true);
+						DisableObject("week_4");					
+					}
+					if(j==4)
+					{
+						//$("#week_5").attr("checked",true);
+						DisableObject("week_3");					
+					}
+					if(j==5)
+					{
+						//$("#week_6").attr("checked",true);
+						DisableObject("week_2");					
+					}					
+					if(j==6)
+					{
+						DisableObject("week_1");					
+						//$("#week_7").attr("checked",true);
+					}
+				
+				}
+			}
+		}
+		else if(flag == flag_tmp)
+		{
+			for(var j=0; j<day.length; j++)
+			{
+				var check_box_value = day.charAt(j);
+				var week_id = "week_" + j;
+				if(check_box_value == 1)
+				{
+					if(j==0)
+					{
+						//$("#week_1").attr("checked",true);
+						DisableObject("week_7");	
+					
+					}
+					if(j==1)
+					{
+						//$("#week_2").attr("checked",true);
+						DisableObject("week_6");					
+					}				
+					if(j==2)
+					{
+						//$("#week_3").attr("checked",true);
+						DisableObject("week_5");					
+					}
+					if(j==3)
+					{
+						//$("#week_4").attr("checked",true);
+						DisableObject("week_4");					
+					}
+					if(j==4)
+					{
+						//$("#week_5").attr("checked",true);
+						DisableObject("week_3");					
+					}
+					if(j==5)
+					{
+						//$("#week_6").attr("checked",true);
+						DisableObject("week_2");					
+					}					
+					if(j==6)
+					{
+						DisableObject("week_1");					
+						//$("#week_7").attr("checked",true);
+					}
+				}
+			}
+		}
+		
+	}
+}
+
+function write_access_control_table()
+{
+	for(var i=0; i<1; i++ )
+	{		
+		$("#tb_all_device").append("\
+		<tr>\
+			<td colspan=\"2\" valign=\"top\">\
+				<table class=\"vox20_tablec\" width=60% cellspacing=1 cellpadding=5 border=0 id=\"tb_station_info\">\
+					<tr>\
+						<td width=10% nowrap ><font id=\"274\" class=btFontBold2></font></td>\
+						<td width=10% nowrap ><font id=\"239\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"273\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"241\" class=btFontBold2></font></td>\
+						<td width=5% nowrap ><font  class=btFontBold2></font></td>\
+						<td width=5% nowrap ><font  class=btFontBold2></font></td>\
+					</tr>\
+				</table>\
+			</td>\
+		</tr>");
+	}	
+}
+
+
+function init_ssid_select_by_url()
+{
+	var thisURL = document.URL;     
+	//thisURL ="https://192.168.1.3/wifi_sche.htm?=user&t=1513307886426";
+	//var checkUrlAddOrEdite=thisURL.split('?=')[1]; 
+
+ 	
+	var  config_wifi_name=thisURL.indexOf("guest");
+	if(config_wifi_name > 0)
+	{
+		$("#wifilist").val("116");//guest
+		config_wifi_name = "guest";
+		HiddenObject("usershow_tap");	
+	}
+	else 
+	{
+		$("#wifilist").val("110");//user
+		config_wifi_name = "user";	
+		HiddenObject("guestshow_tap");
+	}
+	DisableObject("wifilist");
+	//alert(config_wifi_name);
+	//init_checkbox_by_profie("user");
+	//init_checkbox_by_profie(config_wifi_name);
+	
+}
+
+function go_to_user_or_guest_ssid_web()
+{
+	var pid_tmp = get_select_wifi_value();
+
+	if(pid_tmp == 0) //guest
+	{	
+		window.location.href="./ssid_guest.htm";
+	}
+	else if(pid_tmp == 1) //user
+	{
+		window.location.href="./ssid_bt.htm";
+	}
+
+}
+
+function checkSaveNumber(pid){
+	var number=0;
+	for(var i=0;i<status_profile_all_info_arry.length;i++){
+		
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		
+		if(pid==tmp_arry[0])
+			number++;
+
+	}
+	if(number>=10)
+		return false;
+	else
+		return true;
+}	
+
+
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+
+	AddOptWiFiList();//Initializes the WiFi drop-down box
+	get_profile_info_by_profileid();
+	init_ssid_select_by_url();// before  show_access_control_table()
+	write_access_control_table();
+	show_access_control_table();
+	document.getElementById("endtime_h").selectedIndex=0;
+	document.getElementById("endtime_m").selectedIndex=0;
+	document.getElementById("starttime_h").selectedIndex=0;
+	document.getElementById("starttime_m").selectedIndex=0;
+	HiddenObject("endtime_m_00");
+	
+	ShowMenu();
+}
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<!-- Page left-->
+
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+<table width="98%" border="0" cellspacing="3" cellpadding="10" >
+	<tr id="usershow_tap">
+		<td style="padding-left:30px" colspan="3">
+			<font class="arcFont2" id="281"></font>
+		<td>
+	<tr>
+	<tr id="guestshow_tap">
+		<td style="padding-left:30px" colspan="3">
+			<font class="arcFont2" id="282"></font>
+		<td>
+	<tr>
+</table>
+
+
+
+
+
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	<tr>
+		<td class="normalTextRight"><font class="arcFont2"  id="276"></font></td>
+
+		<td class="tdTextBt_20" colspan="2">
+			<select name="wifilist"  id="wifilist" size="1"  onChange="wifi_select_onchange()">
+			</select>
+		</td>
+	</tr>
+	
+<!--	
+	<tr>
+		<td class="normalTextRight" ><font class="arcFont2" >Enable:</font></td>
+	
+		<td class="tdTextBt_20" colspan="2" >	
+			<input type="checkbox" name="schedule"  id="schedule_enable_id" value="0" onClick="">
+		</td>
+	</tr>
+-->		
+	
+</table>
+
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	<tr  id="weekday">
+		<td class="normalTextRight" ><font class="arcFont2"id="253" ></font></td>	
+		<td class="tdTextBt_20" colspan="2" >	
+			<font class="arcFont2" id="263" ></font>
+			<input type="checkbox" name="schedule"  id="week_1" value="0" onClick="">
+				
+			<font class="arcFont2" id="264"></font>
+			<input type="checkbox" name="schedule"  id="week_2" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="265" ></font>
+			<input type="checkbox" name="schedule"  id="week_3" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="266" ></font>
+			<input type="checkbox" name="schedule"  id="week_4" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="267" ></font>
+			<input type="checkbox" name="schedule"  id="week_5" value="0" onClick="">
+
+	
+			<font class="arcFont2" id="268" ></font>
+			<input type="checkbox" name="schedule"  id="week_6" value="0" onClick="">		
+		
+			<font class="arcFont2" id="269" ></font>
+			<input type="checkbox" name="schedule"  id="week_7" value="0" onClick="">
+		</td>
+	</tr>
+</table>
+
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	
+	<tr>
+		<td class="normalTextRight" ><font class="arcFont2" id="254"></font></td><!--schedule_id-->
+	
+		<td class="tdTextBt_20" colspan="2">
+			<select name="starttime_h" id="starttime_h"  size="5" >
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+			</select>	
+			<font class="arcFont2" >:</font>			
+			<select name="starttime_m"  id="starttime_m" size="2"> 
+				<option value="00">00</option>
+				<option value="05">05</option>
+				<option value="10">10</option>
+				<option value="15">15</option>
+				<option value="20">20</option>
+				<option value="25">25</option>
+				<option value="30">30</option>
+				<option value="35">35</option>
+				<option value="40">40</option>
+				<option value="45">45</option>
+				<option value="50">50</option>
+				<option value="55">55</option>
+
+			</select>
+		</td>				
+	</tr>			
+	<tr>
+		<td class="normalTextRight" ><font class="arcFont2" id="255" ></font></td><!--schedule_id-->	
+		<td class="tdTextBt_20" colspan="2">
+			<select name="endtime_h" id="endtime_h" size="5" value="0" onchange="check_endtime_select()">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+				<option value="24">24</option>
+			</select>	
+			<font class="arcFont2" >:</font>	
+			<span id="endtime_m_normal">
+				<select name="endtime_m"  id="endtime_m" size="2"> 
+					<option value="00">00</option>
+					<option value="05">05</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+					<option value="30">30</option>
+					<option value="35">35</option>
+					<option value="40">40</option>
+					<option value="45">45</option>
+					<option value="50">50</option>
+					<option value="55">55</option>
+				</select>
+			</span>
+			
+			<span id="endtime_m_00">
+				<select name="endtime_m"  id="endtime_m" size="2"> 
+					<option value="00">00</option>
+				</select>
+			</span>
+			
+		</td>				
+	</tr>		
+</table>	
+</form>
+
+
+<form>
+<br>
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	<tr >
+		<td align="center">
+			<input type="button" class="green" onClick="evaltF_wifi_schedule()" id="100001">&nbsp;
+			<input type="button" class="green" onClick="go_to_user_or_guest_ssid_web()"  id="259" >&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+
+
+<form>
+	<table width="100%" border="0" cellspacing="0" cellpadding="10" align="center" id="tb_all_device">
+	</table>
+</form>
+
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

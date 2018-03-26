@@ -1,0 +1,809 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<script language="JavaScript" src="js/init_data.js"></script>
+<script language="javascript">var G_counter=0;var LangJ=[];var CGIs=[];</script>
+<script language="JavaScript" src="js/global.js"></script>
+<script language="JavaScript" src="js/menu.js"></script>
+<!--[if lte IE 6]>
+    <script type="text/javascript" src="supersleight-min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script>
+$I = function (a){return document.getElementById(a);}
+//========================
+//if click overview picture goto lanstatus menu don't change ,so in lanstatus.htm use this function re drawMenu(drawMenu_lanstatus) by nick_yang
+
+var flag=0;
+function devicesChangeFlag(){
+flag=1;
+}
+
+//======================TREE================
+
+function TreeItem_class()
+{
+	this.group=0;
+	this.parent = null ;
+	this.level = 0 ;
+	this.caption = '' ;
+	this.selected = false ;
+	this.expanded = false ;
+	this.firstChild = null ;
+	this.lastChild = null ;
+	this.next = null ;
+	//--customized data
+	this.data = null ;
+	this.idx=0; //default first
+}
+
+function Tree_NewRoot()
+{
+	var root = new TreeItem_class();
+	root.caption = 'ROOT' ;
+	return root ;
+}
+
+function Tree_GetRoot( item )
+{
+	var tmp ;
+	if( item==null ) return null ;
+
+	tmp = item ;
+	while( item != null ){
+		tmp = item ;
+		item = item.parent ;
+	}
+	return tmp ;
+}
+
+var show_alert=false;
+function Tree_AddItem( parent, caption, data,group,idx)
+{
+	if( parent == null && !show_alert ){
+		show_alert=true;
+		alert(str_empty_item);
+		return null ;
+	}
+	var item = new TreeItem_class();
+	item.group=group;
+
+	item.parent = parent ;
+	item.caption = caption ;
+	item.data = data ; //--customized data
+	if( item.parent != null ){
+		item.level = item.parent.level + 1;
+		if(item.parent.firstChild == null)
+			item.parent.firstChild = item ;
+		if(item.parent.lastChild != null)
+			item.parent.lastChild.next = item ;
+		item.parent.lastChild = item ;
+	}
+	item.idx=idx;
+	return item ;
+}
+
+
+function Tree_print2( root )
+{
+	if(root == null)  return ;
+
+	var item = Tree_GetNextItem( root ) ;
+	while( item != null ){
+		document.write( 'Level '+ item.level + ': '+ item.caption +'<br>') ;
+
+		item = Tree_GetNextItem( item ) ;
+	}
+
+}
+
+function Tree_print( root )
+{
+	if(root == null)  return ;
+
+	var item = root.firstChild ;
+	while( item != null ){
+		//console.log( 'Group '+ item.group + 'Level '+ item.level + ': '+ item.caption +'<br>') ;
+
+		if( item.firstChild != null )
+			Tree_print( item ) ;
+		item = item.next ;
+	}
+}
+
+//--------------------------------------------------------------
+function Tree_GetNextItem( item )
+{
+	// depth first
+	if( item == null ) return null ;
+	if( item.firstChild != null )  return item.firstChild ;
+	if( item.next != null )  return item.next ;
+
+	var result = item.parent ;
+	while( result != null ){  // search parent's next item
+		if( result.next != null ) return result.next ;
+		result = result.parent ;
+	}
+	return result ;
+}
+
+function Tree_SetAllItemSelected( root, value )
+{
+	if( root == null )  return;
+
+	var item = root ;
+	item = Tree_GetNextItem( item ) ;
+	while( item != null ){
+		item.selected = value ;
+		item = Tree_GetNextItem( item ) ;
+	}
+}
+
+function Tree_SetAllItemExpanded( root, value )
+{
+	if( root == null )  return;
+
+	var item = root ;
+	item = Tree_GetNextItem( item ) ;
+	while( item != null ){
+		item.expanded = value ;
+		item = Tree_GetNextItem( item ) ;
+	}
+}
+
+function Tree_SetSelectedItem( item, value )
+{
+	var root = Tree_GetRoot( item ) ;
+
+	Tree_SetAllItemSelected( root, false ) ;
+	//Tree_SetAllItemExpanded( root, false ) ;
+
+	if( item != null )	item.selected = value ;
+	else				return ;
+
+	if( value ){
+		while( item != null ){ // expand all parent items
+			item.expanded = value ;
+			item = item.parent ;
+		}
+	}
+
+}
+//==========================================
+var menu_sliding = false;
+
+$(function(){
+	var oBody = $("body");
+	oBody.mousemove(function(){
+			var oMenu = $("#vox_menu");
+			var bH = oBody.height();
+			var mH = oMenu.height();
+			var ratio = mH / bH;
+			if(mH < bH)
+			{
+				// if the menu is not at the right position, then reset its position
+				if(!menu_sliding && parseInt(oMenu.css("top").split("px")[0]) != 0)
+				{
+					menu_sliding = true;
+					oMenu.animate({top: 0}, "slow", "", function(){menu_sliding = false;});
+				}
+				return;
+			}
+
+			var y = arguments[0].clientY;
+			if(y / bH < 0.2)       // slide down when mouse is moving over the top part
+			{
+				if(!menu_sliding && parseInt(oMenu.css("top").split("px")[0]) != 0)
+				{
+					menu_sliding = true;
+					oMenu.animate({top: 0}, "slow", "", function(){menu_sliding = false;});
+				}
+			}
+			else if(y / bH > 0.8)  // slide up when mouse is moving over the bottom part
+			{
+				if(!menu_sliding && parseInt(oMenu.css("top").split("px")[0]) != (-1 * (mH - bH)))
+				{
+					menu_sliding = true;
+					oMenu.animate({top: -1 * (mH - bH)}, "slow", "", function() {menu_sliding = false;});
+				}
+			}
+		})
+		;
+	$("#vox_menu table")
+		.hover(function(){
+					//$(this).css("background-color", "#ddefff");
+					//$(this).addClass("menuitem_sel");
+				},function(){
+					//$(this).css("background-color", "#fff");
+					//$(this).removeClass("menuitem_sel");
+				})
+		;
+
+});
+</script>
+</head>
+
+<script language="JavaScript">
+
+// var nat_onoff = <! --#echo var="NAT_enable" -->;
+
+var main_pathname = getQueryValue('n');
+if( main_pathname=='' && parent ) main_pathname = parent.location.pathname ;
+
+//var no_link = getIntQueryValue('nolnk', 0) ;
+
+function MenuItem( name, link, target )
+{
+	this.name = name ;
+	this.link = link ;
+	this.target = target ;
+}
+
+function findItemBygroup( root, group )
+{
+	if( root==null ) return null ;
+
+	var item = Tree_GetNextItem( root ) ;
+	var index ;
+	while( item != null ){
+		if(item.group == group) return item;
+		item = Tree_GetNextItem( item ) ;
+	}
+	return null ;
+}
+
+function toogle_object_display( name, value )
+{
+    var obj = $("#"+name);
+
+    if ( value ) {obj.show();
+    } else { obj.hide();}
+}
+function set_Menu_Nav(nav_root, nav_sub, nav_caption){
+	top.G_menu_nav='';
+	if(nav_root && (nav_root !="ROOT")){
+		top.G_menu_nav+=nav_root+"&nbsp;&gt;&nbsp;";
+	}
+	top.G_menu_nav+=nav_sub;
+	top.G_menu_title=nav_caption;
+
+}
+function JumpMainMenu(idx){
+	if(top.G_prog !=0) return false;
+
+	var elm=MenuList[idx];
+	var Menu_target="main2";
+	var url=elm[MENU_URL];
+
+	if( "undefined" != typeof(elm[MENU_TARGET])){
+			Menu_target=elm[MENU_TARGET];
+	}
+	set_Menu_Nav(null, "","");
+	var targetframe=eval('top.window.frames["'+Menu_target+'"]');
+	if(targetframe){
+		window_location_replace(targetframe,url);
+	}
+}
+var item_selected = null ;
+var menu_root = Tree_NewRoot() ;
+
+function selectMenu(idx )
+{
+//	console.log("selectMenu=>"+top.G_prog);
+
+	if(top.G_prog !=0){return false;}
+
+	var elm=MenuList[idx][MENU_ELM];
+	old_ItemIdx=top.ItemIdx=idx; //keep it
+	set_Menu_Nav( elm.parent.caption, elm.caption, elm.caption);
+	setTimeout(function(){
+			showMenu(elm);
+	},10);
+
+	return true;
+}
+function showMenu(elm)
+{
+	var item = Tree_GetNextItem( menu_root ) ;
+	var item_name=elm.data.name;
+
+	var group=elm.group;
+
+	Tree_SetAllItemSelected( menu_root, false ) ;
+	Tree_SetAllItemExpanded( menu_root, false ) ;
+
+	$("#vox_menu").hide();
+
+	while( item != null ){
+		if( group == item.group ){
+			if( item_name == item.data.name ){
+				Tree_SetSelectedItem( item, true ) ;
+				//if( item.firstChild)
+				//	$I("arrow_"+item.data.name).className = "arrow_up";
+				//else
+				//	$I("arrow_"+item.data.name).className = "arrow_right";
+				if( item.level == 1)
+					$I("menuitem_"+item.data.name).className = "menuitem_sel";
+				else
+					$I("menuitem_"+item.data.name).className = "sub_menuitem_sel";
+			}else{
+				if( item.firstChild ) //sub-menu
+				{
+					toogle_object_display( item.data.name, false ) ;
+					toogle_object_display( "shadow_"+item.data.name, false );
+				//	$I("arrow_"+item.data.name).className = "arrow_right";
+				}
+				if( item.level == 1)
+					$I("menuitem_"+item.data.name).className = "menuitem";
+				else
+					$I("menuitem_"+item.data.name).className = "sub_menuitem";
+			}
+		}
+
+		item = Tree_GetNextItem( item ) ;
+	}
+
+	item = Tree_GetNextItem( menu_root ) ;
+	while( item != null ){
+		if( item.expanded )
+		{
+			toogle_object_display( item.data.name, true ) ;
+			if(item.firstChild)
+			{
+				//$I("arrow_"+item.data.name).className = "arrow_up";
+				toogle_object_display( "shadow_"+item.data.name, true );
+			}
+		}
+
+		item = Tree_GetNextItem( item ) ;
+	}
+	$("#vox_menu").show();
+
+}
+var prepare_ok=0;
+function prepareMenu()
+{
+	var item1=null, item2=null;
+    if("undefined" == typeof(top.ItemIdx)){
+    	top.ItemIdx=0;
+    }
+    if(top.ItemIdx==-1){
+    	//alert("developer??");
+    	top.ItemIdx=0;
+    }
+    // find the lecevel 0 index
+    var Menu_group=-1; //-1 is begin
+
+    var Menu_lvl=1;
+    var Menu_On=1;
+    var Menu_expend=1;
+    var Menu_title,Menu_target="";
+    if(prepare_ok){
+    	return;
+    }
+    prepare_ok=1;
+	for(x in MenuList){
+		 if(!MenuList[x]) continue;
+  		 Menu_lvl=parseInt(MenuList[x][MENU_LVL],10);
+
+		// check if begin
+		if(Menu_lvl ==0){
+			Menu_group++; //first is 0,1,2..
+			if(x == top.ItemIdx){
+				//JumpMainMenu(x);
+				MenuList[x][MENU_GRP]=Menu_group;
+				continue;
+			}
+		}
+		Menu_expend=false;
+
+		// chekc if enabled?
+		Menu_On=1;
+		if( "undefined" != typeof(MenuList[x][MENU_ON])){
+			if(typeof(MenuList[x][MENU_ON]) =="function")
+				Menu_On=MenuList[x][MENU_ON]();
+			else
+				Menu_On=MenuList[x][MENU_ON];
+		}
+		//console.log(top.ItemIdx+":"+MenuList[x][MENU_URL]+","+Menu_On);
+		if(!Menu_On) continue;
+		Menu_target="main2";
+		if( "undefined" != typeof(MenuList[x][MENU_TARGET])){
+				Menu_target=MenuList[x][MENU_TARGET];
+		}
+		Menu_title=MenuList[x][MENU_TITL];
+		if(getLangM(Menu_title)) Menu_title=getLangM(Menu_title);
+		MenuList[x][MENU_TITL]=Menu_title;
+
+		switch(Menu_lvl)
+		{
+		default:
+		case 0: //0 level no add into
+			MenuList[x][MENU_GRP]=Menu_group;
+			break;
+		case 1:
+			item1 = Tree_AddItem( menu_root, Menu_title,new MenuItem(MenuList[x][MENU_NAME],MenuList[x][MENU_URL], Menu_target) ,Menu_group, x);
+			MenuList[x][MENU_ELM]=item1;
+			MenuList[x][MENU_GRP]=Menu_group;
+			break;
+		case 2:
+			item2 = Tree_AddItem( item1, 	 Menu_title,new MenuItem(MenuList[x][MENU_NAME],MenuList[x][MENU_URL], Menu_target) ,Menu_group, x);
+			MenuList[x][MENU_ELM]=item2;
+			MenuList[x][MENU_GRP]=Menu_group;
+			break;
+		}
+	}
+    //------------------------------------------------
+}
+function drawMenu( parent_item, curr_item)
+{
+	var aRow,aCell,h;
+	var item = curr_item;
+    var group=item.group;
+    var temp=0;
+	if( !parent_item) {
+		item = curr_item.firstChild ;
+		parent_item=curr_item;
+	}else{
+		item =parent_item.firstChild;
+	}
+//	var item = parent_item.firstChild ;
+	if( item == null )  return ;
+	//console.log(item.level+"==>"+item.data.link+"?"+item.firstChild);
+
+	if(item.level == 1){
+		temp=0;
+		while( item != null ){
+			if(item.group == group){
+			//console.log(item.level+"==>"+item.data.link+"?"+item.firstChild);
+			aRow=$I("vox_menu").insertRow(-1);
+
+			if(++temp==1) {
+			h='<table cellpadding="2" cellspacing="0" border="0" width="100%">'+
+			  '<tr><td><a class="menue_blau">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+				h+='<table cellpadding="2" cellspacing="0" class="menuitem_sel" border="0" width="100%">'+
+			  '<tr><td id="menuitem_'+item.data.name+'" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+					'<a class="menue_blau" href="'+item.data.link+'" target="'+item.data.target+'" onClick="return selectMenu('+item.idx+')">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'<div class="arcFont1" style="float:right;margin:10px 10px 0 10px" onmouseover="$(this).addClass(\'sel_bt_color_hover\')" onmouseout="$(this).removeClass(\'sel_bt_color_hover\')"  >'+item.caption+'</div>'+
+				//'<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+			} else{
+
+
+			h='<table cellpadding="2" cellspacing="0" border="0" width="100%">'+
+			  '<tr><td id="menuitem_'+item.data.name+'" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+					'<a class="menue_blau" href="'+item.data.link+'" target="'+item.data.target+'" onClick="return selectMenu('+item.idx+')">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'<div class="arcFont1" style="float:right;margin:10px 10px 0 10px" onmouseover="$(this).addClass(\'sel_bt_color_hover\')" onmouseout="$(this).removeClass(\'sel_bt_color_hover\')">'+item.caption+'</div>'+
+				//'<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+			}
+			aCell= aRow.insertCell(-1);
+			aCell.id=item.data.name+'_m';
+			aCell.innerHTML=h;
+			if(item.firstChild)
+			{
+					drawMenu(null, item );
+
+			}
+			}
+
+			item = item.next ;
+		}
+	}else if(item.level == 2){
+		var count = 0;
+		aCell=$I(parent_item.data.name+'_m');
+		//visibility: hidden;
+		h=aCell.innerHTML+
+		  '<table id="'+parent_item.data.name+'" lvl='+item.level+' class=bgmenu style=" display: none;" cellpadding="2" cellspacing="0" border="0" width="100%"></table>';
+		aCell.innerHTML=h;
+
+		while( item != null ){
+			aRow=$I(parent_item.data.name).insertRow(-1);
+
+			h='<a class="sbection" href="'+item.data.link+'" target="'+item.data.target+'" onclick="return selectMenu('+item.idx+')">'+
+			    '<div style="width:100%;height:40px;position:relative" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+			    '<div class="sub_menuitem_link">'+item.caption+'</div>';
+			if(count == 0)
+			{
+				h+='<div class="menu_shadow" id="shadow_'+item.data.name+'">'+
+					'<div class="menu_shadow_top"></div>'+
+				   '</div>';
+			}
+			//h+='<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+			//   '</div>';
+			h+'</a>';
+
+			aCell=aCell = aRow.insertCell(-1);
+			aCell.className="sub_menuitem";
+			aCell.id="menuitem_"+item.data.name;
+			aCell.innerHTML=h;
+
+			drawMenu(null, item ) ;
+			item = item.next ;
+			count++;
+			if(parent_item.firstChild == item) selectMenu(item.idx);
+		}
+	}else if(item.level == 3){
+		aRow=$I("vox_menu").insertRow(-1);
+		aRow.id=parent_item.data.name;
+		aRow.style.visibility="hidden";
+		aRow.style.display="none";
+
+		h='<table cellpadding="1" id="'+parent_item.data.name+'_s" cellspacing="0" border="0" width="100%"></table>';
+		aCell= aRow.insertCell(-1);
+		aCell.bgcolor="#A6A8BD";
+		aCell.innerHTML=h;
+		//document.write('<tr><td bgcolor="#A6A8BD">');
+		var menu_link="<td height='0' align='left' bgColor='#E2E2E2' valign='middle'>";
+		while( item != null ){
+			aRow=$I(parent_item.data.name+'_s').insertRow(-1);
+			h=menu_link+'&nbsp;&nbsp;&nbsp;&nbsp;<a href="'+item.data.link+'" onClick="return selectMenu('+item.idx+')" target="'+item.data.target+'">'+item.caption+'</a>';
+			aCell= aRow.insertCell(-1);
+			aCell.innerHTML=h;
+			item = item.next;
+
+			if(parent_item.firstChild == item) selectMenu(item.idx);
+		}
+
+//	}else if(item.level <= 0){
+//		aRow=$I("vox_menu").insertRow(-1);
+//		aCell= aRow.insertCell(-1);
+//		aCell.innerHTML=STR_menu_error_menu_level+'<br>';
+//	}else{
+//		aRow=$I("vox_menu").insertRow(-1);
+//		aCell= aRow.insertCell(-1);
+//		aCell.innerHTML=STR_menu_not_support_menu_level + item.level +'.<br>';
+	}
+}
+function drawMenu_devices( parent_item, curr_item)
+{
+	var aRow,aCell,h;
+	var item = curr_item;
+    var group=item.group;
+    var temp=0;
+	if( !parent_item) {
+		item = curr_item.firstChild ;
+		parent_item=curr_item;
+	}else{
+		item =parent_item.firstChild;
+	}
+//	var item = parent_item.firstChild ;
+	if( item == null )  return ;
+	//console.log(item.level+"==>"+item.data.link+"?"+item.firstChild);
+
+	if(item.level == 1){
+		temp=0;
+		while( item != null ){
+			if(item.group == group){
+			//console.log(item.level+"==>"+item.data.link+"?"+item.firstChild);
+			aRow=$I("vox_menu").insertRow(-1);
+			if(++temp==1) {
+			h='<table cellpadding="2" cellspacing="0" border="0" width="100%">'+
+			  '<tr><td><a class="menue_blau">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+				h+='<table cellpadding="2" cellspacing="0" class="menue_blau" border="0" width="100%">'+
+			  '<tr><td id="menuitem_'+item.data.name+'" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+					'<a class="menue_blau" href="'+item.data.link+'" target="'+item.data.target+'" onClick="return selectMenu('+item.idx+')">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'<div class="arcFont1" style="float:right;margin:10px 10px 0 10px" onmouseover="$(this).addClass(\'sel_bt_color_hover\')" onmouseout="$(this).removeClass(\'sel_bt_color_hover\')"  >'+item.caption+'</div>'+
+				//'<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+			} 
+			else if(item.data.name=="status_lan_device"){
+			h='<table cellpadding="2" cellspacing="0" class="menuitem_sel" border="0" width="100%">'+
+			  '<tr><td id="menuitem_'+item.data.name+'" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+					'<a class="menue_blau" href="'+item.data.link+'" target="'+item.data.target+'" onClick="return selectMenu('+item.idx+')">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'<div class="arcFont1" style="float:right;margin:10px 10px 0 10px" onmouseover="$(this).addClass(\'sel_bt_color_hover\')" onmouseout="$(this).removeClass(\'sel_bt_color_hover\')">'+item.caption+'</div>'+
+				//'<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+			}
+			else {
+			h='<table cellpadding="2" cellspacing="0" border="0" width="100%">'+
+			  '<tr><td id="menuitem_'+item.data.name+'" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+					'<a class="menue_blau" href="'+item.data.link+'" target="'+item.data.target+'" onClick="return selectMenu('+item.idx+')">'+
+				'<div style="width:100%;height:40px;position:relative">'+
+				'<div class="arcFont1" style="float:right;margin:10px 10px 0 10px" onmouseover="$(this).addClass(\'sel_bt_color_hover\')" onmouseout="$(this).removeClass(\'sel_bt_color_hover\')">'+item.caption+'</div>'+
+				//'<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+				'</div>'+
+				'</a>'+
+			  '</td></tr>'+
+			  '</table>';
+			}
+		//	var a="menuitem_"+item.data.name;
+		//	alert(a);
+		//	alert(item.data.link);
+			
+			
+			aCell= aRow.insertCell(-1);
+			aCell.id=item.data.name+'_m';
+			aCell.innerHTML=h;
+			if(item.firstChild)
+			{
+					drawMenu_discs(null, item );
+
+			}
+			}
+
+			item = item.next ;
+		}
+	}else if(item.level == 2){
+		var count = 0;
+		aCell=$I(parent_item.data.name+'_m');
+		//visibility: hidden;
+		h=aCell.innerHTML+
+		  '<table id="'+parent_item.data.name+'" lvl='+item.level+' class=bgmenu style=" display: none;" cellpadding="2" cellspacing="0" border="0" width="100%"></table>';
+		aCell.innerHTML=h;
+
+		while( item != null ){
+			aRow=$I(parent_item.data.name).insertRow(-1);
+
+			h='<a class="sbection" href="'+item.data.link+'" target="'+item.data.target+'" onclick="return selectMenu('+item.idx+')">'+
+			    '<div style="width:100%;height:40px;position:relative" onmouseover="$(this).addClass(\'sel_hover\')" onmouseout="$(this).removeClass(\'sel_hover\')">'+
+			    '<div class="sub_menuitem_link">'+item.caption+'</div>';
+			if(count == 0)
+			{
+				h+='<div class="menu_shadow" id="shadow_'+item.data.name+'">'+
+					'<div class="menu_shadow_top"></div>'+
+				   '</div>';
+			}
+			//h+='<div class="arrow_right" id="arrow_'+item.data.name+'"></div>'+
+			//   '</div>';
+			h+'</a>';
+
+			aCell=aCell = aRow.insertCell(-1);
+			aCell.className="sub_menuitem";
+			aCell.id="menuitem_"+item.data.name;
+			aCell.innerHTML=h;
+
+			drawMenu_discs(null, item ) ;
+			item = item.next ;
+			count++;
+			if(parent_item.firstChild == item) selectMenu(item.idx);
+		}
+	}else if(item.level == 3){
+		aRow=$I("vox_menu").insertRow(-1);
+		aRow.id=parent_item.data.name;
+		aRow.style.visibility="hidden";
+		aRow.style.display="none";
+
+		h='<table cellpadding="1" id="'+parent_item.data.name+'_s" cellspacing="0" border="0" width="100%"></table>';
+		aCell= aRow.insertCell(-1);
+		aCell.bgcolor="#A6A8BD";
+		aCell.innerHTML=h;
+		//document.write('<tr><td bgcolor="#A6A8BD">');
+		var menu_link="<td height='0' align='left' bgColor='#E2E2E2' valign='middle'>";
+		while( item != null ){
+			aRow=$I(parent_item.data.name+'_s').insertRow(-1);
+			h=menu_link+'&nbsp;&nbsp;&nbsp;&nbsp;<a href="'+item.data.link+'" onClick="return selectMenu('+item.idx+')" target="'+item.data.target+'">'+item.caption+'</a>';
+			aCell= aRow.insertCell(-1);
+			aCell.innerHTML=h;
+			item = item.next;
+
+			if(parent_item.firstChild == item) selectMenu(item.idx);
+		}
+
+//	}else if(item.level <= 0){
+//		aRow=$I("vox_menu").insertRow(-1);
+//		aCell= aRow.insertCell(-1);
+//		aCell.innerHTML=STR_menu_error_menu_level+'<br>';
+//	}else{
+//		aRow=$I("vox_menu").insertRow(-1);
+//		aCell= aRow.insertCell(-1);
+//		aCell.innerHTML=STR_menu_not_support_menu_level + item.level +'.<br>';
+	}
+}
+
+
+
+
+
+var old_ItemIdx=-1;
+function LoadMenu(){
+	// prepare menu content
+	prepareMenu() ;
+
+	// check select items
+	var selgroup=MenuList[top.ItemIdx];
+	if(!selgroup){
+		selgroup=0;
+		top.ItemIdx=0;
+	}else{
+		selgroup=selgroup[MENU_GRP];
+	}
+	JumpMainMenu(top.ItemIdx);
+	top.G_prog=1; // lock it
+	item_selected =findItemBygroup(menu_root,selgroup); //group find
+    Table_del_row("vox_menu",0,0,1); // drop all
+    if(!item_selected) item_selected=menu_root;
+	// show it
+	drawMenu(item_selected.parent, item_selected ) ;
+	
+	old_ItemIdx=top.ItemIdx;
+    top.G_prog=0; // unlock it
+
+}
+function LoadMenu_devices(){
+	// prepare menu content
+	prepareMenu() ;
+
+	// check select items
+	var selgroup=MenuList[top.ItemIdx];
+	if(!selgroup){
+		selgroup=0;
+		top.ItemIdx=0;
+	}else{
+		selgroup=selgroup[MENU_GRP];
+	}	
+	top.G_prog=1; // lock it
+	item_selected =findItemBygroup(menu_root,selgroup); //group find
+    Table_del_row("vox_menu",0,0,1); // drop all
+    if(!item_selected) item_selected=menu_root;
+	// show it
+	drawMenu_devices(item_selected.parent, item_selected ) ;
+	
+	
+	old_ItemIdx=top.ItemIdx;
+    top.G_prog=0; // unlock it
+
+}
+
+function monitor_menu(){
+	if(top.ItemIdx != old_ItemIdx){
+		// NOTE:
+		//   if setup_top set top.ItemIdx to normal >=0 id (same as left menu do)
+		//   top.ItemIdx != old_ItemIdx will fail, due to double click top-bannder will same as old
+		//   here dirty to convert top-banner set value from 1~xx to 0~(xx-1)
+		//   just like a force reload way.
+		if(top.ItemIdx < 0) top.ItemIdx=(-1*top.ItemIdx)-1;
+		LoadMenu();
+	}
+	
+	//when device use devicesChangeFlag() will use drawMenu_devices() by nick_yang
+	if(flag==1){
+	LoadMenu_devices();
+	flag=0;
+	}
+	
+	
+	
+	return false;
+}
+
+function init(){
+	setInterval(monitor_menu,150);
+}
+</script>
+
+<body bgcolor="#ff3b9b" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="init()" class="menu_body">
+<table id="vox_menu" class="vox_menu" border="0" cellspacing="0" cellpadding="0" width="100%"></table>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

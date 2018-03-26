@@ -1,0 +1,195 @@
+config WEBJSMIN_PROJ_WEBJSMIN_ON
+	depends on PACKAGE_html_docs
+	bool "Webjsmin enable"
+
+config WEBJSMIN_PROJ_UI_SYSTEM_VERSION
+	string "UI version"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_PRODUCT_NAME
+	string "UI product name"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_CONFIG_HTTPD_HOT_FIX_SW1
+	bool "Dirty hot fix code"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_LTE_3APN_SUPPORT
+	bool "3 APN support for UI"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_UI_WIFI
+	bool "with WiFi config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_5G
+	bool "with WiFi 5G config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WDS
+	bool "with WiFi WDS config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_MULTI_SSID
+	bool "with multiple SSID config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_IPV6
+	bool "with IPv6 config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_IPV6_NAT64
+	bool "with IPv6 NAT config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_LTE
+	bool "with LTE config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_DHCPD_REALY
+	bool "with lan page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_LTE_STORE_PIN
+	bool "with LTE store pin config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_LTE_HSPA
+	bool "with LTE HSPA cofnig page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_QOS
+	bool "with Qos cofnig page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_RIP
+	bool "with RIP protocol cofnig page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_SIP
+	bool "with SIP config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_SIP_PROXY
+	bool "with SIP proxy config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_STATIC_RT
+	bool "with static route config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_TR69
+	bool "with TR69 config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_VOICE
+	bool "with Voice config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WAN_XPON
+	bool "with PON WAN config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WAN_ROUTER
+	bool "with WAN router config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_PPTP
+	bool "with PPTP config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_L2TP
+	bool "with L2TP config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WAN_VLAN
+	bool "with WAN VLAN config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_NAT_ADDR_MAP
+	bool "with NAT address map config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_UI_NAT_SHOW
+	bool "with NAT Show config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_NAT_ALG
+	bool "with NAT ALG config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_WAN_MAC_CLONE
+	bool "with WAN MAC clone config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_MAC_LSIT
+	bool "with MAC address list config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WLAN_MAC
+	bool "with WLAN MAC address config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_FW_SPI
+	bool "with Firewall SPI config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_FW_RULE
+	bool "with Firewall rule config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_UI_WAN_CONFIG
+	bool "with WAN config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_WAN_MODE
+	bool "with WAN mode config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_UPNP
+	bool "with UPNP config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON	
+	
+config WEBJSMIN_PROJ_UI_USB
+	bool "with USB config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_UI_ADSL
+	bool "with ADSL config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_DIAGNOSTIC
+	bool "with Diagnostic config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+	
+config WEBJSMIN_PROJ_UI_LANG_LST
+	string "Language support"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_WEB_SRC
+	string "web page source directory"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_CGI_VENDOR_INCLUDE
+	string "web cgi directory"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_JSPACK_ENCODE
+	bool "with Encode JS packets"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_EXTRA_OPT
+	string "Extra options"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_BRIDGE
+	bool "with WAN bridge config page"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_PORTBIND
+	bool "with Port Bind"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON
+
+config WEBJSMIN_PROJ_UI_DBDC
+	bool "with WiFi MT7615 split to double bands"
+	depends on WEBJSMIN_PROJ_WEBJSMIN_ON && ARCADYAN_DBDC_MODE

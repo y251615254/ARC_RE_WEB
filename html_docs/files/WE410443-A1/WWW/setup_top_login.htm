@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_top.css">
+<style type="text/css">
+	#top_nav_menu a div{ color:white; background-image: none !important; border-bottom-width:3px; border-bottom-color: white; border-bottom-style:solid; width:auto; margin:0 20px; line-height: 10px; }
+	body{ background:#7BC143; background-image:none; margin-top: 0; }
+</style>
+<script language="javascript">var G_top=-2;var LangJ=["menulist"];</script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script language="JavaScript" src="js/global.js"></script>
+<script language="JavaScript" src="js/menu.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script language="javascript">
+var curr_lang_idx = 1;
+var custom_page_flag =2;
+var lanip_user = 1;
+var wanip_user = 0;
+</script>
+<script language="JavaScript">
+function init(){
+/*DEMO*/
+	setIdVal("logo_til","LTE HGW");
+/*END_DEMO*/
+/*REAL
+	setIdVal("logo_til",(<!--DEF#@PROJ_UI_PRODUCT_NAME@-->));
+REAL*/
+	// if no more 1 language hiden button
+	if(Lang_List.length < 2){
+		HiddenObject("u_lang");
+	}
+	document.tF_Logout.httoken.value=ArcBase._t();
+}
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="init()">
+<div id="hiddenmenu" style="min-width:830px">
+	<div class="logo"><img src="images/logo.png" valign="middle" style="height:35px;width:78px;"></div>
+	<div id="top_nav_menu"></div>
+</div>
+<form ACTION="/cgi-bin/changef.exe" method="post" name="tFF" target="_top">
+<input type="hidden" name="language_flag" value="1">
+<input type="hidden" name="menupage" value="">
+<input type="hidden" name="httoken" value="">
+<input type="hidden" name="lang" value="">
+</form>
+<form method="post" action="logout.cgi" name="tF_Logout" target="_top">
+		<input type="hidden" name="httoken" value="">
+</form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

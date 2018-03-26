@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["access_control"];var CGIs=["toplogy_info_and_access_control"];</script>
+<script language="javascript">var G_top=1;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+
+
+var status_profile_arry = new Array();
+function check_profile_info()
+{
+	var station_length = station_info.stations.length;
+	for(var i=0; i < station_length; i++)
+	{
+		var pid = station_info.stations[i].pid;
+		if(pid == "pause_imm")
+			continue;
+		
+		if(pid != "NULL")//has profile
+		{
+			var station_mac = station_info.stations[i].station_mac;
+			var device_name = station_info.stations[i].alias_name;
+			if(device_name == "NULL")
+			{
+				device_name = station_info.stations[i].station_name;
+			}
+			if(device_name == "NULL")
+				device_name = "Unknown"
+			var station_connect_type = station_info.stations[i].connect_type;
+
+			var total = device_name + '@' +  station_mac + '@' + pid + '@' + station_connect_type;
+			status_profile_arry.push(total);	
+		}
+	}
+/*status_profile_arry
+"pseudo0@AA:BB:CC:00:00:00@group0001"
+"pseudo1@AA:BB:CC:01:01:01@group0001"
+"pseudo2@AA:BB:CC:02:02:02@block"
+"pseudo3@AA:BB:CC:03:03:03@station0001"
+"pseudo4@AA:BB:CC:04:04:04@guest0001"
+"pseudo5@AA:BB:CC:05:05:05@guest0001"
+*/
+	for(var j =0; j<status_profile_arry.length; j++)
+	{
+			get_profile_info_by_profileid(status_profile_arry[j]);
+
+	}
+
+/*status_profile_all_info_arry
+  name              mac           pid   connect_type    enable     type     day      st   et
+"pseudo0   @ AA:BB:CC:00:00:00  @  group0001  @  Ether       @   1     @   2   @ 1000000  @  1800  @  3600"
+"pseudo0@AA:BB:CC:00:00:00@group0001@Ether@1@1@0000010@7200@10800"
+"pseudo1@AA:BB:CC:01:01:01@group0001@2.4G@1@2@1000000@1800@3600"
+"pseudo1@AA:BB:CC:01:01:01@group0001@2.4G@1@1@0000010@7200@10800"
+"pseudo2@AA:BB:CC:02:02:02@block@5G@1@0@0000000@0@0"
+"pseudo3@AA:BB:CC:03:03:03@station0001@5G@1@2@1000000@1800@3600"
+"pseudo3@AA:BB:CC:03:03:03@station0001@5G@1@2@0000010@7200@16800"
+"pseudo4@AA:BB:CC:04:04:04@guest0001@2.4G_guest@1@2@1000000@1800@3600"
+"pseudo4@AA:BB:CC:04:04:04@guest0001@2.4G_guest@1@2@0000010@3600@7200"
+"pseudo5@AA:BB:CC:05:05:05@guest0001@Ether@1@2@1000000@1800@3600"
+"pseudo5@AA:BB:CC:05:05:05@guest0001@Ether@1@2@0000010@3600@7200"
+*/
+
+
+}
+
+var status_profile_all_info_arry = new Array();
+function get_profile_info_by_profileid(statusProfileArry)
+{
+//  name         mac        pid    connect_type  enable     type     day      st   et
+//"pseudo0@AA:BB:CC:00:00:00@group0001@   	Ether     @   1      @  2   @ 1000000  @  1800  @  3600"
+	var profileid_tmp = statusProfileArry.split('@');
+	var profileid = profileid_tmp[2];
+
+	var acp_length= access_control_profile.profile.length;
+	for(var i=0; i < acp_length; i++)
+	{
+		var pid_value = access_control_profile.profile[i].pid;
+
+		if(pid_value == profileid)
+		{
+
+			var profile_configs_length = access_control_profile.profile[i].configs.length;
+
+			for(var j=0; j< profile_configs_length; j++)
+			{
+				var profile_configs_eable = access_control_profile.profile[i].configs[j].enable;
+				if(profile_configs_eable != "1")
+					continue;
+				var profile_configs_active = access_control_profile.profile[i].configs[j].ss;
+				var profile_configs_type = access_control_profile.profile[i].configs[j].type;
+				var profile_configs_day = access_control_profile.profile[i].configs[j].day;
+				var profile_configs_stime = access_control_profile.profile[i].configs[j].st;
+				var profile_configs_etime = access_control_profile.profile[i].configs[j].et;
+				var profile_configs_note = access_control_profile.profile[i].configs[j].note;
+				var profile_configs_id = access_control_profile.profile[i].configs[j].id;
+			//	if(profile_configs_id.charAt(0) == '1')
+			//		profile_configs_note = "Bedroom";
+				if(profile_configs_note == "")
+					profile_configs_note = "NULL";
+				
+				var profile_configs_total = profile_configs_active + '@' + profile_configs_type + '@' + 
+											profile_configs_day + '@' + profile_configs_stime + '@' +  profile_configs_etime + '@' +  profile_configs_note+'@'+profile_configs_id;
+				var tmp_total = statusProfileArry + '@' + profile_configs_total;
+				status_profile_all_info_arry.push(tmp_total);
+			}
+
+		}
+	}
+}		
+
+function transfer_secs_to_special_format(secs)
+{
+	var hour = parseInt(secs/3600);
+	var minute = parseInt(secs/60)%60;		
+	var sec = secs%60;	
+
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	if(sec<10)
+		sec="0"+sec;	
+	
+	var last_time;
+	last_time=hour+":"+minute;
+
+
+	return last_time;
+}
+
+var access_conrtrol_info_arry = new Array();
+function check_access_conrtrol_info()
+{
+
+	check_profile_info();
+/*status_profile_all_info_arry
+//  name              mac           pid   connect_type    enable     type     day      st   et 
+//"pseudo0   @ AA:BB:CC:00:00:00  @  group0001  @  Ether       @   1     @   2   @ 1000000  @  1800  @  3600"
+*/
+
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++)
+	{
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var total_1 = tmp_arry[0];//name
+		var total_2 = tmp_arry[1];//mac
+		var total_3 = tmp_arry[4];//active Status
+		if(total_3 == "1")
+		{
+			total_3 = getLangM(261);
+		}
+		else
+		{
+			total_3 = getLangM(262);
+		}
+
+		var total_4_1 = tmp_arry[5];//Type
+		var total_4_2 = tmp_arry[9];//note
+		var total_4;
+		if(total_4_1 == "0")
+		{
+			total_4 = "Block";
+		}
+		else if(total_4_1 == "1")
+		{
+			total_4 = "Timed";
+		}
+		else if(total_4_1 == "6")
+		{
+			if(total_4_2 == "NULL")
+				total_4 = getLangM(271);
+			else
+				total_4 = getLangM(271) + ' - ' + total_4_2;
+		}
+		else
+		{
+			total_4 = "Pause immediately";
+		}
+
+		
+		var total_5_1 = tmp_arry[6];//day
+		var day_string = "";
+
+		if(total_5_1.charAt(0) == '1')
+		{
+			day_string += getLangM(269);
+		}
+		if(total_5_1.charAt(6) == '1')
+		{
+			day_string += getLangM(263);
+		}		
+		if(total_5_1.charAt(5) == '1')
+		{
+			day_string += getLangM(264);
+		}	
+		if(total_5_1.charAt(4) == '1')
+		{
+			day_string += getLangM(265);
+		}		
+		if(total_5_1.charAt(3) == '1')
+		{
+			day_string += getLangM(266);
+		}		
+		if(total_5_1.charAt(2) == '1')
+		{
+			day_string += getLangM(267);
+		}				
+		if(total_5_1.charAt(1) == '1')
+		{
+			day_string += getLangM(268);
+		}
+
+		if(total_5_1 == "1111111")
+			day_string = getLangM(270);
+		
+		if(day_string == "")
+		{
+			total_5_1 = "Null value"
+		}
+		else
+		{
+			total_5_1 = day_string;	
+		}
+
+		
+		var total_5_2 = parseInt(tmp_arry[7]);//stime
+		var total_5_3 = parseInt(tmp_arry[8]);//etime
+		var st = transfer_secs_to_special_format(total_5_2);
+		var et = transfer_secs_to_special_format(total_5_3);
+		var s_et = st + '-' + et;
+		
+		var	total_5 
+		if(total_4_1 == "1")
+			total_5 = getLangM(272) + et;
+		else if(total_4_1 == "6")
+			total_5 = total_5_1 + ', ' + s_et;
+		else
+			total_5 = '-';
+		
+		var	total_6 = tmp_arry[3];//connect_type
+
+		var total = total_1 + '@' +
+					total_2 + '@' +
+					total_3 + '@' +
+					total_4 + '@' +					
+					total_5 + '@' +					
+					total_6; 
+		access_conrtrol_info_arry.push(total);
+
+	}
+
+}
+
+
+function show_access_control_table()
+{
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,cpic;
+	var pic;
+	
+	for(var i = 0; i < access_conrtrol_info_arry.length; i++)
+	{
+		
+		re_rowcnt=0;
+
+		//pseudo0@AA:BB:CC:00:00:00@Active@Pause repeatedly@1000000/0:30 - 0:0@Ether
+		var tmp = access_conrtrol_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		
+	
+		c1=tmp_arry[0];//Name
+		c2=tmp_arry[1];//MAC Address
+		c3=tmp_arry[2];//Status
+		//c4=tmp_arry[3];//Type
+		c5=tmp_arry[4];//Timing
+		cpic=tmp_arry[5];//connect_type
+		/*
+		if(cpic == "2.4G")
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else if(cpic == "5G")
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else
+		{
+			pic = "<img src='images/ethernet.png' style='height:24px;width:22px;'>";
+		}
+		*/
+		var c6="<td><input type='button' class='green' onClick='EditProfile("+i+")' id='256'></td>";
+		var c7="<td><input type='button' class='green' onClick='DeleteProfile("+i+")' id='257'></td>";
+		
+		pic="";
+		RowCell=[[1,pic],[1,c1],[1,c2],[1,c3],[1,c5],[1,c6],[1,c7],[null,null]];
+		re_rowcnt+=Table_add_row("tb_station_info",[[8,re_rowcnt,1],RowCell]);			
+	   //RowCell=[[1,c1],[1,c2],[1,c3],[1,c4],[1,c5],[null,null]];
+
+		
+	}
+	return 0;
+}
+
+function write_access_control_table()
+{
+	for(var i=0; i<1; i++ )
+	{		
+		$("#tb_all_device").append("\
+		<tr>\
+			<td colspan=\"2\" valign=\"top\">\
+				<table class=\"vox20_tablec\" width=80% cellspacing=1 cellpadding=5 border=0 id=\"tb_station_info\">\
+					<tr>\
+						<td width=5% nowrap ><font class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"202\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"203\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"239\" class=btFontBold2></font></td>\
+						<td width=25% nowrap ><font id=\"241\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font  class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font  class=btFontBold2></font></td>\
+					</tr>\
+				</table>\
+			</td>\
+		</tr>");
+	}	
+}
+function EditProfile(i){
+var EditProfile=status_profile_all_info_arry[i];
+var EditProfile_arry=EditProfile.split('@');
+var EditProfile_Mac=EditProfile_arry[1];
+var EditProfile_Config_Id=EditProfile_arry[10];
+
+window.location.href="./sche.htm?flag_id="+EditProfile_Config_Id;
+
+}
+
+
+
+
+function DeleteProfile(i){
+	var deleteProfile=status_profile_all_info_arry[i];
+	var deleteProfile_arry=deleteProfile.split('@');
+	var deleteProfileNameNumber=0;
+	
+	for(var j = 0; j < status_profile_all_info_arry.length; j++){
+		var tmp = status_profile_all_info_arry[j];
+		var tmp_arry = tmp.split('@');	
+		if(deleteProfile_arry[0]==tmp_arry[0])
+			deleteProfileNameNumber++;	
+	}
+
+		if(deleteProfileNameNumber>1) //there are more than one profile for this client
+		{
+		delete_sche(i);
+					
+		}
+		else
+		{
+		delete_sche2(i);
+		delete_sche_pid(i);					
+		}
+
+}
+
+function delete_sche(i){
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	
+	var deleteProfile=status_profile_all_info_arry[i];
+	var deleteProfile_arry=deleteProfile.split('@');
+	
+	var act=1;
+	var pid=deleteProfile_arry[2];
+	var n=deleteProfile_arry[0];
+	var config_act=2;
+	var config_id=deleteProfile_arry[10];
+	var config_enable=deleteProfile_arry[4];
+	var config_type=deleteProfile_arry[5];
+	var config_day =deleteProfile_arry[6];
+	var config_st=deleteProfile_arry[7];
+	var config_et=deleteProfile_arry[8];
+	var config_note=deleteProfile_arry[9];
+			
+	
+	var data_tmp= act+'?$[+'+pid+'?$[+'+n+'?$[+'+config_act+'?$[+'+config_id+'?$[+'+config_enable+'?$[+'+config_type+'?$[+'+config_day+'?$[+'+config_st+'?$[+'+config_et+'?$[+'+config_note;
+
+
+	
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_access_control.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncaccesscontrol",
+	      		data:data_tmp
+		  }
+	})
+	.done(function( data ){
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+			
+			return subForm({
+							 frm:f,
+							 //next: 'login.htm',
+							 uploadtype: 0, 
+						     wait: 3 
+						  });
+			
+			
+			//alert("syncledconfig msg send okay.");	
+			
+			//return true;
+		}else{
+			alert("syncaccesscontrol msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+
+function delete_sche2(i){
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	
+	var deleteProfile=status_profile_all_info_arry[i];
+	var deleteProfile_arry=deleteProfile.split('@');
+	
+	var act=2;
+	var pid=deleteProfile_arry[2];
+	var n=deleteProfile_arry[0];
+
+	var config_act="2";
+	var config_id="NULL";
+	var config_enable="0";
+	var config_type="0";
+	var config_day ="0000000";
+	var config_st="0";
+	var config_et="0";
+	var config_note="null";
+				
+	var data_tmp= act+'?$[+'+pid+'?$[+'+n+'?$[+'+config_act+'?$[+'+config_id+'?$[+'+config_enable+'?$[+'+config_type+'?$[+'+config_day+'?$[+'+config_st+'?$[+'+config_et+'?$[+'+config_note;
+	
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_access_control.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncaccesscontrol",
+	      		data:data_tmp
+		  }
+	})
+	.done(function( data ){
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+			
+			/*return subForm({
+							 frm:f,
+							 //next: 'login.htm',
+							 uploadtype: 0, 
+						     wait: 3 
+						  });
+			
+			*/
+			//alert("syncledconfig msg send okay.");	
+			
+			return true;
+		}else{
+			alert("syncaccesscontrol msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+function delete_sche_pid(i){
+
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	
+	var deleteProfile=status_profile_all_info_arry[i];
+	var deleteProfile_arry=deleteProfile.split('@');
+	var deleteProfile_mac=deleteProfile_arry[1];
+	
+	
+	for(var i in station_info.stations)
+	{
+	
+		if(deleteProfile_mac ==station_info.stations[i].station_mac){
+			deleteProfile_parent_id=station_info.stations[i].parent_id;
+			deleteProfile_alias_name=station_info.stations[i].alias_name;		
+		}					
+	}
+	
+	var data_tmp= deleteProfile_parent_id+'?$[+'+ deleteProfile_mac+'?$[+'+deleteProfile_alias_name+'?$[+'+'NULL';
+	
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_status_station.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncclientdevicename",
+	      		data:data_tmp
+		  }
+	})
+	.done(function( data ){
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+			
+			return subForm({
+							 frm:f,
+							 //next: 'login.htm',
+							 uploadtype: 0, 
+						     wait: 3 
+						  });						
+			//return true;
+		}else{
+			alert("syncclientdevicename msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+function add(){
+
+window.location.href="./sche.htm?flag_id=0";
+}
+
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+	check_access_conrtrol_info();
+	write_access_control_table();
+	show_access_control_table();
+	ShowMenu();
+	//initSelect();
+	reSetHelpUrl("AccessControlsID");
+}
+
+
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/statusprocess.exe" method="post" target="OUTfrm">
+	<p style="margin-left:10px"><font id="237" class="arcFont4"></font></p>
+	<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-left: 0px;">
+		<tr>
+			<td width="100%">
+					<table border="0" width="100%" cellspacing="0" cellpadding="10">
+						<tr>
+							<td>						
+								<p class=normalText><font class="arcFont2" id="238"></font></p>
+							</td>
+						</tr>
+			      	</table>
+			</td>
+		</tr>
+	</table>
+	<table width="100%" border="0" cellspacing="0" cellpadding="10" align="center" id="tb_all_device">
+	</table>
+</form>
+<form>
+<br>
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td align="center">
+			<input type="button" class="green" onClick="add()" name="" id="258">&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+
+

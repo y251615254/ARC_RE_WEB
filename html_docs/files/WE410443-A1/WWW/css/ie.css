@@ -1,0 +1,30 @@
+/* This is for all IE specfific style less than IE9. We hate IE. */
+
+.reveal-modal{
+	background: transparent; /* Old browsers */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ffffff', endColorstr='#cecece',GradientType=0 ); /* IE6-9 */
+	border: solid 1px #000000;
+}
+html.lt-ie8 .progressbar ,html.lt-ie9 .progressbar{
+	background: transparent url(../images/theme1/btn_m_b.png) repeat-x left top;
+}
+html.lt-ie9 .arcTransformInputInner div input {
+	padding-left: 2px; /*IE7,IE8 padding issue*/
+}
+
+/* Hack for IE6 */
+* html .arcTransformButton {
+    *display: inline; /* Elements with hasLayout and display:inline behave like inline-block */
+}
+/* Hack for IE7 */
+* + html .arcTransformButton {
+    *display: inline; /* Elements with hasLayout and display:inline behave like inline-block */
+}
+* + html .arcTransformInputInner div input {
+    display: inline; /* Elements with hasLayout and display:inline behave like inline-block */
+}
+
+*:first-child+html button.arcTransformButton[type]{width: 1;} /* IE7 */
+
+v\:rect,v\:shape,v\:imagedata { display:inline-block }
+v\:roundrect { display:inline-block;position:relative; }

@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["access_control"];var CGIs=["toplogy_info_and_access_control"];</script>
+<script language="javascript">var G_top=1;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+//
+var status_profile_arry = new Array();
+function check_profile_info()
+{
+	var station_length = station_info.stations.length;
+	for(var i=0; i < station_length; i++)
+	{
+		var pid = station_info.stations[i].pid;
+		if(pid == "pause_imm")
+			continue;
+		
+		if(pid != "NULL")//has profile
+		{
+			var station_mac = station_info.stations[i].station_mac;
+		//	var device_name = station_info.stations[i].alias_name;
+		//	if(device_name == "NULL")
+		//	{
+				device_name = station_info.stations[i].station_name;
+		//	}
+			if(device_name == "NULL")
+				device_name = "Unknown"
+			var station_connect_type = station_info.stations[i].connect_type;
+
+			var total = device_name + '@' +  station_mac + '@' + pid + '@' + station_connect_type;
+			status_profile_arry.push(total);	
+		}
+	}
+/*status_profile_arry
+"pseudo0@AA:BB:CC:00:00:00@group0001"
+"pseudo1@AA:BB:CC:01:01:01@group0001"
+"pseudo2@AA:BB:CC:02:02:02@block"
+"pseudo3@AA:BB:CC:03:03:03@station0001"
+"pseudo4@AA:BB:CC:04:04:04@guest0001"
+"pseudo5@AA:BB:CC:05:05:05@guest0001"
+*/
+	for(var j =0; j<status_profile_arry.length; j++)
+	{
+			get_profile_info_by_profileid(status_profile_arry[j]);
+
+	}
+
+/*status_profile_all_info_arry
+  name              mac           pid   connect_type    enable     type     day      st   et
+"pseudo0   @ AA:BB:CC:00:00:00  @  group0001  @  Ether       @   1     @   2   @ 1000000  @  1800  @  3600"
+"pseudo0@AA:BB:CC:00:00:00@group0001@Ether@1@1@0000010@7200@10800"
+"pseudo1@AA:BB:CC:01:01:01@group0001@2.4G@1@2@1000000@1800@3600"
+"pseudo1@AA:BB:CC:01:01:01@group0001@2.4G@1@1@0000010@7200@10800"
+"pseudo2@AA:BB:CC:02:02:02@block@5G@1@0@0000000@0@0"
+"pseudo3@AA:BB:CC:03:03:03@station0001@5G@1@2@1000000@1800@3600"
+"pseudo3@AA:BB:CC:03:03:03@station0001@5G@1@2@0000010@7200@16800"
+"pseudo4@AA:BB:CC:04:04:04@guest0001@2.4G_guest@1@2@1000000@1800@3600"
+"pseudo4@AA:BB:CC:04:04:04@guest0001@2.4G_guest@1@2@0000010@3600@7200"
+"pseudo5@AA:BB:CC:05:05:05@guest0001@Ether@1@2@1000000@1800@3600"
+"pseudo5@AA:BB:CC:05:05:05@guest0001@Ether@1@2@0000010@3600@7200"
+*/
+
+
+}
+
+var status_profile_all_info_arry = new Array();
+function get_profile_info_by_profileid(statusProfileArry)
+{
+//  name         mac        pid    connect_type  enable     type     day      st   et
+//"pseudo0@AA:BB:CC:00:00:00@group0001@   	Ether     @   1      @  2   @ 1000000  @  1800  @  3600"
+	var profileid_tmp = statusProfileArry.split('@');
+	var profileid = profileid_tmp[2];
+
+	var acp_length= access_control_profile.profile.length;
+	for(var i=0; i < acp_length; i++)
+	{
+		var pid_value = access_control_profile.profile[i].pid;
+
+		if(pid_value == profileid)
+		{
+
+			var profile_configs_length = access_control_profile.profile[i].configs.length;
+
+			for(var j=0; j< profile_configs_length; j++)
+			{
+				var profile_configs_eable = access_control_profile.profile[i].configs[j].enable;
+				if(profile_configs_eable != "1")
+					continue;
+				var profile_configs_active = access_control_profile.profile[i].configs[j].ss;
+				var profile_configs_type = access_control_profile.profile[i].configs[j].type;
+				var profile_configs_day = access_control_profile.profile[i].configs[j].day;
+				var profile_configs_stime = access_control_profile.profile[i].configs[j].st;
+				var profile_configs_etime = access_control_profile.profile[i].configs[j].et;
+				var profile_configs_note = access_control_profile.profile[i].configs[j].note;
+				var profile_configs_id = access_control_profile.profile[i].configs[j].id;
+			//	if(profile_configs_id.charAt(0) == '1')
+			//		profile_configs_note = "Bedroom";
+				if(profile_configs_note == "")
+					profile_configs_note = "NULL";
+				
+				var profile_configs_total = profile_configs_active + '@' + profile_configs_type + '@' + 
+											profile_configs_day + '@' + profile_configs_stime + '@' +  profile_configs_etime + '@' +  profile_configs_note+'@'+profile_configs_id;;
+				var tmp_total = statusProfileArry + '@' + profile_configs_total;
+				status_profile_all_info_arry.push(tmp_total);
+			}
+
+		}
+	}
+}		
+//
+function check_endtime_select(){
+	var f=document.tF0;
+	if(document.getElementById("endtime_h").value==24){
+		HiddenObject("endtime_m_normal");
+		DisplayObject("endtime_m_00");
+		}
+	else{
+		DisplayObject("endtime_m_normal");
+		HiddenObject("endtime_m_00");
+	}
+
+}
+
+function AddOptClientList(){
+	var f=document.tF0;
+	var dev_name, dev_mac;
+	var haveblock=0;
+		
+
+
+		for(var i in station_info.stations)
+		{
+		
+			dev_name=station_info.stations[i].station_name;		
+			alias_name=station_info.stations[i].alias_name;
+			dev_mac=station_info.stations[i].station_mac;
+			if(alias_name=="NULL")
+			alias_name=dev_name;
+				
+			f.clientlist.options.add(new Option(alias_name,dev_mac));
+		}
+
+
+}
+
+function reloadWebByName(){
+	var f=document.tF0;
+	window.location.href="./sche.htm?flag_id=0&climac="+f.clientlist.value;
+}
+
+var flag_id;
+function checkClientNameAndSetDefault(){
+	var f=document.tF0;
+	
+	var thisURL = document.URL;    	
+	thisURL+="&climac=";//if don't have climac
+	var checkUrlAddOrEdite=thisURL.split('?')[1]; //flag_id***&climac=***
+	var checkUrlAddOrEdite2=checkUrlAddOrEdite.split('&')[0];//flag_id=***
+	flag_id=checkUrlAddOrEdite2.split('=')[1];//***
+				
+	var getval =checkUrlAddOrEdite.split('&')[1]; //climac=***
+	var climac= getval.split("=")[1];  //=*******
+	
+	
+	if(flag_id==0){   //when flag_id=0  This is ADD Sche OR change Device
+			
+		HiddenObject("dis_show_client_list");	
+			
+		
+		if(climac!=""){
+		/*	for(var i in station_info.stations)
+			{
+				if(cliname == station_info.stations[i].station_name	)
+					climac = station_info.stations[i].station_mac;				
+			}	*/
+		f.clientlist.value=climac;
+		document.getElementById("Client_mac").innerHTML=climac;
+		}
+		else{	
+			if(station_info.stations.length>0)			
+				document.getElementById("Client_mac").innerHTML=station_info.stations[0].station_mac		
+			else{
+				alert(getLangM(280));
+				returnAccessControl();
+				}
+			}
+	
+		//check  week day
+		/*for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var total_1 = tmp_arry[0];//name
+			if(total_1==f.clientlist.value)
+			{
+				var tmp_day=tmp_arry[6];			
+				if(tmp_day[0]==1)
+					DisableObject("Sun_id");
+				if(tmp_day[1]==1)
+					DisableObject("Sta_id");
+				if(tmp_day[2]==1)
+					DisableObject("Fri_id");
+				if(tmp_day[3]==1)
+					DisableObject("Thu_id");
+				if(tmp_day[4]==1)
+					DisableObject("Wen_id");
+				if(tmp_day[5]==1)
+					DisableObject("Tus_id");
+				if(tmp_day[6]==1)
+					DisableObject("Mon_id");					
+			}	
+		}	
+	*/
+	}
+	else{
+		HiddenObject("show_client_list");
+	
+	
+		//check flag_id by config_id
+		for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+			if(flag_id==tmp_arry[10])
+			{
+				var device_name=tmp_arry[0];
+				var device_mac=tmp_arry[1];		
+				var pid=tmp_arry[2];					
+				var config_day =tmp_arry[6];
+				var config_st=tmp_arry[7];
+				var config_et=tmp_arry[8];
+				break;			
+			}	
+		}		
+
+
+			//Default name
+
+			for(var i in station_info.stations)
+			{
+			
+			
+				if(device_mac==station_info.stations[i].station_mac){
+					var alias_name=station_info.stations[i].alias_name;
+					if(alias_name)
+						device_name=alias_name;
+						break;
+					}
+			}
+			
+			document.getElementById("Client_name").innerHTML=device_name;
+		
+			//Default MAC
+			document.getElementById("Client_mac").innerHTML=device_mac;
+			
+			
+			//Defalut config day
+			if(config_day[0]==1)
+				document.getElementById("Sun_id").checked=true;
+			if(config_day[1]==1)
+				document.getElementById("Sta_id").checked=true;
+			if(config_day[2]==1)
+				document.getElementById("Fri_id").checked=true;
+			if(config_day[3]==1)
+				document.getElementById("Thu_id").checked=true;
+			if(config_day[4]==1)
+				document.getElementById("Wen_id").checked=true;
+			if(config_day[5]==1)
+				document.getElementById("Tus_id").checked=true;
+			if(config_day[6]==1)
+				document.getElementById("Mon_id").checked=true;
+				
+			//Default Time
+			var config_st_h=(config_st-config_st%3600)/3600;
+			var config_st_m=(config_st%3600)/60;
+
+			document.getElementById("starttime_h").selectedIndex=config_st_h;	
+			document.getElementById("starttime_m").selectedIndex=config_st_m/5;		
+			
+			
+			var config_et_h=(config_et-config_et%3600)/3600;
+			
+			
+			if(config_et_h<24){			
+				var config_et_m=(config_et%3600)/60;
+			}
+			else{
+				var config_et_m=0;
+			}
+			document.getElementById("endtime_h").selectedIndex=config_et_h;	
+			document.getElementById("endtime_m").selectedIndex=config_et_m/5;	
+			
+			check_endtime_select();
+			
+			//Disable Other Day 
+		/*	for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+
+				var tmp = status_profile_all_info_arry[i];
+				var tmp_arry = tmp.split('@');
+					if((device_name==tmp_arry[0])&&(flag_id!=tmp_arry[10]))
+					{
+						var tmp_day=tmp_arry[6];			
+						if(tmp_day[0]==1)
+							DisableObject("Sun_id");
+						if(tmp_day[1]==1)
+							DisableObject("Sta_id");
+						if(tmp_day[2]==1)
+							DisableObject("Fri_id");
+						if(tmp_day[3]==1)
+							DisableObject("Thu_id");
+						if(tmp_day[4]==1)
+							DisableObject("Wen_id");
+						if(tmp_day[5]==1)
+							DisableObject("Tus_id");
+						if(tmp_day[6]==1)
+							DisableObject("Mon_id");										
+					}	
+				}		
+		*/
+	}	
+}
+function schedule_save(){
+	var f=document.tF0;
+	var pid;
+	
+	for(var i in station_info.stations)
+	{
+		if(flag_id==0){
+			if(f.clientlist.value ==station_info.stations[i].station_mac){
+				if(station_info.stations[i].pid!="NULL")
+					pid=station_info.stations[i].pid;
+				break;
+			}	
+		}
+		else {		
+			if(document.getElementById("Client_mac").innerHTML ==station_info.stations[i].station_mac){
+				if(station_info.stations[i].pid!="NULL")
+					pid=station_info.stations[i].pid;
+				break;
+			}					
+		}		
+	}
+	
+	
+	if(pid==null)
+	pid=Math.floor(Math.random()*10000000);
+	
+	//when edit
+	if(flag_id==0){
+	add_sche(pid);
+	add_sche_pid(pid);
+	}
+	else{
+	add_sche(pid);
+	}
+}
+
+function add_sche(pid){
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	var act="0";
+		
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+	
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var total_1 = tmp_arry[1];//mac	
+		if(total_1==f.clientlist.value){
+		var act="1";
+			}
+	}
+	
+	var climac=f.clientlist.value;
+	for(var i in station_info.stations){
+		if(climac ==station_info.stations[i].station_mac){
+			cliname=station_info.stations[i].station_name;
+			break;
+		}	
+	}
+
+	var config_act="0";
+	
+	var config_id=20000;
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+	
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		if(config_id<tmp_arry[10])
+			var config_id = tmp_arry[10];
+		
+	}					
+	config_id=parseInt(config_id)+1;		
+		
+	var config_enable=1;
+				
+	var config_type=6;
+	
+	//when edit
+	if(flag_id!=0){
+	act="1";
+	config_act="1";
+	config_id=flag_id;
+	cliname=document.getElementById("Client_name").innerHTML;
+	}
+
+	if((f.Mon_id.checked==false)&&(f.Tus_id.checked==false)&&(f.Wen_id.checked==false)&&(f.Thu_id.checked==false)&&(f.Fri_id.checked==false)&&(f.Sta_id.checked==false)&&(f.Sun_id.checked==false))
+	{
+		alert(getLangM(275));
+		return false;
+	}
+	var config_day=f.Mon_id.checked*1+f.Tus_id.checked*10+f.Wen_id.checked*100+f.Thu_id.checked*1000+f.Fri_id.checked*10000+f.Sta_id.checked*100000+f.Sun_id.checked*1000000;
+	config_day=""+config_day;	
+	for(;config_day.length<7;){
+	config_day="0"+config_day;
+	}
+		
+	var config_st=document.getElementById("starttime_h").value*3600+document.getElementById("starttime_m").value*60;
+	if(document.getElementById("endtime_h").value<24)
+		var config_et=document.getElementById("endtime_h").value*3600+document.getElementById("endtime_m").value*60;
+	else
+		var config_et=document.getElementById("endtime_h").value*3600;
+
+	if(config_st>=config_et){
+	alert(getLangM(260));
+	return ;
+	}
+		
+
+	if(!checkSaveTime(config_day,config_st,config_et,config_id)){
+
+	alert(getLangM(283));
+	return ;
+
+	}
+	if(flag_id==0){//add 
+		if(!checkSaveNumber(climac)){
+			alert(getLangM(286));
+			return false;
+
+		}
+	}
+		
+	var config_note="NULL";
+		
+	var data_tmp= act+'?$[+'+pid+'?$[+'+cliname+'?$[+'+config_act+'?$[+'+config_id+'?$[+'+config_enable+'?$[+'+config_type+'?$[+'+config_day+'?$[+'+config_st+'?$[+'+config_et+'?$[+'+config_note;
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_access_control.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncaccesscontrol",
+	      		data:data_tmp
+		  }
+	})
+	.done(function( data ){
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+			
+			return subForm({
+							 frm:f,
+							 next: 'access_control.htm',
+							 uploadtype: 0, 
+						     wait: 3 
+						  });
+			
+			
+			//alert("syncledconfig msg send okay.");	
+			
+			//return true;
+		}else{
+			alert("syncaccesscontrol msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+
+function add_sche_pid(pid){
+
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	
+	
+	for(var i in station_info.stations)
+	{
+	
+		if(f.clientlist.value ==station_info.stations[i].station_mac){
+		var parent_id=station_info.stations[i].parent_id;
+		var cliname=station_info.stations[i].station_name;
+		var alias_name=station_info.stations[i].alias_name;
+		break;
+		}					
+	}
+		
+	var data_tmp= parent_id+'?$[+'+f.clientlist.value+'?$[+'+alias_name+'?$[+'+pid;
+
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_status_station.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncclientdevicename",
+	      		data:data_tmp
+		  }
+	})
+	.done(function( data ){
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+			
+			return true;
+			
+			
+			//return true;
+		}else{
+			alert("syncclientdevicename msg send error.");			
+			return false;		
+		}
+	});	
+}
+
+function checkSaveTime( config_day, config_st, config_et,config_id){
+
+		for(var day=0;day<7;day++){
+				for(var i = 0 ; i < status_profile_all_info_arry.length; i++){
+
+					var tmp = status_profile_all_info_arry[i];
+					var tmp_arry = tmp.split('@');
+					
+						if((document.getElementById("Client_mac").innerHTML==tmp_arry[1])&&(config_id!=tmp_arry[10]))
+						{
+							var tmp_day=tmp_arry[6];			
+							if((tmp_day[day]==1)&&(config_day[day]==1)){
+								if((config_et<=tmp_arry[7])||(config_st>=tmp_arry[8]))
+									continue;
+								else
+									return false;
+								}
+							
+						}	
+					}	
+		}
+	return true;
+}
+
+function checkSaveNumber(climac){
+	var number=0;
+	for(var i=0;i<status_profile_all_info_arry.length;i++){
+		
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		
+		if(climac==tmp_arry[1])
+			number++;
+
+	}
+	if(number>=10)
+		return false;
+	else
+		return true;
+}	
+
+//*******************show access control ****************************//
+function transfer_secs_to_special_format(secs)
+{
+	var hour = parseInt(secs/3600);
+	var minute = parseInt(secs/60)%60;		
+	var sec = secs%60;	
+
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	if(sec<10)
+		sec="0"+sec;	
+	
+	var last_time;
+	last_time=hour+":"+minute;
+
+
+	return last_time;
+}
+
+var access_conrtrol_info_arry = new Array();
+function check_access_conrtrol_info()
+{
+
+/*status_profile_all_info_arry
+//  name              mac           pid   connect_type    enable     type     day      st   et  id
+//"pseudo0   @ AA:BB:CC:00:00:00  @  group0001  @  Ether       @   1     @   2   @ 1000000  @  1800  @  3600"
+*/
+
+	for(var i = 0 ; i < status_profile_all_info_arry.length; i++)
+	{
+		var tmp = status_profile_all_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		var total_1 = tmp_arry[0];//name
+		var total_2 = tmp_arry[1];//mac
+		var total_3 = tmp_arry[4];//active Status
+
+		if(flag_id==tmp_arry[10])//when edit continue 
+			continue;
+			
+		if(total_3 == "1")
+		{
+			total_3 = getLangM(261);
+		}
+		else
+		{
+			total_3 = getLangM(262);
+		}
+
+		var total_4_1 = tmp_arry[5];//Type
+		var total_4_2 = tmp_arry[9];//note
+		var total_4;
+	/*	if(total_4_1 == "0")
+		{
+			total_4 = "Block";
+		}
+		else if(total_4_1 == "1")
+		{
+			total_4 = "Timed";
+		}
+		else if(total_4_1 == "6")
+		{
+			if(total_4_2 == "NULL")
+				total_4 = getLangM(271);
+			else
+				total_4 = getLangM(271) + ' - ' + total_4_2;
+		}
+		else
+		{
+			total_4 = "Pause immediately";
+		}
+		*/
+		total_4 = "Timed";
+
+		
+		
+		var total_5_1 = tmp_arry[6];//day
+		var day_string = "";
+
+		if(total_5_1.charAt(0) == '1')
+		{
+			day_string += getLangM(269);
+		}
+		if(total_5_1.charAt(6) == '1')
+		{
+			day_string += getLangM(263);
+		}		
+		if(total_5_1.charAt(5) == '1')
+		{
+			day_string += getLangM(264);
+		}	
+		if(total_5_1.charAt(4) == '1')
+		{
+			day_string += getLangM(265);
+		}		
+		if(total_5_1.charAt(3) == '1')
+		{
+			day_string += getLangM(266);
+		}		
+		if(total_5_1.charAt(2) == '1')
+		{
+			day_string += getLangM(267);
+		}				
+		if(total_5_1.charAt(1) == '1')
+		{
+			day_string += getLangM(268);
+		}
+
+		if(total_5_1 == "1111111")
+			day_string = getLangM(270);
+		
+		if(day_string == "")
+		{
+			total_5_1 = "Null value"
+		}
+		else
+		{
+			total_5_1 = day_string;	
+		}
+
+		
+		var total_5_2 = parseInt(tmp_arry[7]);//stime
+		var total_5_3 = parseInt(tmp_arry[8]);//etime
+		var st = transfer_secs_to_special_format(total_5_2);
+		var et = transfer_secs_to_special_format(total_5_3);
+		var s_et = st + '-' + et;
+		
+		var	total_5 ;
+	//	if(total_4_1 == "1")
+	//		total_5 = getLangM(272) + et;
+	//	else if(total_4_1 == "6")
+			total_5 = total_5_1 + ', ' + s_et;
+	//	else
+	//		total_5 = '-';
+		
+		var	total_6 = tmp_arry[3];//connect_type
+
+		var total = total_1 + '@' +
+					total_2 + '@' +
+					total_3 + '@' +
+					total_4 + '@' +					
+					total_5 + '@' +					
+					total_6; 
+		access_conrtrol_info_arry.push(total);
+
+
+	}
+
+}
+
+
+function show_access_control_table()
+{
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,cpic;
+	var pic;
+	
+	for(var i = 0; i < access_conrtrol_info_arry.length; i++)
+	{
+
+		var f=document.tF0;
+		re_rowcnt=0;
+
+		//pseudo0@AA:BB:CC:00:00:00@Active@Pause repeatedly@1000000/0:30 - 0:0@Ether
+		var tmp = access_conrtrol_info_arry[i];
+		var tmp_arry = tmp.split('@');
+		
+	
+		c1=tmp_arry[0];//Name
+		c2=tmp_arry[1];//MAC Address
+
+		if(c2!=document.getElementById("Client_mac").innerHTML)
+			continue;
+		
+		c3=tmp_arry[2];
+		//c4=tmp_arry[3];
+		c5=tmp_arry[4];
+		//cpic=tmp_arry[5];
+		/*
+		if(cpic == "2.4G")
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else if(cpic == "5G")
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else
+		{
+			pic = "<img src='images/ethernet.png' style='height:24px;width:22px;'>";
+		}
+		*/
+
+		
+		pic="";
+		RowCell=[[1,pic],[1,c1],[1,c2],[1,c3],[1,c5],[null,null]];
+		re_rowcnt+=Table_add_row("tb_station_info",[[8,re_rowcnt,1],RowCell]);			
+	   //RowCell=[[1,c1],[1,c2],[1,c3],[1,c4],[1,c5],[null,null]];
+
+		
+	}
+	return 0;
+}
+
+function write_access_control_table()
+{
+	for(var i=0; i<1; i++ )
+	{		
+		$("#tb_all_device").append("\
+		<tr>\
+			<td colspan=\"2\" valign=\"top\">\
+				<table class=\"vox20_tablec\" width=80% cellspacing=1 cellpadding=5 border=0 id=\"tb_station_info\">\
+					<tr>\
+						<td width=5% nowrap ><font class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"202\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"203\" class=btFontBold2></font></td>\
+						<td width=15% nowrap ><font id=\"239\" class=btFontBold2></font></td>\
+						<td width=25% nowrap ><font id=\"241\" class=btFontBold2></font></td>\
+					</tr>\
+				</table>\
+			</td>\
+		</tr>");
+	}	
+}
+
+
+//****************************show access control*************************// 
+
+
+function returnAccessControl(){
+
+window.location.href="./access_control.htm";
+
+}
+
+
+
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;		
+
+	HiddenObject("endtime_m_00");
+	
+	document.getElementById("endtime_h").selectedIndex=0;
+	document.getElementById("endtime_m").selectedIndex=0;
+	document.getElementById("starttime_h").selectedIndex=0;
+	document.getElementById("starttime_m").selectedIndex=0;
+	check_profile_info();
+	AddOptClientList();
+	
+	checkClientNameAndSetDefault();
+
+	 write_access_control_table();
+	 check_access_conrtrol_info();
+	 show_access_control_table();
+
+	ShowMenu();
+}
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<!-- Page left-->
+
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	<tr>
+		<td class="normalTextRight"><font class="arcFont2" id="251"></font></td>
+		
+		<td id="show_client_list" class="tdTextBt_20" colspan="2">
+			<select name="clientlist"  size="1" onChange="reloadWebByName()">
+			</select>
+		</td>	
+		<td id="dis_show_client_list" class="tdTextBt_20" colspan="2">
+			<font class="arcFont2" id="Client_name" ></font>
+			</select>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="normalTextRight"><font class="arcFont2" id="252" ></font></td>
+	
+		<td class="tdTextBt_20" colspan="2" >
+			<font class="arcFont2" id="Client_mac" ></font>
+		</td>
+	</tr>
+	
+	<!--<tr>
+		<td class="normalTextRight" ><font class="arcFont2" >Enable:</font></td>
+	
+		<td class="tdTextBt_20" colspan="2" >	
+			<input type="checkbox" name="sch_enable"  id="sch_enable" value="0" onClick="">
+		</td>
+	</tr>
+		-->
+	
+</table>
+
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	<tr  id="weekday">
+		<td class="normalTextRight" ><font class="arcFont2" id="253" ></font></td>	
+		<td class="tdTextBt_20" colspan="2" >	
+			<font class="arcFont2" id="263"></font>
+			<input type="checkbox" name="schedule"  id="Mon_id" value="0" onClick="">
+				
+			<font class="arcFont2" id="264"></font>
+			<input type="checkbox" name="schedule"  id="Tus_id" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="265"></font>
+			<input type="checkbox" name="schedule"  id="Wen_id" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="266"></font>
+			<input type="checkbox" name="schedule"  id="Thu_id" value="0" onClick="">
+
+		
+			<font class="arcFont2" id="267"></font>
+			<input type="checkbox" name="schedule"  id="Fri_id" value="0" onClick="">
+
+	
+			<font class="arcFont2" id="268"></font>
+			<input type="checkbox" name="schedule"  id="Sta_id" value="0" onClick="">		
+		
+			<font class="arcFont2" id="269"></font>
+			<input type="checkbox" name="schedule"  id="Sun_id" value="0" onClick="">
+		</td>
+	
+	</tr>
+</table>
+<table width="98%" border="0" cellspacing="3" cellpadding="5">
+	
+	<tr>
+		<td class="normalTextRight" ><font class="arcFont2" id="254"></font></td><!--schedule_id-->
+	
+		<td class="tdTextBt_20" colspan="2">
+			<select name="starttime_h" id="starttime_h"  size="5" >
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+			</select>	
+			<font class="arcFont2" >:</font>			
+			<select name="starttime_m"  id="starttime_m" size="2" "> 
+				<option value="00">00</option>
+				<option value="05">05</option>
+				<option value="10">10</option>
+				<option value="15">15</option>
+				<option value="20">20</option>
+				<option value="25">25</option>
+				<option value="30">30</option>
+				<option value="35">35</option>
+				<option value="40">40</option>
+				<option value="45">45</option>
+				<option value="50">50</option>
+				<option value="55">55</option>
+
+			</select>
+		</td>				
+	</tr>			
+	<tr>
+		<td class="normalTextRight" ><font class="arcFont2" id="255"></font></td><!--schedule_id-->	
+		<td class="tdTextBt_20" colspan="2">
+			<select name="endtime_h" id="endtime_h" size="5" value="0" onchange="check_endtime_select()">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+				<option value="24">24</option>
+			</select>	
+			<font class="arcFont2" >:</font>	
+			<span id="endtime_m_normal">
+				<select name="endtime_m"  id="endtime_m" size="2" "> 
+					<option value="00">00</option>
+					<option value="05">05</option>
+					<option value="10">10</option>
+					<option value="15">15</option>
+					<option value="20">20</option>
+					<option value="25">25</option>
+					<option value="30">30</option>
+					<option value="35">35</option>
+					<option value="40">40</option>
+					<option value="45">45</option>
+					<option value="50">50</option>
+					<option value="55">55</option>
+				</select>
+			</span>
+			
+			<span id="endtime_m_00">
+				<select name="endtime_m"  id="endtime_m_00" size="2" "> 
+					<option value="00">00</option>
+				</select>
+			</span>
+			
+		</td>				
+	</tr>	
+</table>	
+
+	
+
+
+</form>
+
+<form>
+<br>
+<table width="98%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td align="center">
+			<input type="button" class="green" onClick="schedule_save()" name="" id="100001">&nbsp;
+			<input type="button" class="green" onClick="returnAccessControl()" id="259" >&nbsp;
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="10" align="center" id="tb_all_device">
+</table>
+
+</form>
+
+
+
+
+
+
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

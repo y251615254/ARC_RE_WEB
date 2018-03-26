@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title>Help</title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<link rel="shortcut icon" href="images/logoico.png" type="image/x-icon">
+<script language="javascript">var G_top=-2;var LangJ=["menulist", "lan_main", "dns","wifi_id","status","tl_sys","help"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+
+<style>
+body {
+	margin: 0px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	font-family: arial;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.background_body {
+	margin: 0;
+	padding: 0;
+	background: #D0D0D0;
+	/*background-image: url(./images/background.jpg);*/
+	background-repeat: repeat;
+}
+
+.table_yj{
+	border-radius:5px;
+	overflow:hidden;
+}
+
+/*Section titles must be A1 font 2, bold*/
+.topic{
+	color:#666666; 
+	font-size: 12pt; 
+	font-family: Calibri, Helvetica; 
+	font-weight: bold;
+}
+.up{
+	font-weight: normal;
+	color: #6464c3;
+}
+.up_noraml{
+	color:#429500;  /*#009957*/	 	 
+	font-size: 10pt;
+	margin-left:50px; 
+	font-family: Calibri, Helvetica; 
+}
+.up_title{
+	color:#429500; 
+	font-size: 12pt; 
+	font-family: Calibri, Helvetica; 
+	font-weight: bold;
+}
+
+.help_body {
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 13px;
+	width: 75%;
+	min-width: 640px !important;
+	line-height: 15px;
+	color: #036;
+	border-radius:30px;
+	overflow:hidden;
+	background: #FFFFFF
+}
+
+.backtop{
+	display:block;
+	width:32px;
+	height:43px;
+	/*color: #FFFFFF;
+	font-size: 18px;
+	line-height: 50px;
+	text-align: center;
+	background: #F96;*/
+	cursor: pointer;
+	position:fixed;
+	right:30px;
+	bottom:20px;
+	background-image:url(images/backtop3243.png);
+}
+
+
+.topic_2 {
+	font-weight: bold;
+	color: blue;
+	margin-left:50px; 
+}
+
+</style>
+
+<script language="javascript">
+
+
+//For IE 10.11 Help content location problem  start add by leo
+var IEVersion;
+function check_browser_version() {
+    var Sys = {};
+    var ua = navigator.userAgent.toLowerCase();
+    var s;
+    (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? Sys.ie = s[1] :
+    (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+    (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+    (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+    (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+    (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+    
+    if (Sys.ie)
+	{
+		//document.write('IE: ' + Sys.ie);
+		IEVersion =parseInt(Sys.ie);
+		//alert(IEVersion);
+	}
+	else
+	{
+		IEVersion = -1; //-1 is not ie browser
+	}
+	
+/*	
+    if (Sys.firefox) 
+	{
+		//document.write('Firefox: ' + Sys.firefox);
+    }
+    if (Sys.chrome) 
+	{
+		//document.write('Chrome: ' + Sys.chrome);
+	}
+    if (Sys.opera) 
+	{
+		//document.write('Opera: ' + Sys.opera);
+	}
+    if (Sys.safari) 
+	{
+		//document.write('Safari: ' + Sys.safari);
+	}
+*/
+	return IEVersion;
+}
+
+
+/*
+this function just set help page content location for ie10,11. 
+it only works in browser IE 10,11  
+*/
+function set_help_idForIE1011() {
+	//var tmp = checkIEVersion(); 
+	var tmp = check_browser_version(); 
+	//alert(tmp);
+	if(tmp >= 10)
+	{
+		var url = window.location.toString();
+		//alert(url);
+		var id = url.split("#")[1];
+		//alert(id);
+		if (id) 
+		{
+		    var t = $("#" + id).offset().top;
+		    $(window).scrollTop(t);
+    	}
+	}
+}
+//For IE 10.11 Help content location problem  end 
+
+
+function init(){
+	ShowMenu();
+	set_help_idForIE1011();//add by leo
+}
+</script>
+
+
+</head>
+<body class="background_body" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="init()">
+<a name='TOP'></a>
+<div>
+	<iframe name="topFrame" src="setup_top_help.htm" target="leftFrame" scrolling="no" noresize="" frameborder="0" border="0" marginwidth="0" marginheigh="0" align="top" hspace="0" vspace="0" cellspacing="0" style="border:none" width="100%" height="50"></iframe>
+</div>
+<br>
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<!-- Page left-->	
+	
+	<!-- help body-->
+	<table class="help_body" height="100%" align="center" cellspacing="10" cellpadding="0" width="60%" border="0" ID="Table3">
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="arcFont4" width="100%">
+				<font class="arcFont4" id="help115"></font><!--Help--><br><br>
+			</td>
+			<td width="10">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help" width="100%"><a name='Status_Menu'></a>
+				<a href="#StatusID"> <font class="up_title" id="help2"></font></a><br><!--1 Status-->
+				<a href="#MyDevicesID"> <font class="up_noraml" id="help3"></font></a><br><br><!--My Devices-->
+				<a href="#WirelessSettingsID"> <font class="up_title" id="help4"></font></a><br><!--1 Settings-->
+				<a href="#NetworkNameSSIDID"> <font class="up_noraml" id="help5"></font></a><br><!--Wireless-->
+				<!--<a href="#NetworkID"> <font class="up_noraml" id="help6"></font></a><br><!--Network-->
+				<a href="#LEDID"> <font class="up_noraml" id="help7"></font></a><br><!--LED-->
+				<!--<a href="#PauseInternetID"> <font class="up_noraml" id="help8"></font></a><br><br><!--PauseInternet-->
+				<a href="#SystemID"> <font class="up_title" id="help9"></font></a><br><!--1 System-->
+				<a href="#InformationID"> <font class="up_noraml" id="help10"></font></a><br><!--Information-->
+				<a href="#AdminPasswordID"> <font class="up_noraml" id="help11"></font></a><br><!--Admin Password-->
+				<a href="#FirmwareUpdateID"> <font class="up_noraml" id="help12"></font></a><br><!--Firmware Update-->
+				<a href="#ResetID"> <font class="up_noraml" id="help13"></font></a><br><!--Reset-->
+				<a href="#SystemLogID"> <font class="up_noraml" id="help14"></font></a><br><!--System Log-->	
+			</td>
+		</tr>
+		
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help" width="100%"><a name='StatusID' id="StatusID"></a><br>
+			<hr><br>
+				<a name='Status'></a>
+				<font class="topic" id="help2"></font></b><br><br><!--Status-->
+				<font id="help16"  class="arcFont3"></font><br>
+				<font id="help17"  class="arcFont3"></font><br><br>
+					<table align="center" cellspacing="0" cellpadding="0" width="80%" border="1">
+						<tr>
+							<th width="20%"><font id="help18" class="arcFont3"></font></th>
+							<th width="30%"><font id="help22" class="arcFont3"></font></th>
+							<th width="50%"><font id="help26" class="arcFont3"></font></th>
+						</tr>
+						<tr>
+							<td align="left" height="50px"><font id="help19" class="arcFont3"></font></td>
+							<td align="left"><font id="help23" class="arcFont3"></font></td>
+							<td align="left"><font id="help27" class="arcFont3"></font></td>
+						</tr>
+						<tr>
+							<td align="left" height="50px"><font id="help20" class="arcFont3"></font></td>
+							<td align="left"><font id="help24" class="arcFont3"></font></td>
+							<td align="left"><font id="help28" class="arcFont3"></td>
+						</tr>
+						<tr>
+							<td align="left" height="100px"><font id="help21" class="arcFont3"></font></td>
+							<td align="left"><font id="help25" class="arcFont3"></font></td>
+							<td align="left"><font id="help30" class="arcFont3"></font><font id="help31" class="arcFont3"></font>
+											 <font id="help32" class="arcFont3"></font><font id="help33" class="arcFont3"></font></td>
+						</tr>
+					</table>
+					
+				<br><font id="help34"  class="arcFont3"></font><br>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='MyDevicesID' id="MyDevicesID"></a>
+				<font class="topic" id="help35"  class="arcFont3"></font><br><br>
+				<font id="help36"  class="arcFont3"></font><br>
+				<font id="help37"  class="arcFont3"></font><br>
+				<font id="help38" class="arcFont3"></font><br>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"   width="100%"><a name='WirelessSettingsID' id="WirelessSettingsID"></a>
+				<font class="topic" id="help39" class="arcFont3"></font><br><br>
+				<font class="topic" id="help40" class="arcFont3"></font><br><br>
+				<font id="help41" class="arcFont3"></font>
+				<font id="help42" class="arcFont3"></font>
+				<font id="help43" class="arcFont3"></font>
+				<font id="help44" class="arcFont3"></font>
+				<font id="help45" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='' id=""></a>
+				<font class="topic" id="help117" class="arcFont3"></font><br><br>
+				<font id="help118" class="arcFont3"></font><br><br>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='NetworkNameSSIDID' id="NetworkNameSSIDID"></a>
+				<font class="topic" id="help46" class="arcFont3"></font><br><br>
+				<font id="help47" class="arcFont3"></font>
+				<font id="help48" class="arcFont3"></font>
+				<font id="help49" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		
+		<!-- Advice for choosing a Wireless network/SSID-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='WirelessNetworkSSIDID' id="WirelessNetworkSSIDID"></a>
+				<font class="topic" id="help50" class="arcFont3"></font><br><br>
+				<font id="help51" class="arcFont3"></font><br>
+				<font id="help52" class="arcFont3"></font><br>
+				<font id="help53" class="arcFont3"></font><br>
+			</td>
+		</tr>
+		
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!-- Visibility-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='VisibilityID' id="VisibilityID"></a>
+				<font class="topic" id="help56" class="arcFont3"></font><br><br>
+				<font id="help57" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!-- Security Mode-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='SecurityModeID' id="SecurityModeID"></a>
+				<font class="topic" id="help58" class="arcFont3"></font><br><br>
+				<font class="arcFont3" id="help59" class="arcFont3"></font><br>
+				<font id="help60" class="arcFont3"></font><br>
+				<font id="help61" class="arcFont3"></font><br>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+
+		<!--Security Key-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='SecurityKeyID' id="SecurityKeyID"></a>
+				<font class="topic" id="help62" class="arcFont3"></font><br><br>
+				<font id="help63" class="arcFont3"></font><br>
+				<font id="help64" class="arcFont3"></font><br>
+				<font id="help65" class="arcFont3"></font><br>
+				<font id="help66" class="arcFont3"></font><br>
+				<font id="help67" class="arcFont3"></font><br>
+				<font id="help68" class="arcFont3"></font><br>
+				<font id="help69" class="arcFont3"></font><br>
+				<font id="help70" class="arcFont3"></font><br>
+				<font id="help71" class="arcFont3"></font><br>
+
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='ChannelID' id="ChannelID"></a>
+				<font class="topic" id="help72" class="arcFont3"></font><br><br>
+				<font id="help73" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%">
+				<a name='WPSID' id="WPSID"></a>
+				<font class="topic" id="help74" class="arcFont3"></font><br><br>
+				<font id="help75" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+<!--		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='LEDID' id="LEDID"></a>
+				<font class="topic" id="help79"></font><br><br>
+				<font id="help80" class="arcFont3"></font><br>
+				<font id="help81" class="arcFont3"></font><br>
+			</td>
+		</tr>
+
+	<!--	<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='PauseInternetID' id="PauseInternetID"></a>
+				<font class="topic" id="help82" class="arcFont3"></font><br><br>
+				<font id="help83" class="arcFont3"></font>
+			</td>
+		</tr>
+		-->
+		<tr>
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!--System_Information-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%">
+				<a name='SystemID' id="SystemID"></a>
+				<a name='InformationID' id="InformationID"></a>
+				<font class="topic" id="help84" class="arcFont3"></font><br><br>
+				<font class="topic" id="help85" class="arcFont3"></font><br><br>
+				<font id="help86" class="arcFont3"></font>
+				<font id="help87" class="arcFont3"></font>
+			</td>
+		</tr>
+
+		<tr id="">
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!--Admin Password-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='AdminPasswordID' id="AdminPasswordID"></a>
+				<font class="topic"  id="help88"></font><br><br>
+				<font id="help89" class="arcFont3"></font><br>
+				<font id="help91" class="arcFont3"></font><br>
+				<font id="help92" class="arcFont3"></font><br>
+				<font id="help93" class="arcFont3"></font><br><br>
+				<font id="help94" class="arcFont3"></font><br>
+				<font id="help95" class="arcFont3" style="margin-left:20px;"></font><br>
+				<font id="help96" class="arcFont3" style="margin-left:20px;"></font><br>
+				<font id="help97" class="arcFont3" style="margin-left:20px;"></font><br>
+				<font id="help98" class="arcFont3" style="margin-left:20px;"></font><br>
+				<font id="help99" class="arcFont3" style="margin-left:20px;"></font><br><br>
+				<font id="help100" class="arcFont3"></font><br>
+				<font id="help101" class="arcFont3"></font><br><br>
+			</td>
+		</tr>
+		
+		<tr id="">
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!--Firmware Update-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='FirmwareUpdateID' id="FirmwareUpdateID"></a>
+				<font class="topic" id="help102"></font><br><br>
+				<font id="help103" class="arcFont3"></font>
+				<font id="help104" class="arcFont3"></font><br>
+			</td>
+		</tr>
+		
+		<tr id="">
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!--Reset-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='ResetID' id="ResetID"></a>
+				<font class="topic" id="help109"></font><br><br>
+				<font id="help110" class="arcFont3"></font><br>
+				<font id="help111" class="arcFont3"></font><br>
+			</td>
+		</tr>
+		
+		<tr id="">
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+		
+		<!--System Log-->
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help"  width="100%"><a name='SystemLogID' id="SystemLogID"></a>
+				<font class="topic" id="help112"></font><br><br>
+				<font id="help113" class="arcFont3"></font><br>
+				<font id="help114" class="arcFont3"></font><br>
+			</td>
+		</tr>
+
+				
+		<tr id="">
+			<td width="10" colspan ="2">&nbsp;</td>
+		</tr>
+
+		<tr>
+			<td width="10">&nbsp;</td>
+			<td class="help" width="100%"><a href="#TOP"> <font class="up" id="hlp283"></font></a></td>
+		</tr>
+		<tr>
+			<td width="10" height="350" colspan ="2">&nbsp;</td>
+		</tr>
+	</table>
+	<!-- help body end-->
+
+<span class="backtop"></span>
+<script language="javascript">
+$(function()
+{
+	$(window).scroll(function(){
+		//var scrollt= document.documentElement.scrollTop + document.body.scrollTop;
+		if($("body").scrollTop() > 384){
+		$(".backtop").fadeIn(400);			//µ­³ö
+		}
+		else{
+		$(".backtop").stop().fadeOut(400);	 //µ­Èë
+		}
+	});
+	$(".backtop").on("click",function()
+								{
+									$("html,body").animate({scrollTop:0},500);
+								});
+});
+</script>
+
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+

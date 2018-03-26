@@ -1,0 +1,81 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<script language="javascript">
+/*REAL
+			//var _httoken = <% httoken_output_xxx(); %>; //for debug
+			var httoken_info = "<% httoken_list_output(); %>";
+REAL*/
+/*DEMO*/
+httoken_info="time=50308<br>timeout_sec=600<br>token table(count=47):<br>1,261741269,828221840,50285,0x00000000,/cgi/cgi_init.js<br>2,1443178488,828221840,107(timeout),0x00000000,/cgi/cgi_init.js<br>3,1399665068,828221840,135(timeout),0x00000000,/cgi/cgi_init.js<br>4,1210999375,828221840,128(timeout),0x00000000,/cgi/cgi_init.js<br>5,917824600,828221840,116(timeout),0x00000000,/cgi/cgi_init.js<br>6,1712422093,828221840,101(timeout),0x00000000,/cgi/cgi_init.js<br>7,1990154476,828221840,98(timeout),0x00000000,/cgi/cgi_init.js<br>8,1973050623,828221840,98(timeout),0x00000000,/cgi/cgi_init.js<br>9,1375497972,828221840,151(timeout),0x00000000,/cgi/cgi_init.js<br>10,691591083,828221840,102(timeout),0x00000000,/cgi/cgi_init.js<br>11,207398240,828221840,146(timeout),0x00000000,/cgi/cgi_init.js<br>12,824929548,828221840,122(timeout),0x00000000,/cgi/cgi_init.js<br>13,2046863572,828221840,119(timeout),0x00000000,/cgi/cgi_init.js<br>14,1579341727,828221840,110(timeout),0x00000000,/cgi/cgi_init.js<br>15,119239267,828221840,110(timeout),0x00000000,/cgi/cgi_init.js<br>16,522772806,828221840,105(timeout),0x00000000,/cgi/cgi_init.js<br>17,2124171379,828221840,91(timeout),0x00000000,/cgi/cgi_init.js<br>18,1726783902,828221840,134(timeout),0x00000000,/cgi/cgi_init.js<br>19,925797554,828221840,120(timeout),0x00000000,/cgi/cgi_init.js<br>20,61415163,828221840,103(timeout),0x00000000,/cgi/cgi_init.js<br>21,366200055,828221840,141(timeout),0x00000000,/cgi/cgi_init.js<br>22,324983130,828221840,117(timeout),0x00000000,/cgi/cgi_init.js<br>23,558521650,828221840,113(timeout),0x00000000,/cgi/cgi_init.js<br>24,155151703,828221840,50277,0x00000000,/cgi/cgi_init.js<br>25,2017444209,828221840,50277,0x00000000,/cgi/cgi_init.js<br>26,1651223409,828221840,150(timeout),0x00000000,/cgi/cgi_init.js<br>27,433830325,828221840,124(timeout),0x00000000,/cgi/cgi_init.js<br>28,343238583,828221840,123(timeout),0x00000000,/cgi/cgi_init.js<br>29,1433754345,828221840,119(timeout),0x00000000,/cgi/cgi_init.js<br>30,1135708509,828221840,117(timeout),0x00000000,/cgi/cgi_init.js<br>31,321443767,828221840,114(timeout),0x00000000,/cgi/cgi_init.js<br>32,886457229,828221840,108(timeout),0x00000000,/cgi/cgi_init.js<br>33,71214155,828221840,50284,0x00000000,/cgi/cgi_init.js<br>34,1310017840,828221840,147(timeout),0x00000000,/cgi/cgi_init.js<br>35,281912920,828221840,142(timeout),0x00000000,/cgi/cgi_init.js<br>36,164533395,828221840,50277,0x00000000,/cgi/cgi_init.js<br>37,589472535,828221840,118(timeout),0x00000000,/cgi/cgi_init.js<br>38,2011308998,828221840,91(timeout),0x00000000,/cgi/cgi_init.js<br>39,626020156,828221840,148(timeout),0x00000000,/cgi/cgi_init.js<br>40,1374694614,828221840,122(timeout),0x00000000,/cgi/cgi_init.js<br>41,1548509890,828221840,106(timeout),0x00000000,/cgi/cgi_init.js<br>42,477428427,828221840,50277,0x00000000,/cgi/cgi_init.js<br>43,1043485604,828221840,143(timeout),0x00000000,/cgi/cgi_init.js<br>44,1120413018,828221840,109(timeout),0x00000000,/cgi/cgi_init.js<br>45,1110567400,828221840,108(timeout),0x00000000,/cgi/cgi_init.js<br>46,157078065,828221840,144(timeout),0x00000000,/cgi/cgi_init.js<br>47,808519578,828221840,111(timeout),0x00000000,/cgi/cgi_init.js<br>end of token table<br>";
+/*END_DEMO*/
+function getQueryStringByName(name)
+{
+		var result = location.search.match(new RegExp("[\?\&]" + name+ "=([^\&]+)","i"));
+
+		if(result == null || result.length < 1)
+		{
+			return "";
+		}
+
+		return result[1];
+}
+function table_addrow(_tbl, _ary){
+	var tbobj=document.getElementById(_tbl);
+	var aCell,aRow=tbobj.insertRow(-1);
+	for(var i=0; i < _ary.length; i++){
+		aCell = aRow.insertCell(-1);
+		aCell.innerHTML=_ary[i];
+	}
+}
+function ShowToken(){
+	var line=httoken_info.split("<br>");
+	var line_sz=line.length;
+	var row;
+	// add current time, Timeout sec, token count
+	table_addrow("tb_info",['',line[0],line[1],line[2]]);
+	// 3~last is the token info
+	for(var i=3; i<line_sz; i++){
+		// <id>,<hash key1>,<hash key2>,<access time>,<expire sec>,<attr>,<path>
+		//1,261741269,828221840,50285,0x00000000,/cgi/cgi_init.js
+		row=line[i].split(",");
+		if(row.length > 1)
+			table_addrow("tb_token",row);
+	}
+}
+function init(){
+	ShowToken();
+	var fresh_interval = getQueryStringByName("interval");
+	if(fresh_interval != "")
+	{
+		setTimeout("document.location.reload(true)", parseInt(fresh_interval) * 1000);
+	}
+}
+</script>
+</head>
+
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onload="init()">
+<table width="100%" border="0" cellspacing="0" cellpadding="10" height="0" align="center" id="tb_info">
+</table>
+<span id="cur_time"></span>
+<table width="100%" border="1" cellspacing="0" cellpadding="10" height="0" align="center" id="tb_token">
+  <colgroup>
+	<col width="5%">
+	<col width="5%">
+	<col width="5%">
+	<col width="10%">
+	<col width="10%">
+	<col width="30%">
+  </colgroup>
+  <tbody>
+  	<th>No.</th>
+  	<th>Hash Key1</th>
+  	<th>Hash Key2</th>
+  	<th>access time</th>
+  	<th>expired time</th>
+  	<th>path</th>
+  </tbody>
+</table>
+</body>
+</html>
