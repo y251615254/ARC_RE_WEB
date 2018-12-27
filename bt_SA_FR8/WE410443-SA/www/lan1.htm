@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<style type="text/css">
+	.td_disabled{color:#ccc!important;}
+</style>
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["lan_main"];var CGIs=["toplogy_info", "lan"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="javascript" src="js/data.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+//===================================
+// Validate
+//===================================
+
+function isValid_LAN_IP_Range(lan_ip) {
+	var f=document.tF;
+	if(lan_ip[0] == 10) return true; //10.*.*.*
+	if(lan_ip[0] == 172 && (lan_ip[1] > 15 && lan_ip[1] < 32 ) )
+		return true; //172.16.0.0 ~ 172.31.255.255
+
+	if(lan_ip[0] == 192 && lan_ip[1] == 168) return true; //192.168.*.*
+	return false;
+}
+// 10.x.x.x -> 255.0.0.0
+//172.x.x.x -> 255.255.0.
+//192.x.x.x -> 255.255.255.0
+
+// 10.0.0.254 255.255.0.0
+// 10.0.255.1 255.255.255.128
+// 172.20.255.10 255.255.255.224
+// 172.31.128.226 255.255.255.240
+// 192.168.100.100 255.255.255.240
+// 192.168.16.1 255.255.255.224
+
+//===================================
+// Submit
+//===================================
+function combinIP2(d){
+	if (d.length!=4) return d.value;
+    var ip=d[0].value+"."+d[1].value+"."+d[2].value+"."+d[3].value;
+    if (ip=="...")
+        ip="";
+    return ip;
+}
+function evaltF(){
+	var f=document.tF;
+	var idx=0;
+	var httoken_val = ArcBase._t();	
+	//var lanIP = combinIP2(f.lan_ip);
+	//var lan_mask = 255 + "." + 255 + "." + 255 + "." + f.lan_mask.value;
+	var orig_proto = getCfg("lan_proto"+idx);
+	var lan_proto = orig_proto;	
+	var rc;
+	var changeFlag = 0;	//check if the value is changed, if not, only reload.
+	var landata;
+	var flag = 0;
+
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	
+	//fix bug: if didn't click this radio, can't get the SetSelect value.
+
+	if(document.getElementById('SetSelectStatic').checked == true)
+	{
+		lan_proto = "static";
+	}
+	else if(document.getElementById('SetSelectDhcp').checked == true)
+	{
+		lan_proto = "dhcp";
+	}	
+		
+	if((lan_proto == "dhcp") && (orig_proto == "dhcp"))
+	{
+		window.location.reload();
+		return;
+	}
+	if(lan_proto == "static")
+		landata = '0';
+	else
+		landata = '1';
+
+	if(lan_proto == "static"){
+
+		for(var i in toplogy_info.nodes)
+		{
+			var orig_lanip=toplogy_info.nodes[i].device_ip;
+			var orig_mask=toplogy_info.nodes[i].device_netmask;
+			var lanIP = f.lan_ip[4*i].value+"."+f.lan_ip[4*i+1].value+"."+f.lan_ip[4*i+2].value+"."+f.lan_ip[4*i+3].value;
+			var lan_mask;
+/*		
+			if(toplogy_info.nodes.length == 1)
+				//lan_mask = 255 + "." + 255 + "." + 255 + "." + f.lan_mask.value;
+				lan_mask = 255 + "." + 255 + "." + 255 + "." + 255;
+			else
+				//lan_mask = 255 + "." + 255 + "." + 255 + "." + f.lan_mask[i].value;
+				lan_mask = 255 + "." + 255 + "." + 255 + "." + 255;
+*/
+
+			
+			var subnet_mask = 255 + "." + 255 + "." + f.subnet_mask3.value + "." + f.subnet_mask4.value;
+			var dns_server    = f.dns_server1.value + "." +  f.dns_server2.value  + "." + f.dns_server3.value  + "." + f.dns_server4.value;
+			var gate_way	= f.gateway1.value + "." +  f.gateway2.value  + "." + f.gateway3.value  + "." + f.gateway4.value;
+			//alert("subnet_mask:" + subnet_mask);
+			//alert("dns_server:" + dns_server);		
+			//alert("gate_way:" + gate_way);
+			//var mask_dns_gate = "mask_dns_gate@" +  subnet_mask + "@"+ dns_server + "@"+ gate_way;
+			//alert("mask_dns_gate:" + mask_dns_gate);
+
+		
+			//landata += ','+toplogy_info.nodes[i].device_id + '@'+lanIP+'@'+subnet_mask + '@' + gate_way + '@' + dns_server;
+			landata += ','+toplogy_info.nodes[i].device_id + '@'+lanIP+'@'+subnet_mask + '@' + dns_server + '@' + gate_way;
+		
+			if(i==0 && (orig_lanip != lanIP || orig_mask != subnet_mask))
+			{
+				top.G_IP=lanIP;
+				top.G_URL="http://"+lanIP+"/index.htm"; // change IP
+			}
+
+//add start demo   by leo
+			var status = new Array();
+			status = mask_dns_gateway_status.split("@");
+			var tmp_mask = status[0];// mask
+			var tmp_dns = status[1];// dns
+			var tmp_gateway = status[2];// gateway
+//add end
+
+			if((orig_proto == "dhcp") || (orig_lanip != lanIP) || (orig_mask != subnet_mask) || (dns_server != tmp_dns)  || (gate_way != tmp_gateway))
+			{
+				changeFlag = 1;
+			}
+
+			if( (rc=isNValidSubnetMask1(subnet_mask)) ){	//check netmask
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+				AlertM(1242);
+				return false;
+			}
+			if( (rc=isNValidAddress(dns_server)) ){	//check dns_server
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+				AlertM(10243);
+				return false;
+			}
+
+			if( (rc=isNValidAddress(gate_way)) ){	//check gate_way
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+				AlertM(10244);
+				return false;
+			}
+			if( (rc=isNValidAddress(lanIP)) ){	//check IP
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+		 		alert(m_ip);//AlertM(1243);
+				f.lan_ip[--rc+4*i].focus();
+				return false;
+			}
+			 
+			var lan_ip = [f.lan_ip[4*i].value, f.lan_ip[4*i+1].value,f.lan_ip[4*i+2].value,f.lan_ip[4*i+3].value];
+			if(isValid_LAN_IP_Range(lan_ip) == false){
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+				alert(m_ip);
+				f.lan_ip[4*i].focus();
+				return false;
+			}
+
+			if((f.gateway1.value == lan_ip[0]) && (f.gateway2.value == lan_ip[1])
+				&& (f.gateway3.value == lan_ip[2]) && (f.gateway4.value == lan_ip[3])){
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");					
+				AlertM(12002);
+				f.lan_ip[4*i+3].focus();
+				return false;	
+			}
+		}
+
+		if(toplogy_info.nodes.length > 1){
+			for(var i=0; i<toplogy_info.nodes.length-1;i++)
+			{
+				var lanIP1 = f.lan_ip[4*i].value+"."+f.lan_ip[4*i+1].value+"."+f.lan_ip[4*i+2].value;
+				for(var j=i+1; j < toplogy_info.nodes.length; j++ )
+				{
+					var lanIP2 = f.lan_ip[4*j].value+"."+f.lan_ip[4*j+1].value+"."+f.lan_ip[4*j+2].value;
+					if(lanIP1 != lanIP2)
+					{
+						HiddenObject("submit_disabled_id");
+						DisplayObject("submit_enabled_id");						
+						alert(getLangM(2008));
+						f.lan_ip[4*i].focus();
+						return false;
+					}
+					
+					if(f.lan_ip[4*i+3].value == f.lan_ip[4*j+3].value)
+					{
+						HiddenObject("submit_disabled_id");
+						DisplayObject("submit_enabled_id");						
+						alert(getLangM(2007));
+						f.lan_ip[4*i+3].focus();
+						return false;
+					}
+				}
+			}
+		}
+
+		if(changeFlag == 0)
+		{
+			window.location.reload();
+			return;
+		}
+
+		
+	}
+
+
+//	alert("landata:" + landata);
+
+	
+	$.ajax({
+		type: "POST",
+		url: "/cgi-bin/toplogy.cgi",
+		dataType: "text",
+		data: { httoken:httoken_val,
+		     		cmd:"synclanconfig",
+		      		data:landata
+			}
+	})
+	.done(function( data ){
+		if(data == "ok"){                               
+	                  return subForm({
+				frm:f,
+				next: 'login.htm',
+				uploadtype: 0, 
+				wait: 15
+	                           });   
+		}else{
+                            alert("set and reboot error.");                        
+                            return false;  
+		}
+	});	
+}
+
+
+function DisableObjectForSafari(id) {
+    var obj = null;
+    if ("string" == typeof(id)) {
+        obj = document.getElementById(id);
+    } else {
+        obj = id;
+    }
+    if (obj) {
+        obj.disabled = true;
+    }
+}
+
+
+
+
+function set_subnet_dns_gateway(flag)
+{
+	if(flag == "enable")
+	{
+//		EnableObject(document.tF.subnet_mask1);
+//		EnableObject(document.tF.subnet_mask2);
+		EnableObject(document.tF.subnet_mask3);
+		EnableObject(document.tF.subnet_mask4);
+		
+		EnableObject(document.tF.dns_server1);
+		EnableObject(document.tF.dns_server2);
+		EnableObject(document.tF.dns_server3);
+		EnableObject(document.tF.dns_server4);
+		
+		EnableObject(document.tF.gateway1);
+		EnableObject(document.tF.gateway2);
+		EnableObject(document.tF.gateway3);
+		EnableObject(document.tF.gateway4);
+	}
+	else if(flag == "disable")
+	{
+		DisableObject(document.tF.subnet_mask1);
+		DisableObject(document.tF.subnet_mask2);
+		DisableObject(document.tF.subnet_mask3);
+		DisableObject(document.tF.subnet_mask4);
+		
+		DisableObject(document.tF.dns_server1);
+		DisableObject(document.tF.dns_server2);
+		DisableObject(document.tF.dns_server3);
+		DisableObject(document.tF.dns_server4);
+		
+		DisableObject(document.tF.gateway1);
+		DisableObject(document.tF.gateway2);
+		DisableObject(document.tF.gateway3);
+		DisableObject(document.tF.gateway4);
+	}
+	else
+	{
+//		EnableObject(document.tF.subnet_mask1);
+//		EnableObject(document.tF.subnet_mask2);
+		EnableObject(document.tF.subnet_mask3);
+		EnableObject(document.tF.subnet_mask4);
+		
+		EnableObject(document.tF.dns_server1);
+		EnableObject(document.tF.dns_server2);
+		EnableObject(document.tF.dns_server3);
+		EnableObject(document.tF.dns_server4);
+		
+		EnableObject(document.tF.gateway1);
+		EnableObject(document.tF.gateway2);
+		EnableObject(document.tF.gateway3);
+		EnableObject(document.tF.gateway4);
+	};
+
+}
+
+function SetSelectChange() {
+	var checkedDhcp = document.getElementById('SetSelectDhcp').checked; // false or true 
+	var checkedStatuc = document.getElementById('SetSelectStatic').checked;
+	if(checkedDhcp == true)
+	{
+		if (is_safari() == true)
+		{
+			for(var i=0; i<toplogy_info.nodes.length; i++ )
+			{
+				for (var j=0;j<4;j++){
+					idx = i*4+j;
+					//$(":input[name='lan_ip']").attr("disabled","disabled"); 
+					DisableObjectForSafari(document.tF.lan_ip[idx]);
+				}
+				if(toplogy_info.nodes.length == 1)
+					DisableObjectForSafari(document.tF.lan_mask);
+				else
+					DisableObjectForSafari(document.tF.lan_mask[i]);
+			}
+			$(".vox20_table_nbl td").addClass('td_disabled');
+		}
+		else
+		{
+			for(var i=0; i<toplogy_info.nodes.length; i++ )
+			{
+				for (var j=0;j<4;j++){
+					idx = i*4+j;
+					DisableObject(document.tF.lan_ip[idx]);
+				}
+				if(toplogy_info.nodes.length == 1)
+					DisableObject(document.tF.lan_mask);
+				else
+					DisableObject(document.tF.lan_mask[i]);
+			}
+
+			set_subnet_dns_gateway("disable");
+			
+			$(".vox20_table_nbl td").addClass('td_disabled');
+		}
+	}
+	else if(checkedStatuc == true)
+	{
+		for(var i=0; i<toplogy_info.nodes.length; i++ )
+		{
+			for (var j=0;j<4;j++){
+				idx = i*4+j;			
+				EnableObject(document.tF.lan_ip[idx]);
+			}
+			if(toplogy_info.nodes.length == 1)
+				EnableObject(document.tF.lan_mask);
+			else
+				EnableObject(document.tF.lan_mask[i]);
+		}
+
+		set_subnet_dns_gateway("enable");
+
+		$(".vox20_table_nbl td").removeClass('td_disabled');
+	}
+}
+
+
+
+function setCfgValueToField(i){
+	var f=document.tF;
+	var idx;
+	f.SetSelect.value = getCfg("lan_proto0");
+	
+	if(getCfg("lan_proto0") == "dhcp")
+		document.getElementById('SetSelectDhcp').checked = true;
+	else
+		document.getElementById('SetSelectStatic').checked = true;
+
+	for(var i in toplogy_info.nodes)
+	{
+		if(toplogy_info.nodes[i].device_name != "")
+			setIdVal("device_name"+i,  toplogy_info.nodes[i].device_name);
+		else
+			setIdVal("device_name"+i,  'Wi-Fi Extender '+i);
+		
+		var lanIP=toplogy_info.nodes[i].device_ip.split('.');
+		var lanMask=toplogy_info.nodes[i].device_netmask.split('.');
+	   
+		for (var j=0;j<4;j++){
+			idx = i*4+j;
+			SetFieldValue(f.lan_ip[idx], lanIP[j]);
+		}
+		if(toplogy_info.nodes.length == 1)
+			SetFieldValue(f.lan_mask, lanMask[3]);
+		else
+			SetFieldValue(f.lan_mask[i], lanMask[3]);
+	}
+
+	SetSelectChange();
+}
+
+
+/*
+Fix Mac Safari 
+network settings page, the input box for each segment 
+of the IP address is too small so 3 digit numbers are obscured..............start 
+by leo 20161013
+*/
+function check_browser_version() {
+	var brow_ver;
+    var Sys = {};
+    var ua = navigator.userAgent.toLowerCase();
+    var s;
+    (s = ua.match(/rv:([\d.]+)\) like gecko/)) ? Sys.ie = s[1] :
+    (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+    (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+    (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+    (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+    (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+    
+    if (Sys.ie)
+	{
+		//document.write('IE: ' + Sys.ie);
+		//IEVersion =parseInt(Sys.ie);
+		brow_ver = 'IE:' + Sys.ie;
+		//alert(brow_ver);
+	}	
+    if (Sys.firefox) 
+	{
+		//document.write('Firefox: ' + Sys.firefox);
+		brow_ver = 'Firefox:' + Sys.firefox;
+		//alert(brow_ver);
+    }
+    if (Sys.chrome) 
+	{
+		//document.write('Chrome: ' + Sys.chrome);
+		brow_ver = 'Chrome:' + Sys.chrome;
+		//alert(brow_ver);
+	}
+    if (Sys.opera) 
+	{
+		//document.write('Opera: ' + Sys.opera);
+		brow_ver = 'Opera:' + Sys.opera;
+		//alert(brow_ver);	
+		//alert("is_safari_flag:" + is_safari_flag);
+	}
+
+	if (Sys.safari) 
+	{
+		//document.write('Safari: ' + Sys.safari);
+		brow_ver = 'Safari:' + Sys.safari;
+		//alert(brow_ver);	
+	}
+	return brow_ver;
+}
+
+
+//the function can check safari in mac and ios system, is safari return true, else return false
+function is_safari()
+{
+	var tmp = check_browser_version(); 
+	var tmp_flag = tmp.toLowerCase().indexOf("safari"); 
+	if(tmp_flag != "-1")//  not find the subString return -1. 
+	{
+		return true;
+	}else
+	{
+		return false;
+	}
+}
+
+function getByClass(sClass){
+    var aResult=[];
+    var aEle=document.getElementsByTagName('*');
+    /*regular expression*/
+    var re=new RegExp("\\b" + sClass + "\\b","g");
+    for(var i=0;i<aEle.length;i++){
+        /*string search method to determine whether there is a match*/
+        if(aEle[i].className.search(re) != -1){
+            aResult.push(aEle[i]);
+        }
+    }
+    return aResult;
+};
+
+
+//init_lanip_color_for_safari()  just for safari .Fix Network settings IP address segments not visible....leo_20161015
+function init_lanip_color_for_safari()
+{
+	if (is_safari() == true)
+	{
+		
+		if(getCfg("lan_proto0") == "dhcp")
+		{
+		    //$("input[name=lan_ip]").css('color','#BFEFFF'); 
+			$("input[name=lan_ip]").css('color','#686A6F'); 
+			$("input[name=lan_mask]").css('color','#686A6F'); 
+		}
+	}	
+}
+
+function set_input_style_for_safari()
+{
+	var tmp = check_browser_version(); //the check_browser_version can check safari in mac and ios system
+	var tmp_flag = tmp.toLowerCase().indexOf("safari"); 
+    var mobile_info = navigator.userAgent;
+	var mobile_flag = mobile_info.toLowerCase().indexOf("mobile");
+	
+	if(tmp_flag != "-1")//  not find the subString return -1. 
+	{
+	    var lan_input_list=getByClass("arcTransformInputWrapper");
+	    for(var i=0;i<lan_input_list.length;i++){
+	       //var ddd = lan_input_list[i].style.width;
+	       lan_input_list[i].style.width = "49px";//49px
+	    }
+	}
+}
+
+/*
+Fix Mac Safari 
+network settings page, the input box for each segment 
+of the IP address is too small so 3 digit numbers are obscured..............end 
+*/
+
+function init() {
+	var f= document.tF;
+
+	// put at global to share all functions
+    m_ip=getLangM(400)+"\n"+getLangM(416)+"\n"+getLangM(417)+"\n"+getLangM(418)+"\n"+getLangM(1240);
+	write_master_ip_table();
+	write_ip_table();
+	init_write_master_ip_table();
+	setCfgValueToField("0");
+	HiddenObject("submit_disabled_id");
+	ShowMenu();
+	set_input_style_for_safari();//just for mac ios safari
+	init_lanip_color_for_safari();//just for mac ios safari
+	reSetHelpUrl("IPAddressingID");
+
+}
+
+
+function init_write_master_ip_table()
+{
+
+	//var mask_dns_gateway_status  = "255.255.255.7@192.128.1.3@212.168.1.2";
+	var f=document.tF;
+	
+	if(mask_dns_gateway_status != "")
+	{
+		var status = new Array();
+		status = mask_dns_gateway_status.split("@");
+
+		var tmp_mask = new Array();
+		tmp_mask = status[0].split(".");// mask
+		SetFieldValue(f.subnet_mask3, tmp_mask[2]);
+		SetFieldValue(f.subnet_mask4, tmp_mask[3]);
+
+		var tmp_dns = new Array();
+		tmp_dns = status[1].split(".");// dns
+		SetFieldValue(f.dns_server1, tmp_dns[0]);
+		SetFieldValue(f.dns_server2, tmp_dns[1]);
+		SetFieldValue(f.dns_server3, tmp_dns[2]);
+		SetFieldValue(f.dns_server4, tmp_dns[3]);
+
+		var tmp_gateway = new Array();
+		tmp_gateway = status[2].split(".");// gateway
+		SetFieldValue(f.gateway1, tmp_gateway[0]);
+		SetFieldValue(f.gateway2, tmp_gateway[1]);
+		SetFieldValue(f.gateway3, tmp_gateway[2]);
+		SetFieldValue(f.gateway4, tmp_gateway[3]);
+	}
+	
+}
+
+
+function write_master_ip_table()
+{
+	var f=document.tF;
+	for(var i=0; i<toplogy_info.nodes.length; i++ )
+	{	
+		if(toplogy_info.nodes[i].parent_id == "NULL")
+		{
+			$('#tb_extender_master_ip').append('\
+				<tr>\
+					<td width=200 class=tdTitle3><font id="372">Subnet Mask</font></td>\
+					<td >\
+							<input maxLength="3" name="subnet_mask1" disabled="disabled" size="3" value="255" >.\
+							<input maxLength="3" name="subnet_mask2" disabled="disabled" size="3" value="255" >.\
+							<input maxLength="3" name="subnet_mask3" size="3" value="255" >.\
+				  			<input maxLength="3" name="subnet_mask4" size="3" value="0" >\
+					</td>\
+				</tr>\
+				<tr>\
+					<td width=200 class=tdTitle3><font id="">DNS Server</font></td>\
+					<td >\
+							<input maxLength="3" name="dns_server1"  size="3" value="192" >.\
+							<input maxLength="3" name="dns_server2"  size="3" value="168" >.\
+							<input maxLength="3" name="dns_server3"  size="3" value="1" >.\
+				  			<input maxLength="3" name="dns_server4"  size="3" value="254" >\
+					</td>\
+				</tr>\
+				<tr>\
+					<td width=200 class=tdTitle3><font id="">Gateway</font></td>\
+					<td >\
+							<input maxLength="3" name="gateway1"  size="3" value="192" >.\
+							<input maxLength="3" name="gateway2"  size="3" value="168" >.\
+							<input maxLength="3" name="gateway3"  size="3" value="1" >.\
+				  			<input maxLength="3" name="gateway4"  size="3" value="254" >\
+					</td>\
+				</tr>');
+		}
+	}
+
+}
+
+
+function write_ip_table(){
+	for(var i=0; i<toplogy_info.nodes.length; i++ )
+	{		
+		$('#tb_extender_ip').append('<tr>\
+				<td class=tdTitle2><font id="device_name'+i+'"></font></td>\
+			</tr>\
+			<tr>\
+				<td width=200 class=tdTitle3><font id="371"></font></td>\
+				<td >\
+					<input maxLength="3" name="lan_ip" size="3" value="" >.\
+					<input maxLength="3" name="lan_ip" size="3" value="" >.\
+					<input maxLength="3" name="lan_ip" size="3" value="" >.\
+					<input maxLength="3" name="lan_ip" size="3" value="">\
+				</td>\
+			</tr>\
+			<tr id="device_name_lan_mask'+i+'">\
+				<td class=tdTitle3><font id="372"></font></td>\
+				<td class=tdTitle3><input maxLength="3" size="3" value="255"></div>.\
+								   <input maxLength="3" size="3" value="255"></div>.\
+								   <input maxLength="3" size="3" value="255"></div>.\
+						  		   <input maxLength="3" name="lan_mask" size="3" value="" >\
+						</td>\
+			</tr>');
+
+		var lan_mask = "device_name_lan_mask"+i;
+		HiddenObject(lan_mask);
+
+	}
+	
+}
+
+
+
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="2006" class="btFontBold1"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF" method="post" action="/cgi-bin/setup_lan.exe" target="OUTfrm">
+<table width=90% border=0 cellspacing="0" cellpadding="10">
+	<tr>
+		<td valign="top">
+      <p class=normalText><font id="370"></font></p>
+    </td>
+  </tr>
+       <tr>								
+		<td class=normalText >
+			<font  id="12000" style="display:-moz-inline-box; display:inline-block; width:250px;"></font>
+			<input type="radio" name="SetSelect" id="SetSelectDhcp"  value="dhcp" onChange="SetSelectChange()">
+			<br>
+			<br>
+			<font  id="12001" style="display:-moz-inline-box; display:inline-block; width:250px;"></font>          	         
+			<input type="radio" name="SetSelect" id="SetSelectStatic" value="static" onChange="SetSelectChange()">
+			<br>
+			<br>
+			<hr style="height:1px;border:none;border-top:1px solid #555555;">
+		 </td>	
+	</tr>	
+
+
+	
+  	<tr>
+  		<td>
+			<table class="vox20_table_nbl" width="80%" cellpadding="5" cellspacing="1" border="0" id="tb_extender_master_ip">	
+			</table>
+			<hr style="height:1px;border:none;border-top:1px solid #555555;">
+			<table class="vox20_table_nbl" width="80%" cellpadding="5" cellspacing="1" border="0" id="tb_extender_ip">				
+			</table>
+		</td>
+	</tr>
+	
+	<tr>
+		<td>
+			<table border=0 cellspacing=0 cellpadding=0 width="100%">
+				<tr>
+    			<td width="250"></td>
+			<td align="right" id="submit_disabled_id">
+				<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+			</td>
+			<td align="right" id="submit_enabled_id">
+				<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001">&nbsp;
+			</td>
+      	</tr>
+  		</table>
+		</td>
+	</tr>
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

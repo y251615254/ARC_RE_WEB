@@ -1,0 +1,127 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_top.css">
+
+<style type="text/css">
+	.nav_right_sel,.nav_left_sel,.nav_middle_sel{ border-bottom-color:#e60050 !important;}
+	.nav_span_logout{ color:white; float:right; display: inline-block; padding-top: 17px; height: 44px; line-height: 0px; font-family: Calibri, Helvetica;margin:0 30px; font-size: 20px; }
+	.nav_span_help{ color:white; float:right; display: inline-block; margin-top:5px ;margin:0 30px; font-family: Calibri, Helvetica;font-size: 20px; }	
+	#top_nav_menu a div{ color:white; background-image: none !important; border-bottom-width:3px; border-bottom-color: white; border-bottom-style:solid; width:auto; margin:0 20px; line-height: 10px; }
+	body{ background:#6400aa; background-image:none; margin-top: 0; }
+	#top_nav_menu a div:hover{ border-color:#00a0d6; }
+	#top_nav_menu{padding-top: 17px;font-family:Calibri, Helvetica;font-size:17px}
+	.helpClass{ 
+	 	line-height:16px;
+		height:16px;
+		width:16px;
+		color:#ffffff;
+		background-color:#6400aa;
+		font-size:16px;
+		font-weight:100;
+		font-family:Arial;
+		border:2px solid #ffffff;
+		-webkit-border-top-left-radius:17px;
+		-moz-border-radius-topleft:17px;
+		border-top-left-radius:17px;
+		-webkit-border-top-right-radius:17px;
+		-moz-border-radius-topright:17px;
+		border-top-right-radius:17px;
+		-webkit-border-bottom-left-radius:17px;
+		-moz-border-radius-bottomleft:17px;
+		border-bottom-left-radius:17px;
+		-webkit-border-bottom-right-radius:17px;
+		-moz-border-radius-bottomright:17px;
+		border-bottom-right-radius:17px;
+		-moz-box-shadow:0px 0px 0px 0px #ffffff;
+		-webkit-box-shadow:0px 0px 0px 0px #ffffff;
+		box-shadow:0px 0px 0px 0px #ffffff;
+		text-align:center;
+		display:inline-block;
+		text-decoration:none;
+	}
+
+	.helpHomeClass{ 
+	 	line-height:24px;
+		height:24px;
+		width:54px;
+		color:#ffffff;
+		background-color:#6400aa;
+		font-size:17px;
+		font-weight:normal;
+		font-family:Calibri, Helvetica;
+		border:0px solid #6400aa;
+		-webkit-border-top-left-radius:6px;
+		-moz-border-radius-topleft:6px;
+		border-top-left-radius:6px;
+		-webkit-border-top-right-radius:6px;
+		-moz-border-radius-topright:6px;
+		border-top-right-radius:6px;
+		-webkit-border-bottom-left-radius:6px;
+		-moz-border-radius-bottomleft:6px;
+		border-bottom-left-radius:6px;
+		-webkit-border-bottom-right-radius:6px;
+		-moz-border-radius-bottomright:6px;
+		border-bottom-right-radius:6px;
+		-moz-box-shadow:0px 0px 0px 0px #6400aa;
+		-webkit-box-shadow:0px 0px 0px 0px #6400aa;
+		box-shadow:0px 0px 0px 0px #6400aa;
+		text-align:center;
+		display:inline-block;
+		text-decoration:none;
+	}
+}
+</style>
+
+<script language="javascript">var G_counter=0;var LangJ=["menulist"];var CGIs=[];</script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script language="JavaScript" src="js/global.js"></script>
+<script language="JavaScript" src="js/menu.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script language="JavaScript">
+function doLogout()
+{
+	var f=document.tF_Logout;
+	if(top.G_prog !=0) return false;
+	if(top.ItemIdx==-1) return false;
+/*DEMO*/
+	f.action="login.htm";
+/*END_DEMO*/
+	return subForm({
+ 					frm:f,
+ 					genfrm:0, //direct submit
+ 					wait:2,
+ 					noprogress:1 //no progress
+	});
+	return true;
+}
+
+function init(){
+	//ShowTopMenu();
+	//setLogout();
+}
+</script>
+
+
+
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="pre_init()">
+<div id="hiddenmenu">
+	<div class="logo"><img src="images/logo.png" valign="middle" style="height:46px;width:96px;"></div>
+	
+</div>
+<form ACTION="/cgi-bin/changef.exe" method="post" name="tFF" target="_top">
+<input type="hidden" name="language_flag" value="1">
+<input type="hidden" name="menupage" value="">
+<input type="hidden" name="httoken" value="">
+<input type="hidden" name="lang" value="">
+</form>
+<form method="post" action="logout.cgi" name="tF_Logout" target="_top" terget="OUTfrm"></form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+

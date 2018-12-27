@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["wifi_bt"];CGIs=["wifi_bt"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script language="javascript" src="js/checkpswstrong.js"></script>
+<script language="javascript" src="js/base64.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style>
+.td_class_div {
+	margin: 10px 10px 10px 10px;
+	background: #00F;
+	border-top-left-radius:5em;
+	border-top-right-radius:5em;
+	border-bottom-right-radius:5em;
+	border-bottom-left-radius:5em;
+}
+
+.divcss{
+	width: 20px;
+	background: #00F;
+	color:#FFF
+	height: 10px;
+	margin: 500px 10px 0px 0px;
+	display:inline;
+//	border:5px solid #00F;
+}
+/* -------------
+ * Inputs //nick
+ * ------------- */
+ .show_psk{
+	position:relative;
+	left:-90px;
+	top:10px;
+	height:32.5px;
+	z-index:1;
+	moz-user-select: -moz-none;
+	-moz-user-select:none;
+	-o-user-select:none;
+	-khtml-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+.arcTransformInputWrapper {
+	padding-right:40px;
+	width:171px !important;	
+}
+
+
+.arcTransformInputInner {
+	padding-right:40px;
+	width:171px !important;
+}
+
+.arcTransformInputInner div input {
+
+	/*padding-right:40px;must be this ,or input bug*/
+	width:171px !important;
+	
+}
+.arcTransformSafari .arcTransformInputInner div {
+	padding-right:40px;
+	width:171px !important;	
+}
+.arcTransformSafari .arcTransformInputInner div input {
+	padding-right:40px;
+	width:171px !important;
+}
+
+input[type="password"]::-ms-reveal{display:none;}
+input[type="text"]::-ms-clear{display:none;}
+</style>
+
+<script language="JavaScript">
+
+
+function ssid_check(object) 
+{
+	var ssidvalue=object.value;
+	var excludeChar='?\"$[\\+';
+	var excludeFirstChar='!#; ';
+	var excludeEndChar=' ';
+	var chk_err=0;
+	var lcase_str = ssidvalue.toLowerCase();
+
+	if(isBlank(ssidvalue))
+	{
+		chk_err=1;
+	}
+	
+	if (chk_err==0)//'1407':'Must not contain ? " $ [ \ +',
+	{
+		for (var i=0; i<excludeChar.length; i++)
+		{
+			if (ssidvalue.indexOf(excludeChar.charAt(i))>=0)
+			{
+				chk_err=1;
+				alert(getLangM(1407));
+				break;
+			}
+		}
+	}
+
+	
+	if (chk_err==0)//'1408':'Must not start with ! # ; or space.',
+	{
+		for (var i=0; i<excludeFirstChar.length; i++)
+		{
+			if (ssidvalue.indexOf(excludeFirstChar.charAt(i))==0)
+			{
+				chk_err=1;
+				alert(getLangM(1408));
+				break;
+			}
+		}
+	}
+
+	
+	if (chk_err==0)//'1409':'Must not end with a space.',
+	{
+		if(lcase_str[ssidvalue.length-1]==excludeEndChar)
+		{
+			chk_err=1;
+			alert(getLangM(1409));
+		}
+	}
+
+	
+	if (chk_err==0)
+	{
+		for (var i=0; i<ssidvalue.length; i++)
+		{
+			if (ssidvalue.charCodeAt(i)>127)
+			{
+				chk_err=1;
+				alert(getLangM(1403));
+				break;
+			}
+		}
+	}
+
+	
+	if (chk_err==0)//Must not contain BTWifi, BTWi-Fi, BTOpenzone, BTFON etc
+	{
+		if (lcase_str.indexOf("auto-bt") !=-1 || lcase_str.indexOf("btopenzone") !=-1 ||
+			lcase_str.indexOf("btwifi") !=-1|| lcase_str.indexOf("btfon") !=-1|| lcase_str.indexOf("btwi-fi")!=-1)
+		{
+			chk_err=1;
+			alert(getLangM(1410));
+		}
+	}
+	
+	if(chk_err==1)
+	{
+		HiddenObject("submit_disabled_id");
+		DisplayObject("submit_enabled_id");			
+		//alert(getLangM(1401));
+		document.getElementById("ORIGESSID").value="";
+		document.getElementById("ORIGESSID").focus();
+		return chk_err;	
+	}
+					
+	return chk_err;
+}
+
+
+function evaltF()
+{
+	var f = document.tF;
+	var httoken_val = ArcBase._t();	
+	var datatmp;
+
+	var ssid = decode64(getCfg("24gname0"));
+	if(ssid==f.ORIGESSID.value)
+	{
+	alert(getLangM(1412));
+	return;
+	}
+	
+	
+
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+
+	//make PreSharedKey correct when chose disp_PreSharedKey;
+	if(psk_show_hide_flag==1)
+	SetFieldValue(f.PreSharedKey,f.disp_PreSharedKey.value);
+	
+	
+	if(f.ssid_enable.value == "1")
+	{
+
+		var security_flag = f.securitymode.value;
+		if(security_flag != "OPEN")// If not open pwd, need check the pwd . 
+		{
+			if (wpapskCheck(f.PreSharedKey)) 
+			{
+				return false;
+			}
+		}
+		
+		f.PreSharedKey.value = convert_specific_char_common(f.PreSharedKey.value);
+
+		//SSID Name Check	
+		if (ssid_check(f.ORIGESSID) == 1) // 1 check ssid error   0->check ssid pass
+		{
+			return 0;
+		}	
+	}
+	else
+	{
+		//f.PreSharedKey.value = "NULL";
+		//f.ORIGESSID.value = "NULL";
+	}
+
+
+
+	var securitymode_flag = f.securitymode.value;
+	if(securitymode_flag != "OPEN")// If not open pwd, need check the pwd . 
+	{
+		if (wpapskCheck(f.PreSharedKey)) 
+		{
+			return false;
+		}
+
+		if(invalid_glb_flag > 0) //Password input is empty  (invalid_glb_flag is define checkpswstrong.js lin783)
+		{
+			//alert(invalid_glb_flag);
+			if(invalid_glb_flag == 1)// password<8 or password>64
+				alert(getLangM(1405));//8-63 characters are required.
+			else if(invalid_glb_flag == 2)//only 0-9 or A-Z or a-z
+				alert(getLangM(1402));
+			else if(invalid_glb_flag == 3)//appendix_a
+				alert(getLangM(1402));
+			else if(invalid_glb_flag == 4)//appendix_c
+				alert(getLangM(1406));
+			else
+				alert(getLangM(1402));	
+			
+			if(psk_show_hide_flag==0)
+			{ 
+				f.PreSharedKeyID.focus();
+				f.PreSharedKeyID.value="";
+			}
+			else
+			{
+				f.disp_PreSharedKeyID.focus();
+				f.disp_PreSharedKeyID.value="";			
+			}
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");	
+			return 0;
+		}
+
+	}
+		
+	datatmp = f.ssid_enable.value +  '?$[+' +  f.securitymode.value + '?$[+' +  f.ORIGESSID.value +  '?$[+' + f.PreSharedKey.value + '?$[+' + f.bw_alloc.value;
+
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/toplogy.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncguestwificonfig",
+	      		data:encode64(datatmp)
+		   }
+	})
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+				 frm:f,
+				 uploadtype: 0,
+				 wait: 10
+			  });
+		}else{
+               	 	alert("set and reboot error.");                        
+               	 	return false;  
+		}
+	});	
+}
+
+function wpapskCheck(object) {
+	var f = document.tF;
+	var keyvalue=object.value;
+	var wpapsklen=object.value.length;
+	//alert(keyvalue);
+
+	if(keyvalue == "NULL")
+	{
+		HiddenObject("submit_disabled_id");
+		DisplayObject("submit_enabled_id");	
+		alert(getLangM(1206));
+		if(psk_show_hide_flag==0){
+			f.PreSharedKeyID.focus();
+			f.PreSharedKeyID.value="";
+			}
+			else
+			{
+			f.disp_PreSharedKeyID.focus();
+			f.disp_PreSharedKeyID.value="";			
+			}	
+		return true;
+	}
+
+	if(f.ssid_enable.value == "1")	//enabled
+	{
+
+	   	if(wpapsklen >= 8 && wpapsklen < 64) 
+		{
+	    	if(keyvalue.match(/[^\x00-\xff]/g))//Check whether the Chinese characters or full width 
+	   	    {
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");	
+				alert(getLangM(1405));
+				if(psk_show_hide_flag==0)
+				{
+					f.PreSharedKeyID.focus();
+					f.PreSharedKeyID.value="";
+				}
+				else
+				{
+					f.disp_PreSharedKeyID.focus();
+					f.disp_PreSharedKeyID.value="";			
+				}	
+
+				return true;
+	   	    }
+		}
+		else 
+		{
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");	
+			alert(getLangM(1405));
+			if(psk_show_hide_flag==0)
+			{
+				f.PreSharedKeyID.focus();
+				f.PreSharedKeyID.value="";
+			}
+			else
+			{
+				f.disp_PreSharedKeyID.focus();
+				f.disp_PreSharedKeyID.value="";			
+			}	
+			return true;
+		}	
+	}
+	else
+	{		
+		return false;
+	}
+		
+//	return false;
+}
+
+function ssidCheck(object) {
+	var ssidvalue=object.value;
+
+	var excludeChar='?\"$[\\+';
+	var excludeFirstChar='!#; ';
+	var excludeEndChar=' ';
+	var chk_err=0;
+	var lcase_str = ssidvalue.toLowerCase();
+
+	if(ssidvalue == "NULL")
+	{
+		alert(getLangM(1206));
+		return true;
+	}
+
+	if(isBlank(ssidvalue))
+	{
+		chk_err=1;
+	}
+	if (chk_err==0)
+	{
+		for (var i=0; i<excludeChar.length; i++)
+		{
+			if (ssidvalue.indexOf(excludeChar.charAt(i))>=0)
+			{
+				chk_err=1;
+				break;
+			}
+		}
+	}
+	if (chk_err==0)
+	{
+		for (var i=0; i<excludeFirstChar.length; i++)
+		{
+			if (ssidvalue.indexOf(excludeFirstChar.charAt(i))==0)
+			{
+				chk_err=1;
+				break;
+			}
+		}
+	}
+	if (chk_err==0)
+	{
+	
+		if(lcase_str[ssidvalue.length-1]==excludeEndChar)
+		{
+			chk_err=1;
+		}
+
+	}
+	if (chk_err==0)
+	{
+		for (var i=0; i<ssidvalue.length; i++)
+		{
+			if (ssidvalue.charCodeAt(i)>127)
+			{
+				chk_err=1;
+				break;
+			}
+		}
+	}
+	if (chk_err==0)
+	{
+		if (ssidvalue.indexOf("DIRECT") == 0)
+			chk_err=1;
+	}
+	if (chk_err==0)
+	{
+		if (lcase_str.indexOf("auto-bt") !=-1 || lcase_str.indexOf("btopenzone") !=-1 ||
+			lcase_str.indexOf("btwifi") !=-1|| lcase_str.indexOf("btfon") !=-1|| lcase_str.indexOf("btwi-fi")!=-1)
+		{
+			chk_err=1;
+		}
+	}
+	if(chk_err==1)
+	{
+		HiddenObject("submit_disabled_id");
+		DisplayObject("submit_enabled_id");	
+		alert(getLangM(111));
+		document.getElementById("ssid_id").value="";
+		document.getElementById("ssid_id").focus();
+		return true;	
+	}
+					
+	return false;
+}
+
+function SelectValue(o,v)
+{
+	for(var i=0; i<o.options.length; i++)
+	{
+		if(o.options[i].value == v)
+		{
+			o.options[i].selected=true;
+			break;
+		}
+	}
+}
+
+function dosecuritymodeChange()
+{
+	var f = document.tF;
+	if(f.securitymode.value=="OPEN")
+	{
+		HiddenObject("psw_id");
+		HiddenObject("strong_check");
+	}
+	else
+	{
+		DisplayObject("psw_id");
+		DisplayObject("strong_check");
+	}
+}
+
+function guest_enable_onchange()
+{
+	var f = document.tF;
+	
+	if(f.ssid_enable.value == "1") //enabled
+	{
+		EnableObject("ssid_id");
+		EnableObject("PreSharedKeyID");
+		EnableObject("disp_PreSharedKeyID");
+		EnableObject("securitymode");
+		EnableObject("bw_alloc");		
+	}
+	else
+	{
+		DisableObject("ssid_id");
+		DisableObject("PreSharedKeyID");
+		DisableObject("disp_PreSharedKeyID");
+		DisableObject("securitymode");
+		DisableObject("bw_alloc");	
+	}
+}
+
+
+//add psw check strong func.....start.........leo 
+function pwStrength()
+{ 		
+	var f = document.tF;
+	if(psk_show_hide_flag==1)
+	SetFieldValue(f.PreSharedKey,f.disp_PreSharedKey.value);
+		
+	var pwd=document.getElementById("PreSharedKeyID").value;
+	var Dfault_color="#C4C4C4";     
+	var color_1 = "#FF0000";//red 
+	var color_2 = "#FF9900";//deep yellow
+	var color_3 = "#FFCC00";//light yellow
+	var color_4 = "#124eab"; //blue
+	var Invalid = Dfault_color;
+	var Weak = Dfault_color;
+	var OK = Dfault_color;
+	var Good = Dfault_color;
+	var Strong = Dfault_color;
+	
+	if (pwd==null||pwd=='')
+	{    
+		Invalid = Weak = OK = Good = Strong = Dfault_color;  
+		document.getElementById("strength_text").innerText="Invalid";
+	}   
+	else
+	{    
+		S_level=check_wifi_psw_strong(pwd);
+		//alert(S_level);
+		switch(S_level) 
+		{    
+			case 0://    
+				Invalid = Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+				break;  
+			case 1:    //Invalid
+				Invalid=color_1;  
+				Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+				break;    
+			case 2:    //Weak
+				Invalid = Weak = color_2;    
+				OK = Good = Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="Weak"; 
+				break;    
+			case 3:    //OK
+				Invalid = Weak = OK = color_3;    
+				Good = Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="OK"; 
+				break;    
+			case 4:    //Good
+				Invalid = Weak = OK = Good = color_4;    
+				Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="Good"; 
+				break;    
+			case 5:    //Strong
+				Invalid = Weak = OK = Good = Strong = color_4;        
+				document.getElementById("strength_text").innerText="Strong"; 
+				break;    
+			default:    //
+				Invalid = Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+		}    
+	}    
+	document.getElementById("strength_1").style.background=Invalid;    
+	document.getElementById("strength_2").style.background=Weak;    
+	document.getElementById("strength_3").style.background=OK;   
+	document.getElementById("strength_4").style.background=Good;    
+	document.getElementById("strength_5").style.background=Strong;    
+
+	return 0;
+}  
+
+function init_psw_strong()
+{
+	 pwStrength();
+}
+//add psw check strong func.....end.........leo 
+
+
+var psk_show_hide_flag=0;
+function show_psk()
+{
+	var f=document.tF;
+	psk_show_hide_flag=1;
+	DisplayObject("disp_sharedkey_td");
+	DisplayObject("disp_sharedkey_show");
+	SetFieldValue(f.disp_PreSharedKey,f.PreSharedKey.value);
+	HiddenObject("sharedkey_td");
+	HiddenObject("sharedkey_show");
+}
+
+function show_psk_hide()
+{
+	var f=document.tF;
+	psk_show_hide_flag=0;
+	DisplayObject("sharedkey_td");
+	DisplayObject("sharedkey_show");
+	SetFieldValue(f.PreSharedKey,f.disp_PreSharedKey.value);
+	HiddenObject("disp_sharedkey_td");
+	HiddenObject("disp_sharedkey_show");
+}
+
+
+
+function init()
+{
+	var f = document.tF;
+	f.ORIGESSID.value = decode64(getCfg("24gname1"));
+	SelectValue(f.ssid_enable, getCfg("24genable1"));
+	SelectValue(f.securitymode, getCfg("24gsecurity_mode1"));
+	SelectValue(f.bw_alloc, getCfg("guest_bw_alloc"));
+	f.PreSharedKey.value = decode64(getCfg("24gwpapsk1"));
+	f.PreSharedKey.value = convert_common_char_specific(f.PreSharedKey.value);
+	
+	guest_enable_onchange();
+	dosecuritymodeChange();
+
+	HiddenObject("submit_disabled_id");
+
+	HiddenObject("disp_sharedkey_td");
+	HiddenObject("disp_sharedkey_show");
+
+	HiddenObject("guest_atf");	
+	ShowMenu();
+	init_psw_strong();
+
+	reSetHelpUrl("GuestNetworkID");
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="209" class="btFontBold1"></font></p>
+<!-- main page-->
+<form name="tF" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+<table border="0" cellspacing="0" cellpadding="10" width="90%">
+	<tr>
+		<td valign="top">
+			<p class=normalText><font id="207"></font></p>
+			<table class="vox20_table_nbl_bt" border="0" cellspacing="0" cellpadding="8" >
+
+				<tr>
+					<td class="normalTextRight" style="width:142px"><font class="btFont2" id="206"></font></td><!--guest enable-->
+					<td class="tdTextBt_20"  colspan="2">
+						<select name="ssid_enable" size="2" onChange="guest_enable_onchange()">
+						<option value="0">Disabled</option>
+						<option value="1">Enabled</option>
+						</select>
+					</td>
+				</tr>
+												
+				<tr id="orig_ssid">
+					<td class="normalTextRight"  ><font class="btFont2" id="100"></font></td>
+					
+					<td class="tdTextBt_20"  colspan="2"><input id="ssid_id" name="ORIGESSID" size=18 maxlength=32 value="" class=txt1></td>
+				</tr>
+
+				<tr>
+					<td class="normalTextRight"><font class="btFont2" id="102"></font></td>
+					<td class="tdTextBt_20" colspan="2">
+						<select name="securitymode" id="securitymode" size="1" onchange="dosecuritymodeChange()">
+						<option value="WPA2PSK">WPA2 (Recommended)</option>
+						<option value="WPAPSKWPA2PSK">WPA (Auto)</option>
+						<option value="OPEN">None</option>
+						</select>
+					</td>
+				</tr>		
+
+				<tr id="psw_id">
+					<td class=normalTextRight width="250"><font class="btFont2" id="103"></font></td>
+
+					<td id="sharedkey_td" class="tdTextBt_20" style="width:250px">
+						<input type="password" id="PreSharedKeyID" name="PreSharedKey" size=18 maxlength=64 value="" onkeyup="pwStrength()" onBlur="pwStrength()">
+					</td>
+
+					<td id="disp_sharedkey_td" class="tdTextBt_20" style="width:250px">
+						<input type="text" id="disp_PreSharedKeyID" name="disp_PreSharedKey" size=18 maxlength=64 value="" onkeyup="pwStrength()" onBlur="pwStrength()">
+					</td>
+	
+					<td style="font-size: 12px !important;" id="sharedkey_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_psk()" id="120010"> </font></div></td>	
+										
+					
+					<td style="font-size: 12px !important;" id="disp_sharedkey_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_psk_hide()" id="120011"></font ></div></td>
+					
+				</tr>
+			</table>
+			
+	       <table id="strong_check" width="150" height="12px" border="0" cellpadding="0" cellspacing="2" style="margin-left:188px;">
+	        <tr>  
+	            <td width="15%"  height="100%" ><div id="strength_1" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+	            <td width="15%"  height="100%" ><div id="strength_2" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+	            <td width="15%"  height="100%" ><div id="strength_3" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+	            <td width="15%"  height="100%" ><div id="strength_4" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+	            <td width="15%"  height="100%" ><div id="strength_5" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>
+	            <td width="25%"  height="100%" ><span class="btFont3" id="strength_text">Invalid</span></td>
+	    	 </tr>
+	       </table>  
+     	
+
+
+				
+			<table id="guest_atf" style="margin-left: 10px;" >
+				<tr>
+					<td class="normalTextRight" ><nobr><font class="btFont2" id="208"></font></nobr></td><!--guest enable-->
+					<td class="tdTextBt_20" colspan="2" >
+						<select name="bw_alloc" id="bw_alloc" size="2">
+						<option value="50">50%</option>
+						<option value="45">45%</option>
+						<option value="40">40%</option>
+						<option value="35">35%</option>
+						<option value="30">30%</option>
+						<option value="25">25%</option>
+						<option value="20">20%</option>
+						<option value="15">15%</option>	
+						<option value="10">10%</option>
+						<option value="5">5%</option>							
+						</select>
+					</td>
+				</tr>
+	</table>
+
+	</td>
+	</tr>
+
+</table>
+
+
+<br/>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="250"></td>
+		<td align="right" id="submit_disabled_id">
+			<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+		</td>
+		<td align="right" id="submit_enabled_id">
+			<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001">&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+

@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var G_top=1;G_key=1;</script>
+<script language="javascript">var LangJ=["tl_sys_fw"];var CGIs=["wireless_wps","st","internet_cfg"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style type="text/css">
+/*BT start*/
+.btFont1		{color:#666666; font-size: 14pt; font-family:Calibri;}
+.btFont2		{color:#666666; font-size: 12pt; font-family:Calibri;}
+.btFont3		{color:#666666; font-size: 10pt; font-family:Calibri;}
+.btFont4		{color:#6400aa; font-size: 14pt; font-family:Calibri;font-weight: bold;}
+.btFont5		{color:#6400aa; font-size: 12pt; font-family:Calibri;}
+.btFont6		{color:#6400aa; font-size: 10pt; font-family:Calibri;}
+.btFont7		{color:#999999; font-size: 14pt; font-family:Calibri;}
+.btFont8		{color:#999999; font-size: 12pt; font-family:Calibri;}
+.btFont9		{color:#999999; font-size: 10pt; font-family:Calibri;}
+.btFont10		{color:#e40521; font-size: 12pt; font-family:Calibri;}
+.btFont11		{color:#6400aa; font-size: 18pt; font-family:Calibri;}
+.btFontBold2	{color:#666666; font-size: 12pt; font-family:Calibri; font-weight: bold;}
+.btFontBold3	{color:#666666; font-size: 10pt; font-family:Calibri; font-weight: bold;}
+/*BT end*/
+</style>
+
+<style>
+body {
+	margin: 0px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	font-family: arial;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.background_body {
+	margin: 0;
+	padding: 0;
+	background: #FFFFFF;
+	/*background-image: url(./images/background.jpg);*/
+	background-repeat: repeat;
+}
+
+.table_yj{
+	border-radius:5px;
+	overflow:hidden;
+}
+.topic{
+	font-weight: bold;
+	color: #0000ff;
+}
+.up{
+	font-weight: normal;
+	color: #6464c3;
+}
+.up_noraml{
+	/*font-weight: normal;*/
+	/*color: #6464c3;*/
+	color: blue;
+	margin-left:50px; 
+	font-size: 13px;
+}
+.up_title{
+	font-weight: bold;
+	color: blue;
+	font-size: 15px;
+	font-weight: bold;
+}
+
+.help_body {
+	font-family: Arial,Helvetica, sans-serif;
+	font-size: 13px;
+	width: 100%;
+	min-width: 640px !important;
+	line-height: 15px;
+	color: #036;
+	border-radius:30px;
+	overflow:hidden;
+	background: #F0F0F0;
+}
+
+.backtop{
+	display:block;
+	width:32px;
+	height:43px;
+	/*color: #FFFFFF;
+	font-size: 18px;
+	line-height: 50px;
+	text-align: center;
+	background: #F96;*/
+	cursor: pointer;
+	position:fixed;
+	right:30px;
+	bottom:20px;
+	background-image:url(images/backtop3243.png);
+}
+
+.topic {
+	font-weight: bold;
+	color: blue;
+	font-family: arial;
+	font-size: 15px;
+}
+
+.topic_2 {
+	font-weight: bold;
+	color: blue;
+	margin-left:50px; 
+}
+
+</style>
+
+<script language="javascript">
+//===================================
+// Submit
+//===================================
+
+var g_progress = 0;
+var fmw_prg=[-1,-1,-1,-1,-1,-1,-1-1];
+var fake_cnt=[0,0,0,0,0,0,0,0];
+var fmw_wait=120;
+var only_one=0;
+
+window.getHeight= function(){  
+    if(window.innerHeight!= undefined){  
+        return window.innerHeight;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientHeight, B.clientHeight);  
+    }  
+}  
+window.getWidth= function(){  
+    if(window.innerWidth!= undefined){  
+        return window.innerWidth;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientWidth, B.clientWidth);  
+    }  
+}  
+function msgbox(title,content,func,cancel,focus){
+		create_mask();
+		var temp="<div style=\"width:400px;border: 0px solid #37B6D1;background-color: #fff; padding:0px 15px 0px 15px; \" ><form id='frm_msg'>"
+		if(title!=null){temp+="<div class=\"btFontBold2\"  align=\"left\" style=\"line-height:25px; padding:30px 15px 0px 10px;	background-color: white;\">"+title+"</div>";}
+		temp+="<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 10px; \"></td>"
+			  	+"<tr><td colspan='2'><div style=\"background-color: #fff; color:#333333;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:left;\">"
+			  	+"<br><br>Rollback will revert your discs to an older firmware version."
+				+"</div></td></tr>"
+				+"<tr><td colspan='2'><div style=\"background-color: #fff; color:#333333;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:left;\">"
+			  	+"<br><br>After the firmware has updated, you'll need to factory reset all discs and go through setup again using the App."
+				+"</div></td></tr>"
+				+"<tr><td colspan='2'><div style=\"background-color: #fff; color:#333333;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:left;\">"
+			  	+"<br><br>Make sure you disable automatic update when prompted by the App otherwise your discs will upgrade again."
+				+"</div></td></tr>"
+				+"<tr><td>&nbsp;"	
+			  	+"</td></tr></table>"
+				+"<div style=\"text-align:right; padding:0px 0px 6px;background-color: #fff;\"><input type='button' class='btpurple' value='Rollback' id=\"msgconfirmb\"   onclick='"+func+";remove();'>";
+		if(null!=cancel){temp+="&nbsp;<input type='button' class='btpurple' value='Cancel'  id=\"msgcancelb\"   onClick='remove()'>";}
+		temp+="</div></form></div>";
+		create_msgbox(400,200,temp);
+		if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+		else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}	
+		do_arcTrans('#frm_msg');	
+	}
+	function get_width(){
+		return (window.getWidth()+document.body.scrollLeft);
+	}
+	function get_height(){
+		return (window.getHeight()+document.body.scrollTop);
+	}
+	function get_left(w){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		w=parseFloat(w);
+		return (bw/2-w/2+document.body.scrollLeft);
+	}
+	function get_top(h){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		h=parseFloat(h);
+		return (bh/2-h/2+document.body.scrollTop);
+	}
+	function create_mask(){
+		var mask=document.createElement("div");
+		mask.id="mask";
+		mask.style.position="absolute";
+		mask.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=4,opacity=25)";
+		mask.style.opacity=0.4;
+		mask.style.background="white";
+		mask.style.top="0px";
+		mask.style.left="0px";
+		mask.style.width=get_width()+'px';
+		mask.style.height=get_height()+50+'px';
+		mask.style.zIndex=1000;
+		document.body.appendChild(mask);
+	}
+	function create_msgbox(w,h,t){
+		var box=document.createElement("div")	;
+		box.id="msgbox";
+		box.style.position="absolute";
+		box.style.width=w;
+		box.style.height=h;
+		box.style.overflow="visible";
+		box.innerHTML=t;
+		box.style.zIndex=1001;
+		box.style.left=window.getWidth()/2-w/2 + 'px';
+		document.body.appendChild(box);
+		box.style.top=window.getHeight()/2-box.offsetHeight/2 + 'px';
+		re_pos();
+	}
+	function re_mask(){
+		var mask=document.getElementById("mask")	;
+		if(null==mask)return;
+		mask.style.width=get_width()+"px";
+		mask.style.height=get_height()+"px";
+	}
+	function re_pos(){
+		var box=document.getElementById("msgbox");
+		if(null!=box){
+			var w=box.style.width;
+			var h=box.style.height;
+			box.style.left=get_left(w)+"px";
+			box.style.top=get_top(h)+"px";
+		}
+	}
+	function remove(){
+		var mask=document.getElementById("mask");
+		var msgbox=document.getElementById("msgbox");
+		if(null==mask&&null==msgbox)return;
+		document.body.removeChild(mask);
+		document.body.removeChild(msgbox);
+	}
+	
+	function re_show(){
+		re_pos();
+		re_mask();	
+	}
+	function load_func(){
+		window.onresize=re_show;
+		window.onscroll=re_show;	
+	}
+
+function Show_Manually()
+{
+}
+function check_FW_and_jump()
+{
+	show_uploadloaing('#uploadloaing');
+	$.getScript('cgi/fw_download_prg.js', function(){
+		//console.log('LoadingStatus:'+FMWLoad.LoadingStatus);
+		if(FMWLoad.LoadingStatus == 0)
+		{
+			window.top.location.href="fw_upgrade.htm";	
+			return true;
+		}
+		else
+			setTimeout(function(){
+							check_FW_and_jump();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						check_FW_and_jump();
+					}, 1000* 2);
+				return;
+	});
+}
+
+
+
+function get_autoFW_version()
+{
+	
+	show_uploadloaing('#autofw_uploadloaing');	
+	//console.log('get_autoFW_version');
+	$.getScript('cgi/autofw_version.js', function(){
+		//console.log('nowait:'+autofw.nowait);
+		if(autofw.nowait == 0)
+		{
+			HiddenObject("loading1");
+		//	console.log('runtime_version:'+runtime_version);
+		//	console.log('autofw.version:'+autofw.version);
+			if(autofw.available == 1){
+				//DisplayObject("notes3");
+				console.log('autoFW');
+				if(autofw.version != '')
+				{
+					setIdVal("rollback_version",  autofw.version);
+					//DisplayObject("notes2");
+					HiddenObject("autofw_disabled_id");
+					DisplayObject("autofw_enable_id");
+				}
+				else
+					setIdVal("rollback_version",  "No rollback available");
+	
+			}
+			else
+				setIdVal("rollback_version",  "No rollback available");
+						
+			return true;
+		}
+		else
+			setTimeout(function(){
+							get_autoFW_version();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						get_autoFW_version();
+					}, 1000* 2);
+				return;
+	});
+}
+
+
+function show_GUI2320()
+{
+}
+
+function doConfirm(){
+	if(ConfirmM(440)) {
+		AlertM(441);
+			return true;
+	}
+	return false;
+}
+
+function autofw_check()
+{
+	var f=document.webForm3;
+	f.rollbackflag.value=1;
+	f.action="rollback.cgi";
+	f.encType="multipart/form-data";
+	
+	return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+			 uploadtype: 0,
+			wizard:1,
+		        wait: 2,
+		        done:function(){get_autoFW_version();}
+		         });
+}
+
+function autofw_evaltF()
+{
+	var f=document.webForm3;
+
+//add this function in phase2
+
+	
+	//if(time_val != -1)
+	if(0)
+	{
+		f.action="upload.cgi";
+		f.ENCTYPE='multipart/form-data';
+
+		return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+		         uploadtype: 1, 
+	 		wait:2
+		});
+	}
+	else
+	{
+		if( doConfirm() ){
+			if( g_progress == 0 ){
+				g_progress = 1;
+				f.action="upload.cgi";
+				f.ENCTYPE='multipart/form-data';
+	/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+					
+		}
+	}
+	return false;
+}
+
+function evaltF()
+{
+	var f=document.webForm;
+	
+	if(f.owlfile.value.length == 0){
+		AlertM(439);
+		return false;
+	}
+	/*
+	var filename = f.owlfile.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(442);
+		return false;
+	}
+	*/
+	
+	var filename = f.owlfile.value;
+	var header = "WE410443-SA_";
+	
+	if( filename.length<header.length ) 
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	if((filename.indexOf(header) == -1) || (filename.indexOf("aldk_uImage_web") == -1) )
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	f.resetFlag.checked = true;
+	f.reset.value = "1";
+
+		
+	if( doConfirm() ){
+		
+		HiddenObject("submit_enabled_id");
+		DisplayObject("submit_disabled_id");
+		
+		if( g_progress == 0 ){
+			g_progress = 1;
+			f.action="upload.cgi";
+			f.ENCTYPE='multipart/form-data';
+/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+		
+		
+	}
+	return false;
+}
+//==============Backup===============
+function evaltFback(){
+	// FIXME: old design is put under CGI, we no retrieve every time, but by request
+	//
+	var iframe; 
+	do_jload([["cgi/cgi_sys_bk.js"]],function(){
+		var configFile_URL='/tmp/'+cgi_bkup_file;
+		configFile_URL=URLToken(configFile_URL);	
+		//use iframe to download files because  location.replace can't success by edge.
+		//location.replace(configFile_URL);
+		iframe = document.createElement('iframe');
+		iframe.src = configFile_URL;
+		iframe.style.display = "none";
+		document.body.appendChild(iframe);
+	});	
+	return false;
+}
+//=============ReBackup==============
+function evaltFReback(){
+	var f=document.tfReb;
+	if(f.restore.value.length == 0){
+		AlertM(529);
+		return false;
+	}
+	var filename = f.restore.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(533);
+		return false;
+	}
+	if(ConfirmM(530)) {
+		AlertM(531);
+		f.action="upload.cgi";
+		f.encType="multipart/form-data";
+		return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:"SYS_PROF",
+ 					wait:120
+		});
+	}
+	return false;
+}
+//=============Restore==============
+function evaltFRestore(){
+	return doConfirmRes();
+}
+
+function doConfirmRes(){
+	if(ConfirmM(426)) {
+		AlertM(427);
+		top.G_IP=getCfg("def_lanip");
+		top.G_URL="https://"+top.G_IP+"/index.htm"; // change IP as default value
+		return subForm({
+ 					frm:document.tF,
+ 					next: "index.htm",
+ 					cmd:subFormSYSReset,
+ 					wait:120
+		});
+	} else {
+		AlertM((428));
+	 return false;
+	}
+}
+
+
+
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading1" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function init_check_fw_status()
+{
+	var internetflag=getCfg("internet_enable"); // 1 internet_ok, 0 internet_disconnect_connection
+	var uplink_status_flag=getCfg("uplink_status");// 0 : No Uplink, 1: WiFi 2G, 2: WiFi 5G, 3: Ethernet
+	//alert("uplink_status_flag:" + uplink_status_flag);
+	//internetflag=0;
+	//alert(internetflag);
+	
+	if(internetflag == 0 || uplink_status_flag != 3)
+	{
+		DisplayObject("notes4");
+		HiddenObject("checkfwID");
+		DisplayObject("checkfw_disabledID");
+		//EnableObject("checkfwID");
+		//HiddenObject("checkfwID");
+	}
+}
+
+
+//add for Automatic Update..................strart  20170525
+function SelectValue(o,v){
+	for(var i=0; i<o.options.length; i++)
+		if(o.options[i].value == v){
+		o.options[i].selected=true;
+		break;
+	}
+}
+
+
+
+function demo(){
+
+		//DisplayObject("notes2");
+		HiddenObject("autofw_disabled_id");
+		DisplayObject("autofw_enable_id");
+}
+
+
+
+//===================================
+// Init
+//===================================
+function init(){
+	var f=document.webForm;
+
+	HiddenObject("manual_update_id");
+	HiddenObject("hidden_reset");  
+	HiddenObject("notes1");
+	HiddenObject("notes2");
+	HiddenObject("notes3");
+	HiddenObject("notes4");
+	HiddenObject("autofw_enable_id");
+	HiddenObject("submit_disabled_id");
+	HiddenObject("checkfw_disabledID");
+	HiddenObject("tr_upgrade_schedule");
+	init_check_fw_status();//device cannot be connected to the Internet via a network cable.check fw will be disabled.
+	if( G_top==1){ addFieldValue(f, "devtag",1);} //hacking
+	setIdVal("u_runver",runtime_code_version);
+
+	//demo();
+		
+	ShowMenu();
+	setIdVal("fw_version",  runtime_version);
+	setIdVal("rollback_version",  "");
+
+	if(upgrade_schedule.enable == 1)
+	{
+		DisplayObject("tr_upgrade_schedule");	
+		setIdVal("upgrade_schedule",  "Upgrade scheduled for between " + transfer_secs(parseInt(upgrade_schedule.choose_time), 24) + " and " + transfer_secs(parseInt(upgrade_schedule.choose_time)+14400, 24) + ".");
+		setIdVal("rollback_version",  upgrade_schedule.remote_version);
+	}
+
+
+	
+	reSetHelpUrl("FirmwareUpdateID");	
+}
+
+</script>
+
+</head>
+<body class="background_body" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<form name="tF" action="/cgi-bin/wireless_eb.exe" method="post" target="OUTfrm">
+<a name='TOP'></a>
+<div style="background-color:#6400aa">
+<div class="newbodywidth">
+	<iframe name="topFrame" src="setup_top_help.htm" target="leftFrame" scrolling="no" noresize="" frameborder="0" border="0" marginwidth="0" marginheigh="0" align="top" hspace="0" vspace="0" cellspacing="0" style="border:none" width="100%" height="80"></iframe>
+</div>
+</div>
+
+<div>
+<div class="newbodywidth_h30">
+	<img  style="height:30px;width:1px;" src="images/folder/tv_space.gif" border='0'>
+</div>
+</div>
+<script>ShowPageMenu();</script>
+<!-- Page left-->	
+
+<!-- main page-->
+<div >
+<div class="newbodywidth" >	
+<table class="help_body" height="100%" align="center" cellspacing="10" cellpadding="0" width="60%" border="0" ID="Table3">
+	<tr>
+		<td valign="top">
+	        <p style="margin-left:10px"><font  id="621" class="btFontBold1"></font></p>
+	   </td>
+	</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm1" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset1" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<p class=normalText><font class="btFont2" id="622"></font></p>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm2" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset2" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td width="150">						
+						<font class="btFont2" id="623"></font>
+					</td>
+					<td>						
+						<font class="btFont2" id="fw_version"></font>
+					</td>
+				</tr>
+				<tr>
+					<td width="150">						
+						<font class="btFont2" id="624"></font>
+					</td>
+					<td>						
+						<font class="btFont2" id="rollback_version"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm3" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="update_time" value="-1">		
+			<input type="hidden" name="owlfile_auto" value="">
+			<input type="hidden" name="rollbackflag" value="1">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="autofw">
+				<div style="width:90%">
+						<div class="tdText" width="50%" style="float:right;" id="checkfwID">
+							<input type="button" class="btpurple" onClick="autofw_check()" name="checkfw" id="601">&nbsp;
+						</div>
+						
+						<div class="tdText" width="50%" style="float:right;" id="checkfw_disabledID">
+							<input type="button" class="btpurple" onClick="autofw_check()" disabled="true" name="checkfw" id="601">&nbsp;
+						</div>
+						
+						<div class="tdText" id="autofw_disabled_id" width="50%" style="float:right;">
+							<input type="button" class="btpurple" onClick="autofw_evaltF()" name="autoupgrade" id="625" disabled="true">&nbsp;
+						</div>
+						<div class="tdText" id="autofw_enable_id" width="50%" style="float:right;">
+							<input type="button" class="btpurple" onClick="msgbox('Confirm Firmware RollBack ',null,'autofw_evaltF()',1,1)" name="autoupgrade" id="625">&nbsp;
+							<!--<input type="button" class="btpurple" onClick="autofw_evaltF()" name="autoupgrade" id="438">&nbsp;-->
+						</div>
+						</div>
+	      			</tr>
+	      			<tr id="tr_upgrade_schedule">
+					<td width="150">						
+						<font class="btFont2" id="upgrade_schedule"></font>
+					</td>
+	      			</tr>
+			</table>
+			<div id='autofw_uploadloaing'></div>
+		</form>
+	</td>
+</tr>	      			
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm4" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset3" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="notes1">
+					<td>						
+						<font class="btFont3" id="606"></font>
+					</td>
+				</tr>
+				<tr id="notes2">
+					<td>						
+						<font class="btFont3" id="432"></font>
+					</td>
+				</tr>
+				<tr id="notes3">
+					<td>						
+						<font class="btFont3" id="607"></font>
+					</td>
+				</tr>
+				<tr id="notes4">
+					<td>						
+						<font class="btFont3" id="609" style="color:red"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%" id="manual_update_id">			
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<b><font class="btFont1" id="602"></font></b>
+					</td>
+				</tr>
+				<tr>
+					<td>						
+						<font class="btFont2" id="603"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="vox20_table_nbl" border="0" cellspacing="0" cellpadding="5" width="50%" style="margin-left: 0px;">
+							<tr>
+								<td nowrap class="tdText">
+									<font class="btFont2" id="437"></font>
+								</td>
+								<td nowrap class="tdText">
+									<input class="btFont3" type="file" size="50" maxlength="31" name="owlfile">
+								</td>
+							</tr>
+							<tr id='hidden_reset'>
+								<td colspan="2" align="center" nowrap class="tdText">
+									<font class="btFont2" id="600"></font>
+									<input type="checkbox" name="resetFlag" value="1" NOCHECK="0">
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr id="updatebutton">
+					<td align="right" id="submit_disabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="upgrade" id="438" disabled="true">&nbsp;
+					</td>
+					<td align="right" id="submit_enabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="upgrade" id="438">&nbsp;
+					</td>
+	      			</tr>
+	      	</table>
+	      	<div id='uploadloaing'></div>
+		<div id='progressList'></div>
+			</form>
+	</td>
+</tr>
+</table>
+</div>
+</div>
+
+	<!-- main page-->
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

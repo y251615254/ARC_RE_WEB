@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset="/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<link rel="shortcut icon" href="images/logoico.png" type="image/x-icon">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var CGIs=["login"];</script>
+<script language="javascript">var LangJ=["login","top"];</script>
+<script language="javascript">var G_top=-2;</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style>
+body {
+	margin: 30px 0px 0px 0px;
+	background: #ffffff;
+	color: #000000;
+	min-width: 640px !important;
+	min-width: 700px;
+	width: auto !important;
+	width: 100%;
+	height: 100%;
+}
+.Login_Container{
+            width: 425px;
+            height: 380px;
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            margin-left: -212.5px;
+            background-color: white;
+            border: 1px white solid;
+            border-radius: 2px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.4);
+        }
+.logo_position{
+            width: 391px;
+            height: 46px;
+            margin: 17px 17px 70px 17px;
+        }
+.FontRef3{
+			margin:0px 0px 0px 40px;
+			font-family: Calibri Light,Arial;
+            font-size: 13px;
+            color: #333333;
+            position:absolute;
+            margin-left:60px;
+}
+.FontRef6{
+			white-space:nowrap;
+			font-family: Calibri Light,Arial;
+            font-size: 13px;
+            color: #6400AA;
+}
+.FontRefH{
+			color:#333333;
+            float: right;
+            font-size: 24px;
+            font-family: Calibri Light;
+            line-height: 46px;
+        }      
+.bt_purple {
+	background-color:#6400aa;
+	/*background-color:#674ca3;*/
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Calibri, Helvetica,Times New Roman;
+	font-size:16px;
+	/*font-weight:bold;*/
+	padding:10px 20px;
+	width:210px;
+	text-decoration:none;
+}
+.bt_inactive {
+	background-color:#d9bae7;
+	/*background-color:#674ca3;*/
+	-moz-border-radius:5px;
+	-webkit-border-radius:5px;
+	border-radius:5px;
+	display:inline-block;
+	cursor:pointer;
+	color:#ffffff;
+	font-family:Calibri, Helvetica,Times New Roman;
+	font-size:16px;
+	/*font-weight:bold;*/
+	padding:10px 20px;
+	width:210px;
+	text-decoration:none;
+}
+.bt_purple:hover {
+	background-color:#e60050;
+}
+.bt_purple:active {
+	position:relative;
+	background-color:#540e85;
+	top:1px;
+}
+
+
+
+/* -------------
+ * Inputs
+ * ------------- */
+ .show_psk{
+	position:relative;
+	left:-117px;
+	top:10px;
+	height:32.5px;
+	z-index:0;
+	moz-user-select: -moz-none;
+	-moz-user-select:none;
+	-o-user-select:none;
+	-khtml-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+ 
+.arcTransformInputWrapper {
+	padding-right:40px;
+	width:210px !important;	
+}
+
+
+.arcTransformInputInner {
+	padding-right:40px;
+	width:210px !important;
+}
+
+.arcTransformInputInner div input {
+
+	/*padding-right:40px;*/
+	width:150px !important;
+}
+.arcTransformSafari .arcTransformInputInner div {
+	padding-right:40px;
+	width:210px !important;	
+}
+.arcTransformSafari .arcTransformInputInner div input {
+	padding-right:40px;
+	width:210px !important;
+}
+
+input[type="password"]::-ms-reveal{display:none;}
+input[type="text"]::-ms-clear{display:none;}
+
+</style>
+
+
+<script type="text/javascript"> 
+
+var IEVersion=999;
+function show_pwd_prompt()
+{	
+	var text=document.getElementById("Forgot_pwd");
+	var toward1=document.getElementById("triangle1");
+	var toward2=document.getElementById("triangle2");
+	if(text.style.display=="none")
+		{
+		text.style.display="block";
+		HiddenObject("triangle1");
+		DisplayObject("triangle2");
+		}
+	else
+		{
+		text.style.display="none";
+		HiddenObject("triangle2");
+		DisplayObject("triangle1");
+		}
+}
+function checkIEVersion()
+{
+	if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/7./i)=="7.") 
+	{ 
+		//alert("IE 7.0");
+		IEVersion = 7;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/8./i)=="8.") 
+	{ 
+		//alert("IE 8.0"); 
+		IEVersion = 8;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/9./i)=="9.") 
+	{ 
+		//alert("IE 9.0");
+		IEVersion = 9;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer" && navigator.appVersion.match(/10./i)=="10.") 
+	{ 
+		//alert("IE 10.0");
+		IEVersion = 10;
+	} 
+	else if(navigator.appName == "Microsoft Internet Explorer") 
+	{ 
+		//alert("IE 6.0");
+		IEVersion = 6;
+	} 
+
+	return IEVersion;
+}
+
+function setLoginButStyle()
+{
+	var tmp = checkIEVersion();
+	if(tmp == 7 || tmp == 6)
+	{
+		document.getElementById("loginButtonID").style.cssText = "padding-left:170px;padding-bottom:50px;"; 
+	}
+	
+}
+</script>
+
+
+
+<script language="JavaScript">
+top.ItemIdx=-1;
+if( (window.top !=window.self)){
+   window.top.location.href="login.htm";
+}
+
+var company="<font class='txt1'>Arcadyan</font>";
+document.onkeypress=kDown;
+if (document.layers) window.captureEvents(Event.KEYDOWN);
+
+function kDown(e)
+{
+    var key = 0 ;
+    if(window.event)  key = window.event.keyCode;
+    else if(e)        key = e.which ;
+    if(key==13) {checkfwVersion(); return false;}
+}
+
+function kDownnull(e)
+{
+    var key = 0 ;
+    if(window.event)  key = window.event.keyCode;
+    else if(e)        key = e.which ;
+    if(key==13) {return false;}
+}
+
+function checkfwVersion(){
+	SetCookie("popup",1);
+	curTime = new Date();
+	
+	if(psk_show_hide_flag==1)
+	SetFieldValue(document.tF.ui_pws,document.tF.disp_ui_pws.value);
+	
+	//document.tF2.name.value = document.tF.ui_user.value;
+	//check err_login number for BT 20160602
+
+	var tmp =ArcMD5(document.tF.ui_pws.value);
+	document.tF2.pws.value =ArcMD5(tmp+tmp_val);
+
+	document.tF2.action="login.cgi";
+/*DEMO*/
+	document.tF2.action="index.htm";
+/*END_DEMO*/
+
+	if(document.tF.ui_pws.value == "")
+	{
+		SetCookie("login_empty_flag", 1);
+		window.location.href="login.htm";
+	}	
+
+	return subForm({
+			frm:document.tF2,
+			genfrm:0, //no generate form
+			noprogress:1,
+			wait: 5
+	});
+}
+
+function check_block(){
+	//if(!GetCookie("pwderr"))
+	{
+		window.location.href="login.htm";
+	}
+}
+
+/*
+window.setInterval(logout_token_alert, 5000); 
+function logout_token_alert() 
+{ 
+	var f=document.tF;
+	var token_url = window.location.href;
+	//var token_url = "http://192.168.1.1/login.htm?t=1475895975462";
+	var token_flag = token_url.indexOf("?t=");
+	if(token_flag != "-1")//  not find the string ?t= 	 return -1. 
+	{
+		//alert("have torken" + token_url );
+		DisplayObject("token_out_id");
+		DisableObject(f.ui_pws);
+		DisplayObject("login_ok_disable_buttonID");
+		HiddenObject("login_ok_enable_buttonID");
+	}
+} 
+*/
+	
+//when user logout,in login page, 10mins later,it will show logout information 
+window.setTimeout("init_logout_token_alert()","600000");// 600000  = 10mins    540000=9mins
+function init_logout_token_alert() 
+{ 
+	var f=document.tF;
+	DisplayObject("token_out_id");
+	DisableObject(f.ui_pws);
+	DisableObject(f.disp_ui_pws);
+	DisplayObject("login_ok_disable_buttonID"); 
+	HiddenObject("Forgot_pwd_link");
+	HiddenObject("Forgot_pwd");
+	HiddenObject("login_ok_enable_buttonID");
+	HiddenObject("login_ok_enable_buttonID_IE");
+} 
+function init_login_css_button_for_ie()
+{
+	var tmp = checkIEVersion();
+	//alert(tmp);
+	if(tmp <= 8)
+	{
+		HiddenObject("login_ok_enable_buttonID");
+		DisplayObject("login_ok_enable_buttonID_IE");
+	}
+}
+
+//psk hide/show by nicknickni
+var psk_show_hide_flag=0;
+function show_psk(){
+	var f=document.tF;
+	psk_show_hide_flag=1;
+DisplayObject("disp_ui_psk");
+DisplayObject("disp_ui_psk_show");
+SetFieldValue(f.disp_ui_pws,f.ui_pws.value);
+HiddenObject("ui_psk");
+HiddenObject("ui_psk_show");
+}
+
+function show_psk_hide(){
+	var f=document.tF;
+	psk_show_hide_flag=0;
+DisplayObject("ui_psk");
+DisplayObject("ui_psk_show");
+SetFieldValue(f.ui_pws,f.disp_ui_pws.value);
+HiddenObject("disp_ui_psk");
+HiddenObject("disp_ui_psk_show");
+}
+//
+
+function init(){
+	var f=document.tF;
+	HiddenObject("token_out_id");  
+	HiddenObject("login_ok_disable_buttonID"); 
+	HiddenObject("login_ok_enable_buttonID_IE");
+	HiddenObject("triangle2");
+	HiddenObject("u_errpaswd");
+	init_login_css_button_for_ie();
+	if(GetCookie("login_empty_flag") == "1")
+	{
+		DisplayObject("u_errpaswd");
+		HiddenObject("u_errpaswd2");
+		HiddenObject("u_errpaswd1");
+		DisplayObject("u_errpaswd0");
+		DeleteCookie("login_empty_flag");
+	}
+	else
+	{
+		if(login_info.error>0)
+		{
+			var errtimes = login_info.error_count;
+			if(errtimes)
+			{
+				if((parseInt(errtimes) >= 5))	
+				{
+					if(login_info.error_wait > 0)
+					{
+						DisplayObject("u_errpaswd");
+						var min = parseInt(errtimes)-5+1;
+						if(min > 15)
+							min = 15;
+						DisplayObject("u_errpaswd2");	
+						if(min > 1)
+							setIdVal("toomanyfail",  'Too many failed attempts. Please wait '+min+' minutes and try again.');
+						else
+							setIdVal("toomanyfail",  'Too many failed attempts. Please wait '+min+' minute and try again.');
+						HiddenObject("Forgot_pwd_link");
+						HiddenObject("token_out_id");
+						HiddenObject("u_errpaswd1");
+						HiddenObject("u_errpaswd0");
+						DisableObject(f.ui_pws);
+						DisableObject(f.disp_ui_pws);
+						DisplayObject("login_ok_disable_buttonID");
+						HiddenObject("login_ok_enable_buttonID");	
+						document.onkeypress=kDownnull;	
+						setInterval(function () {check_block();}, login_info.error_wait * 1000);
+					}
+				}
+				else
+				{
+					DisplayObject("u_errpaswd");
+					DisplayObject("u_errpaswd1");
+					HiddenObject("u_errpaswd2");
+					HiddenObject("u_errpaswd0");
+				}
+			}
+		}
+	}
+	DeleteCookie("login_empty_flag");
+
+	f.fwversion1.value = getCfg("fwversion1");
+	f.fwversion2.value = getCfg("fwversion2");
+	
+	ShowMenuLogin();
+
+	setLoginButStyle();
+
+	HiddenObject("disp_ui_psk");
+	HiddenObject("disp_ui_psk_show");
+	
+	//NOTE:
+	//   if single password focus it, if exist user field set focus
+	document.tF.ui_pws.focus();
+
+	//document.tF.ui_user.focus();
+
+}
+</script>
+</head>
+<body class="background_body" onload="pre_init()">
+<table width="100%"  height="100%" border="0" cellspacing="0" cellpadding="0" id="contentbody" style="display:none">
+<tr>
+  <td colspan="2" width="100%" bgcolor="white" class="header_section">
+	<!-- main page-->
+		<form action="/cgi-bin/login.exe" method="post" name="tF" target="_top">
+  		<input type="hidden" name="fwversion1" value="">
+  		<input type="hidden" name="fwversion2" value="">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" height="100%" bgcolor="#F0F0F0">
+		<tr>
+			<td valign="top" align="center">
+				<div align="center" class="Login_Container">
+				<div class="logo_position">
+            		<span style="float:left;"><img src="images/logo_w.png" style="height:46px;"></span>
+            		<span class="FontRefH">Whole Home Wi-Fi</span>
+        		</div>
+				<!-- login -->
+				<table width="450" border="0" cellspacing="1" cellpadding="5" align="center">			
+			
+				<tr><!--Password-->
+				<td>&nbsp</td>
+				<div style="position:absolute;margin-left:95px;margin-top:13px;opacity:0.5;">
+            		<span style="float:left;"><img src="images/lock.png" style="width:16px;height:20px;"></span>
+        		</div>
+					<td id="ui_psk" colspan="2" align="center" class=tdText>
+						<input type="password" maxLength=20 size="12" name="ui_pws" value="">
+					</td>
+									
+					<td id="disp_ui_psk" colspan="2" align="center" class=tdText>
+						<input type="text" maxLength=20 size="12" name="disp_ui_pws" value="">
+					</td>
+					
+					<td style="font-size: 16px !important;" id="ui_psk_show"><div class="show_psk">
+					<font style="color:#333333" onclick="show_psk()" id="120010"  ></font></div></td>	
+															
+					<td style="font-size: 16px !important;" id="disp_ui_psk_show"><div class="show_psk">
+					<font style="color:#333333" onclick="show_psk_hide()" id="120011" ></font ></div></td>				
+				</tr>
+				<tr>
+					<td align=center>
+						<span style="display:none;margin-left:80px;position:absolute;" id="u_errpaswd">
+							<div id="u_errpaswd0">
+								<font class="btFont10"  id="128"></font>
+							</div>
+							<div id="u_errpaswd1">
+								<font class="btFont10"  id="129"></font>
+							</div>
+							<div id="u_errpaswd2" style="margin-left:-75px;position:absolute;white-space:nowrap;">
+								<font class="btFont10"  id="toomanyfail"></font>
+							</div>
+						</span>
+					</td>
+				</tr>
+				<tr><!--Login (Button)-->
+					<td colspan="3" align="center" id="loginButtonID"  style="padding-left:30px;padding-bottom:10px;"><br>						
+						<div id="login_ok_enable_buttonID_IE"><!--Only work for IE<=8 , default hide -->
+						   <input type="button" class="btpurple" value="" id="127" onClick="checkfwVersion()">
+						 </div>
+
+						<div id="login_ok_enable_buttonID">
+						    <a href="#" class="bt_purple"  id="127" value="Login" onClick="checkfwVersion()">Login</a>
+						</div>		
+						
+					    <div id="login_ok_disable_buttonID">
+					    	 <a href="#" class="bt_inactive" onClick="">Login</a>
+					    </div>
+						
+						<!--
+						<input type="button" value="" id="125" onClick="javascript:window.location.reload();">
+						-->
+					</td>
+				</tr>
+				<tr id="Forgot_pwd_link"><!--Forgot pwd-->
+				<td>&nbsp;</td>
+					<td>
+						<div style="padding-left: 60px;"><a href="javaScript:show_pwd_prompt()" class="FontRef6">Forgot Password</a>
+							<img src="images/triangle.png" style="width:12px;height:9px;opacity:0.8;transform:rotate(90deg);" id="triangle1">
+							<img src="images/triangle.png" style="width:12px;height:9px;opacity:0.8;transform:rotate(180deg);" id="triangle2">
+						</div>
+					</td>
+				</tr>
+					<td>
+						<p class="FontRef3" style="display:none;" id="Forgot_pwd">
+						The default password can be found on the product label on</br>
+						the back of your Whole Home Wi-Fi .In case you forget your </br>
+						password you can restore the default password by holding</br>
+						the factory reset pinhole for 1 second.</p>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="4" align=center id="token_out_id">
+						<div id="token_out_id">
+							<font class="btFont10"  id="">You are logged out, <a style="color:#e40521" onClick="javascript:window.location.href='login.htm' ">please click here to login again.</a></font>
+						</div>
+					</td>
+				</tr>
+				
+				<tr>
+					<td height="370">&nbsp;</td>
+				</tr>
+				</table>
+				<!-- login -->
+			</td>
+		</tr>
+		</table>
+		</form>
+	<!-- main page-->
+  </td>
+</tr>
+</table>
+<form id="myForm" action="/cgi-bin/login.exe" method="post" name="tF2" target="_top">
+<input type="hidden" name="url" value="">
+<input type="hidden" name="name" value="">
+<input type="hidden" name="pws" value="">
+</form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

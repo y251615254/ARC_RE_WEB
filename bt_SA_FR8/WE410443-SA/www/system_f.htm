@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var G_top=1;G_key=1;</script>
+<script language="javascript">var LangJ=["tl_sys_fw"];var CGIs=["wireless_wps","st","internet_cfg"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+//===================================
+// Submit
+//===================================
+
+var g_progress = 0;
+var fmw_prg=[-1,-1,-1,-1,-1,-1,-1-1];
+var fake_cnt=[0,0,0,0,0,0,0,0];
+var fmw_wait=120;
+var only_one=0;
+
+window.getHeight= function(){  
+    if(window.innerHeight!= undefined){  
+        return window.innerHeight;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientHeight, B.clientHeight);  
+    }  
+}  
+window.getWidth= function(){  
+    if(window.innerWidth!= undefined){  
+        return window.innerWidth;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientWidth, B.clientWidth);  
+    }  
+}  
+function msgbox(title,content,func,cancel,focus){
+		create_mask();
+		var temp="<div style=\"width:400px;border: 0px solid #37B6D1;background-color: #fff; padding:0px 15px 0px 15px; \" ><form id='frm_msg'>"
+		if(title!=null){temp+="<div class=\"btFontBold2\"  align=\"left\" style=\"line-height:25px; padding:30px 15px 0px 10px;	background-color: white;\">"+title+"</div>";}
+		temp+="<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 10px; \"></td>"
+			  	+"<td colspan='2'><div style=\"background-color: #fff; color:#333333;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:left;\">"
+			  	+"<br>You can apply the update immediately or schedule the update for later. Please select below.<br>"
+				+"</div></td></tr>"
+				+"<tr><td style=\" padding:0px 0px 0px 0px; \"></td>"
+			  	+"<td><div style=\"background-color: #fff; color:#333333;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:left;\">Update:</div></td>"			  	
+				+"<td>"
+				+"	<select name='sel_time' id='sel_time'>"
+				+"	<option value='-1'>Immediately</option>"
+				+"	<option value='0'>0:00AM</option>"
+				+"	<option value='1'>1:00AM</option>"
+				+"	<option value='2'>2:00AM</option>"
+				+"	<option value='3'>3:00AM</option>"
+				+"	<option value='4'>4:00AM</option>"
+				+"	<option value='5'>5:00AM</option>"
+				+"	<option value='6'>6:00AM</option>"
+				+"	<option value='7'>7:00AM</option>"
+				+"	<option value='8'>8:00AM</option>"
+				+"	<option value='9'>9:00AM</option>"
+				+"	<option value='10'>10:00AM</option>"
+				+"	<option value='11'>11:00AM</option>"
+				+"	<option value='12'>12:00PM</option>"
+				+"	<option value='13'>1:00PM</option>"
+				+"	<option value='14'>2:00PM</option>"
+				+"	<option value='15'>3:00PM</option>"
+				+"	<option value='16'>4:00PM</option>"
+				+"	<option value='17'>5:00PM</option>"
+				+"	<option value='18'>6:00PM</option>"
+				+"	<option value='19'>7:00PM</option>"
+				+"	<option value='20'>8:00PM</option>"
+				+"	<option value='21'>9:00PM</option>"
+				+"	<option value='22'>10:00PM</option>"
+				+"	<option value='23'>11:00PM</option>"
+				+"	</select>"
+				+"</td></tr>"
+				+"<tr><td>&nbsp;&nbsp;"	
+			  	+"</td></tr></table>"
+				+"<div style=\"text-align:right; padding:0px 0px 6px;background-color: #fff;\"><input type='button' class='btpurple' value='Update' id=\"msgconfirmb\"   onclick='"+func+";remove();'>";
+		if(null!=cancel){temp+="&nbsp;<input type='button' class='btpurple' value='Cancel'  id=\"msgcancelb\"   onClick='remove()'>";}
+		temp+="</div></form></div>";
+		create_msgbox(400,200,temp);
+		if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+		else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}	
+		do_arcTrans('#frm_msg');	
+	}
+	function get_width(){
+		return (window.getWidth()+document.body.scrollLeft);
+	}
+	function get_height(){
+		return (window.getHeight()+document.body.scrollTop);
+	}
+	function get_left(w){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		w=parseFloat(w);
+		return (bw/2-w/2+document.body.scrollLeft);
+	}
+	function get_top(h){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		h=parseFloat(h);
+		return (bh/2-h/2+document.body.scrollTop);
+	}
+	function create_mask(){
+		var mask=document.createElement("div");
+		mask.id="mask";
+		mask.style.position="absolute";
+		mask.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=4,opacity=25)";
+		mask.style.opacity=0.4;
+		mask.style.background="white";
+		mask.style.top="0px";
+		mask.style.left="0px";
+		mask.style.width=get_width()+'px';
+		mask.style.height=get_height()+50+'px';
+		mask.style.zIndex=1000;
+		document.body.appendChild(mask);
+	}
+	function create_msgbox(w,h,t){
+		var box=document.createElement("div")	;
+		box.id="msgbox";
+		box.style.position="absolute";
+		box.style.width=w;
+		box.style.height=h;
+		box.style.overflow="visible";
+		box.innerHTML=t;
+		box.style.zIndex=1001;
+		box.style.left=window.getWidth()/3-w/2 + 'px';
+		document.body.appendChild(box);
+		box.style.top=window.getHeight()/2.5-box.offsetHeight/2 + 'px';
+		re_pos();
+	}
+	function re_mask(){
+		var mask=document.getElementById("mask")	;
+		if(null==mask)return;
+		mask.style.width=get_width()+"px";
+		mask.style.height=get_height()+"px";
+	}
+	function re_pos(){
+		var box=document.getElementById("msgbox");
+		if(null!=box){
+			var w=box.style.width;
+			var h=box.style.height;
+			box.style.left=get_left(w)+"px";
+			box.style.top=get_top(h)+"px";
+		}
+	}
+	function remove(){
+		var mask=document.getElementById("mask");
+		var msgbox=document.getElementById("msgbox");
+		if(null==mask&&null==msgbox)return;
+		document.body.removeChild(mask);
+		document.body.removeChild(msgbox);
+	}
+	
+	function re_show(){
+		re_pos();
+		re_mask();	
+	}
+	function load_func(){
+		window.onresize=re_show;
+		window.onscroll=re_show;	
+	}
+
+function Show_Manually()
+{
+}
+function check_FW_and_jump()
+{
+	show_uploadloaing('#uploadloaing');
+	$.getScript('cgi/fw_download_prg.js', function(){
+		//console.log('LoadingStatus:'+FMWLoad.LoadingStatus);
+		if(FMWLoad.LoadingStatus == 0)
+		{
+			window.top.location.href="fw_upgrade.htm";	
+			return true;
+		}
+		else
+			setTimeout(function(){
+							check_FW_and_jump();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						check_FW_and_jump();
+					}, 1000* 2);
+				return;
+	});
+}
+
+
+
+function get_autoFW_version()
+{
+	
+	show_uploadloaing('#autofw_uploadloaing');	
+	//console.log('get_autoFW_version');
+	$.getScript('cgi/autofw_version.js', function(){
+		//console.log('nowait:'+autofw.nowait);
+		if(autofw.nowait == 0)
+		{
+			HiddenObject("loading1");
+			setIdVal("last_version",  autofw.version);
+		//	console.log('runtime_version:'+runtime_version);
+		//	console.log('autofw.version:'+autofw.version);
+			if(autofw.available == 0)
+				DisplayObject("notes3");
+			else
+			{
+			//	console.log('autoFW');
+				if(autofw.version != '')
+				{
+					DisplayObject("notes2");
+					HiddenObject("autofw_disabled_id");
+					DisplayObject("autofw_enable_id");
+				}
+	
+			}
+			return true;
+		}
+		else
+			setTimeout(function(){
+							get_autoFW_version();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						get_autoFW_version();
+					}, 1000* 2);
+				return;
+	});
+}
+
+
+function show_GUI2320()
+{
+}
+
+function doConfirm(){
+	if(ConfirmM(440)) {
+		AlertM(441);
+			return true;
+	}
+	return false;
+}
+
+function autofw_check()
+{
+	var f=document.webForm3;
+	f.action="fwcheck.cgi";
+	f.encType="multipart/form-data";
+	
+	return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+			 uploadtype: 0,
+			wizard:1,
+		        wait: 2,
+		        done:function(){get_autoFW_version();}
+		         });
+}
+
+function autofw_evaltF()
+{
+	var f=document.webForm3;
+
+//add this function in phase2
+
+	var time_val = document.getElementById('sel_time').value;
+
+	f.update_time.value = time_val;
+
+	if(time_val != -1)
+	{
+		f.action="upload.cgi";
+		f.ENCTYPE='multipart/form-data';
+
+		return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+		         uploadtype: 1, 
+	 		wait:2
+		});
+	}
+	else
+	{
+		if( doConfirm() ){
+			if( g_progress == 0 ){
+				g_progress = 1;
+				f.action="upload.cgi";
+				f.ENCTYPE='multipart/form-data';
+	/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+					
+		}
+	}
+	return false;
+}
+
+function evaltF()
+{
+	var f=document.webForm;
+	
+	if(f.owlfile.value.length == 0){
+		AlertM(439);
+		return false;
+	}
+	/*
+	var filename = f.owlfile.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(442);
+		return false;
+	}
+	*/
+	
+	var filename = f.owlfile.value;
+	var header = "WE410443-SA_";
+	
+	if( filename.length<header.length ) 
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	if((filename.indexOf(header) == -1) || (filename.indexOf("aldk_uImage_web") == -1) )
+	{
+		AlertM(608);
+		return false;
+	}
+	
+	f.resetFlag.checked = true;
+	f.reset.value = "1";
+
+		
+	if( doConfirm() ){
+		
+		HiddenObject("submit_enabled_id");
+		DisplayObject("submit_disabled_id");
+		
+		if( g_progress == 0 ){
+			g_progress = 1;
+			f.action="upload.cgi";
+			f.ENCTYPE='multipart/form-data';
+/*DEMO*/
+f.action="Success_upgrade.htm";
+/*END_DEMO*/
+			// our upgrade need take around 60 secs, we more waiting 20 secs
+		/*	return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:'',
+ 					uploadtype: 1, //0: nomral, 1: firmware upgrade,  2: reset default,3: restore profile.,
+					wait:180     //by seal
+			});
+		}*/
+		//HiddenObject("updatebutton");
+		//setTimeout("chk_Download_FMW_start()", 4000);
+		DisplayObject('loading');
+		/*return subForm({
+				frm: f,
+				genfrm:0, //no generate form
+				cmd: "",
+				wizard:1,
+				wait: 2,
+				uploadtype: 1,
+				done:function(){show_uploadloaing('#uploadloaing');}
+		});*/
+		
+		return subForm({
+				         frm:f,
+						 genfrm:0, //no generate form
+						 cmd:'',
+				         uploadtype: 1, 
+				         wizard:1,
+				         //isfwdl: 0,
+				            wait: 2,
+				            done:function(){check_FW_and_jump();}
+				         });
+		}
+		AlertM(1198);
+		
+		
+	}
+	return false;
+}
+//==============Backup===============
+function evaltFback(){
+	// FIXME: old design is put under CGI, we no retrieve every time, but by request
+	//
+	var iframe; 
+	do_jload([["cgi/cgi_sys_bk.js"]],function(){
+		var configFile_URL='/tmp/'+cgi_bkup_file;
+		configFile_URL=URLToken(configFile_URL);	
+		//use iframe to download files because  location.replace can't success by edge.
+		//location.replace(configFile_URL);
+		iframe = document.createElement('iframe');
+		iframe.src = configFile_URL;
+		iframe.style.display = "none";
+		document.body.appendChild(iframe);
+	});	
+	return false;
+}
+//=============ReBackup==============
+function evaltFReback(){
+	var f=document.tfReb;
+	if(f.restore.value.length == 0){
+		AlertM(529);
+		return false;
+	}
+	var filename = f.restore.value.split(".");
+	if (filename[filename.length-1].toLowerCase() != "bin")
+	{
+		AlertM(533);
+		return false;
+	}
+	if(ConfirmM(530)) {
+		AlertM(531);
+		f.action="upload.cgi";
+		f.encType="multipart/form-data";
+		return subForm({
+ 					frm:f,
+ 					genfrm:0, //no generate form
+ 					next: "index.htm",
+ 					cmd:"SYS_PROF",
+ 					wait:120
+		});
+	}
+	return false;
+}
+//=============Restore==============
+function evaltFRestore(){
+	return doConfirmRes();
+}
+
+function doConfirmRes(){
+	if(ConfirmM(426)) {
+		AlertM(427);
+		top.G_IP=getCfg("def_lanip");
+		top.G_URL="https://"+top.G_IP+"/index.htm"; // change IP as default value
+		return subForm({
+ 					frm:document.tF,
+ 					next: "index.htm",
+ 					cmd:subFormSYSReset,
+ 					wait:120
+		});
+	} else {
+		AlertM((428));
+	 return false;
+	}
+}
+
+
+
+function evaltF_polling()
+{
+	var f = document.auto_update_tF;
+
+	var httoken_val = ArcBase._t();		
+
+	var options_enable=$("#updat_automatically_id option:selected");  
+	var options_time_h=$("#time_h_id option:selected");  
+	var options_time_min=$("#time_min_id option:selected");  //获取选中的项
+	//alert(options_enable.val());  
+	//alert(options_time_h.text());   
+	//alert(options_time_min.text());   
+	//var start_time = ( parseInt(options_time_h.text())*60) + parseInt(options_time_min.text());
+	//var end_time =( parseInt(options_time_h.text())*60) + parseInt(options_time_min.text()) + 60*2;
+
+	var start_time=((parseInt(options_time_h.text())*60)+parseInt(options_time_min.text()))*60;//second
+	var end_time = start_time + 4*60*60;
+
+	//alert(start_time);
+	//alert(end_time);
+	var datatmp  = options_enable.val() + '@' + start_time + '@' + end_time;
+	//alert(datatmp);
+
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/toplogy.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncpollingconfig",
+	      		data:datatmp
+		  }
+	 })      
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+							 frm:f,
+							 next: 'system_f.htm',
+							 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+						     wait: 3 
+						  });			
+		}else{
+			alert("sync fw polling config msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function show_uploadloaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading1" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function init_check_fw_status()
+{
+	var internetflag=getCfg("internet_enable"); // 1 internet_ok, 0 internet_disconnect_connection
+	var uplink_status_flag=getCfg("uplink_status");// 0 : No Uplink, 1: WiFi 2G, 2: WiFi 5G, 3: Ethernet
+	//alert("uplink_status_flag:" + uplink_status_flag);
+	//internetflag=0;
+	//alert(internetflag);
+	
+	if(internetflag == 0 || uplink_status_flag != 3)
+	{
+		DisplayObject("notes4");
+		HiddenObject("checkfwID");
+		DisplayObject("checkfw_disabledID");
+		//EnableObject("checkfwID");
+		//HiddenObject("checkfwID");
+	}
+}
+
+
+//add for Automatic Update..................strart  20170525
+function SelectValue(o,v){
+	for(var i=0; i<o.options.length; i++)
+		if(o.options[i].value == v){
+		o.options[i].selected=true;
+		break;
+	}
+}
+
+function delay_time_onchange()
+{
+	var delay_time_text = document.getElementById('delay_time_text').innerText;//
+	var options_time_h=$("#time_h_id option:selected");  
+	var options_time_min=$("#time_min_id option:selected");  //获取选中的项
+	options_time_h = options_time_h.text();   
+	options_time_min = options_time_min.text();   
+	var delay_time_h = (parseInt(options_time_h))+4;
+
+	if(delay_time_h >= 24 )
+	{
+		delay_time_h = delay_time_h-24;
+	}
+
+	if(delay_time_h < 10)
+	{
+		var tmp ='0' + delay_time_h + ':' + options_time_min;
+	}
+	else
+	{
+		var tmp =delay_time_h + ':' + options_time_min;
+	}
+	//alert(tmp);
+	document.getElementById('delay_time_text').innerText = tmp;
+}
+
+function update_automatically_onchange()
+{
+	var tmp=$("#updat_automatically_id option:selected");  
+	//alert(tmp.val());  
+	tmp = tmp.val();
+	if(tmp == '1')
+	{
+		DisplayObject("auto_update_id");
+		//DisplayObject("auto_update_button_id");
+		SelectValue(document.auto_update_tF.updat_automatically, "1");
+	}
+	else
+	{
+		HiddenObject("auto_update_id");
+		//HiddenObject("auto_update_button_id");
+		SelectValue(document.auto_update_tF.updat_automatically, "0");
+	}
+}
+
+
+function init_auto_update_info()
+{
+	var f = document.auto_update_tF;
+	var auto_update_enable_value =  getCfg("polling_enable");
+	var polling_auto_start_hour_value =  getCfg("polling_auto_start_hour");
+
+	//polling_auto_start_hour_value = "85500";
+	var time_h = polling_auto_start_hour_value/3600;
+	time_h = ( parseInt(time_h));
+	var time_m = polling_auto_start_hour_value/60%60;
+	var time_s = polling_auto_start_hour_value%60;
+
+	//time_h=11;
+	//time_m=0;
+
+	SelectValue(document.auto_update_tF.time_h, time_h);
+	SelectValue(document.auto_update_tF.time_min, time_m);
+
+	//auto_update_enable_value=1;
+	if(auto_update_enable_value == '1')
+	{
+		DisplayObject("auto_update_id");
+		//DisplayObject("auto_update_button_id");
+		SelectValue(document.auto_update_tF.updat_automatically, "1");
+	}
+	else
+	{
+		HiddenObject("auto_update_id");
+	//	HiddenObject("auto_update_button_id");
+		SelectValue(document.auto_update_tF.updat_automatically, "0");
+	}
+	
+	delay_time_onchange();
+}
+//add for Automatic Update..................end..leo  20170525
+
+function transfer_secs(secs, hour_system)
+{
+	var hour = parseInt(secs/3600);
+	var minute = parseInt(secs/60)%60;		
+	var sec = secs%60;	
+
+	if(hour>12){
+		var hour_pm=hour-12;
+		if(hour_pm<10)
+			hour_pm="0"+hour_pm;
+	}
+
+	if(hour>24)
+		hour=hour-24;	
+	if(hour<10)
+		hour="0"+hour;
+	if(minute<10)
+		minute="0"+minute;
+	if(sec<10)
+		sec="0"+sec;	
+	
+	var last_time;
+	if(hour_system == 12)
+	{
+		if(hour<12)
+			last_time=hour+":"+minute+"AM";
+		else if(hour==12)
+			last_time=hour+":"+minute+"PM";
+		else 
+			last_time=hour_pm+":"+minute+"PM";
+	}
+	else
+	{
+		last_time=hour+":"+minute;
+	}
+
+	return last_time;
+}
+
+
+function evaltF_Early_Adopter()
+{
+	var f = document.auto_update_tF;
+
+	var httoken_val = ArcBase._t();		
+
+	var options_enable=$("#Early_Adopter_id option:selected");  
+
+	var datatmp  = options_enable.val() 
+	//alert(datatmp);
+
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/toplogy.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"syncearlyadopter",
+	      		data:datatmp
+		  }
+	 })      
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+							 frm:f,
+							 next: 'system_f.htm',
+							 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+						     wait: 3 
+						  });			
+		}else{
+			alert("sync earlya dopter config msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+
+//===================================
+// Init
+//===================================
+function init(){
+	var f=document.webForm;
+	init_auto_update_info();
+	HiddenObject("manual_update_id");
+	HiddenObject("hidden_reset");  
+	HiddenObject("notes1");
+	HiddenObject("notes2");
+	HiddenObject("notes3");
+	HiddenObject("notes4");
+	HiddenObject("autofw_enable_id");
+	HiddenObject("submit_disabled_id");
+	HiddenObject("checkfw_disabledID");
+	HiddenObject("tr_upgrade_schedule");
+	init_check_fw_status();//device cannot be connected to the Internet via a network cable.check fw will be disabled.
+	if( G_top==1){ addFieldValue(f, "devtag",1);} //hacking
+	setIdVal("u_runver",runtime_code_version);
+
+	SelectValue(document.Early_Adopter_tF.Early_Adopter, getCfg("Early_Adopter"));
+
+	ShowMenu();
+	setIdVal("fw_version",  runtime_version);
+	setIdVal("last_version",  "");
+
+	if(upgrade_schedule.enable == 1)
+	{
+		DisplayObject("tr_upgrade_schedule");	
+		setIdVal("upgrade_schedule",  "Upgrade scheduled for between " + transfer_secs(parseInt(upgrade_schedule.choose_time), 24) + " and " + transfer_secs(parseInt(upgrade_schedule.choose_time)+14400, 24) + ".");
+		setIdVal("last_version",  upgrade_schedule.remote_version);
+	}
+	
+	reSetHelpUrl("FirmwareUpdateID");	
+}
+
+</script>
+
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="443" class="btFontBold1"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<table border="0" cellspacing="0" cellpadding="0" width="100%" style="margin-left: 0px;">
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm1" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset1" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<p class=normalText><font class="btFont2" id="431"></font></p>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm2" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset2" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td width="150">						
+						<font class="btFont2" id="604"></font>
+					</td>
+					<td>						
+						<font class="btFont2" id="fw_version"></font>
+					</td>
+				</tr>
+				<tr>
+					<td width="150">						
+						<font class="btFont2" id="605"></font>
+					</td>
+					<td>						
+						<font class="btFont2" id="last_version"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm3" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="update_time" value="-1">		
+			<input type="hidden" name="owlfile_auto" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="autofw">
+					<div style="width:90%">
+						<div class="tdText" style="float:right;" width="50%" align="right" id="checkfwID">
+							<input type="button" class="btpurple" onClick="autofw_check()" name="checkfw" id="601">&nbsp;
+						</div>
+						
+						<div class="tdText" width="50%" style="float:right;" align="right;" id="checkfw_disabledID">
+							<input type="button" class="btpurple" onClick="autofw_check()" disabled="true" name="checkfw" id="601">&nbsp;
+						</div>
+						
+						<div class="tdText" id="autofw_disabled_id" style="float:right;" width="50%" style="min-width:100px" align="right">
+							<input type="button" class="btpurple" onClick="autofw_evaltF()" name="autoupgrade" id="438" disabled="true">&nbsp;
+						</div>
+						<div class="tdText" id="autofw_enable_id" style="float:right;"width="50%" style="min-width:100px"align="right">
+							<input type="button" class="btpurple" onClick="msgbox('Schedule Update',null,'autofw_evaltF()',1,1)" name="autoupgrade" id="438">&nbsp;
+							<!--<input type="button" class="btpurple" onClick="autofw_evaltF()" name="autoupgrade" id="438">&nbsp;-->
+						</div>
+					</div>
+	      			</tr>
+	      			<tr id="tr_upgrade_schedule">
+					<td width="150">						
+						<font class="btFont2" id="upgrade_schedule"></font>
+					</td>
+	      			</tr>
+			</table>
+			<div id='autofw_uploadloaing'></div>
+		</form>
+	</td>
+</tr>	      			
+<tr>
+	<td width="80%">
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm4" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset3" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr id="notes1">
+					<td>						
+						<font class="btFont3" id="606"></font>
+					</td>
+				</tr>
+				<tr id="notes2">
+					<td>						
+						<font class="btFont3" id="432"></font>
+					</td>
+				</tr>
+				<tr id="notes3">
+					<td>						
+						<font class="btFont3" id="607"></font>
+					</td>
+				</tr>
+				<tr id="notes4">
+					<td>						
+						<font class="btFont3" id="609" style="color:red"></font>
+					</td>
+				</tr>
+	      	</table>
+		</form>
+	</td>
+</tr>
+<tr>
+	<td width="80%" id="manual_update_id">			
+	<!--content-->
+			<!--<p><b class=subtitle><font id="230200"></font></b></p>-->
+			<form enctype="multipart/form-data" name="webForm" method="post" action="/cgi-bin/upgrade.exe" target="OUTfrm">
+			<input type="hidden" name="reset" value="">
+			<table border="0" width="90%" cellspacing="0" cellpadding="10">
+				<tr>
+					<td>						
+						<b><font class="btFontBold1" id="602"></font></b>
+					</td>
+				</tr>
+				<tr>
+					<td>						
+						<font class="btFont2" id="603"></font>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="vox20_table_nbl" border="0" cellspacing="0" cellpadding="5" width="50%" style="margin-left: 0px;">
+							<tr>
+								<td nowrap class="tdText">
+									<font class="btFont2" id="437"></font>
+								</td>
+								<td nowrap class="tdText">
+									<input class="btFont3" type="file" size="50" maxlength="31" name="owlfile">
+								</td>
+							</tr>
+							<tr id='hidden_reset'>
+								<td colspan="2" align="center" nowrap class="tdText">
+									<font class="btFont2" id="600"></font>
+									<input type="checkbox" name="resetFlag" value="1" NOCHECK="0">
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr id="updatebutton">
+					<td align="center" id="submit_disabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="upgrade" id="438" disabled="true">&nbsp;
+					</td>
+					<td align="center" id="submit_enabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="upgrade" id="438">&nbsp;
+					</td>
+	      			</tr>
+	      	</table>
+	      	<div id='uploadloaing'></div>
+		<div id='progressList'></div>
+			</form>
+	</td>
+</tr>
+</table>
+
+
+<form enctype="multipart/form-data" name="auto_update_tF" action="/cgi-bin/auto_upgrade.exe" target="OUTfrm">
+<table  class="" border="0" width="90%" cellspacing="0" cellpadding="10">
+	<tr>
+		<td colspan="2"> 						
+			<font class="btFontBold1" id="615"></font>
+		</td>
+	</tr>
+			
+	<tr>
+		<td colspan="2">						
+			<font class="btFont2" id="611"></font>
+		</td>
+	</tr>
+
+	<tr >
+		<td class="normalTextRight">						
+				<nobr><font class="btFont2" id="612"></font></nobr>
+		</td>
+		<td class="tdTextBt_20">
+			<select name="updat_automatically" id="updat_automatically_id" size="2" onChange="update_automatically_onchange()">
+				<option value="0">Disabled</option>
+				<option value="1">Enabled</option>
+			</select>
+		</td>		
+	</tr>
+</table>
+<br>
+<table  id="auto_update_id" class="" border="0" width="90%" cellspacing="0" cellpadding="10">
+	<tr>
+		<td colspan="2"> 						
+			<font class="btFont2" id="613"></font>
+		</td>
+	</tr>
+	<tr >
+		<td class="normalTextRight" >						
+				<nobr><font class="btFont2" id="614"></font></nobr>
+		</td>
+		<td class="tdTextBt_20" >
+			<select name="time_h" id="time_h_id" size="5" onChange="delay_time_onchange()">
+				<option value="0">0</option>
+				<option value="1">1</option>
+				<option value="2">2</option>
+				<option value="3">3</option>
+				<option value="4">4</option>
+				<option value="5">5</option>
+				<option value="6">6</option>
+				<option value="7">7</option>
+				<option value="8">8</option>
+				<option value="9">9</option>
+				<option value="10">10</option>
+				<option value="11">11</option>
+				<option value="12">12</option>
+				<option value="13">13</option>
+				<option value="14">14</option>
+				<option value="15">15</option>
+				<option value="16">16</option>
+				<option value="17">17</option>
+				<option value="18">18</option>
+				<option value="19">19</option>
+				<option value="20">20</option>
+				<option value="21">21</option>
+				<option value="22">22</option>
+				<option value="23">23</option>
+			</select>
+			<span>:</span>
+		
+			<select name="time_min"  id="time_min_id" size="2" onChange="delay_time_onchange()"> 
+				<option value="00">00</option>
+				<option value="15">15</option>
+				<option value="30">30</option>
+				<option value="45">45</option>
+			</select>
+			<span>&nbsp&nbsp&nbsp   -  &nbsp&nbsp&nbsp</span>
+			<span id="delay_time_text">02:00</span>
+		</td>
+	</tr>
+
+	<tr >
+		<td colspan="2" align="right"> 						
+			<input type="button" class="btpurple" onClick="evaltF_polling()" name="save" id="100001" >
+		</td>
+	</tr>
+</table>
+</form>
+
+<form enctype="multipart/form-data" name="Early_Adopter_tF" action="" target="OUTfrm">
+<table  class="" border="0" width="90%" cellspacing="0" cellpadding="10">
+	<tr>
+		<td colspan="2"> 						
+			<font class="btFontBold1" id="616"></font>
+		</td>
+	</tr>
+			
+	<tr>
+		<td colspan="2">						
+			<font class="btFont2" id="617"></font>
+		</td>
+	</tr>
+
+	<tr >
+		<td class="normalTextLeft">						
+				<nobr><font class="btFont2" id="618"></font></nobr>
+		</td>
+		<td class="tdTextBt_20">
+			<select name="Early_Adopter" id="Early_Adopter_id" size="2" onChange="">
+				<option value="1">Enabled</option>
+				<option value="0">Disabled</option>
+			</select>
+		</td>		
+	</tr>
+
+	<br>
+
+	<tr >
+		<td colspan="2" align="right"> 						
+			<input type="button" class="btpurple" onClick="evaltF_Early_Adopter()" name="save" id="100001" >
+		</td>
+	</tr>
+</table>
+
+</form>
+
+	<!-- main page-->
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>

@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<link rel="stylesheet" type="text/css" href="css/slider.css">
+<link rel="stylesheet" type="text/css" href="css/slider_div.css">
+<script language="javascript">var G_top=1;</script>
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["status"];var CGIs=["toplogy_info","status"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="javascript" src="js/slider.js"></script>
+
+<script language="JavaScript">
+//initLedValueSlider is the initial value of the slider(action-block).Like:Dim , initLedValueSlider=1.  Off 0, dim 1, normal 2
+//The initLedValueSlider defined  in status.js
+//var LedValueSlider=getCfg("led_glbcfg"); //LedValueSlider is defined in here, set or modify the value in slider.js (240 line)
+
+var LedValueSlider = getCfg("led_glbcfg");
+//===================================
+// Submit
+//===================================
+function submitLED(){
+	var f=document.tF0;
+	var httoken_val = ArcBase._t();	
+	var nled =LedValueSlider;
+	var options=$("#LedREx option:selected"); 
+	var option_value =  options.val()
+		
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	var led_msg = "";
+
+	if(option_value == "all")
+	{
+		led_msg = "1@" + led_all_date_info;	
+		setCfg("led_select_index", "0");
+
+	}
+	else if(option_value == "individual")
+	{
+		var tmp_no = led_date_info.length/2 + '@';
+		led_msg = tmp_no + led_date_info.join(',');
+		setCfg("led_select_index", "1");
+	}
+
+	subForm({
+				 frm:f,
+				 //next: 'login.htm',
+				 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+			     wait: 3
+			});
+	
+
+//	alert(led_msg);
+	$.ajax({
+	type: "POST",
+	url: "/cgi-bin/set_led.cgi",
+	dataType: "text",
+	data: { httoken:httoken_val,
+	     		cmd:"ledbrightness",
+	      		data:led_msg //nled
+		  }
+	})
+	.done(function( data ){
+	
+		if(data == "ok" || data == "ok_wifi" || data == "ok_eth"){
+		/*
+			return subForm({
+							 frm:f,
+							 //next: 'login.htm',
+							 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+						     wait: 1 
+						  });
+					//alert("syncledconfig msg send okay.");	
+					//return true;
+		*/
+		}else{
+			alert("syncledconfig all  msg send error.");			
+			return false;		
+		}
+	});	
+
+}
+
+
+
+/*
+	Set the link to the Help button, Different pages for different HelpUrl.For different Help content.
+	reSet the topFrame(setup_top.htm / <a href='help.htm' id=HelpBtId>) Help button url.
+	helpurl var like:LEDID,SystemLogID.(LEDID define in help.htm)  reSetHelpUrl(LEDID)  
+*/
+function reSetHelpUrl(helpurl)
+{
+	if(helpurl != "")
+	{
+		var setHelpUrl = "help.htm#" + helpurl; //help.htm#LEDID
+		window.parent.frames["topFrame"].document.getElementById("HelpBtId").href = setHelpUrl;
+	}
+	else
+	{
+		return;
+	}
+
+}
+
+function SelectValue(o,v){
+	for(var i=0; i<o.options.length; i++)
+		if(o.options[i].value == v){
+		o.options[i].selected=true;
+		break;
+	}
+}
+
+
+function led_select_onchange()
+{
+	var options=$("#LedREx option:selected"); 
+	var options_val =  options.val();
+	//alert(options_val);
+	if(options_val == "all")
+	{
+		DisplayObject("wifi_div_all");
+		HiddenObject("bar_box");
+		setCfg("led_select_index", "0");
+	}
+	else if(options_val == "individual")
+	{
+		DisplayObject("bar_box");
+		HiddenObject("wifi_div_all");
+		setCfg("led_select_index", "1");
+	}
+	return 0;
+}
+
+
+
+function init_ledValue()
+{
+	var bar_date_info = check_station_led_info();
+	var bar_date_array = bar_date_info.split(',');
+
+	for(var i=0; i < bar_date_array.length;  i++)
+	{
+		var bar_all = bar_date_array[i].split('@');
+		var name = bar_all[0].replace(/[^a-z]+/ig,"") + bar_all[0].replace(/[^0-9]+/ig,"");
+		set_led_value(name, bar_all[2]);
+	}
+}
+
+
+function init_write_led_bar_info()
+{
+	var options=$("#LedREx option:selected"); 
+	var options_val =  options.val();
+	write_led_bar_info();
+	var led_select = getCfg("led_select_index");
+	
+	if(led_select == "0")//all
+	{
+			DisplayObject("wifi_div_all");
+			HiddenObject("bar_box");
+			SelectValue(document.tF0.LedREx, "all");
+	}
+	else	// individual ("1")
+	{
+			DisplayObject("bar_box");
+			HiddenObject("wifi_div_all");
+			SelectValue(document.tF0.LedREx, "individual");
+	}
+}
+
+
+
+function DisplayObjectVi(id){
+     if(document.getElementById(id)){
+      // document.getElementById(id).style.display="";
+      document.getElementById(id).style.visibility="visible";
+     }
+
+}
+function HiddenObjectVi(id){
+     if(document.getElementById(id)){
+     //  document.getElementById(id).style.display="none";
+       document.getElementById(id).style.visibility="hidden";
+     }
+}
+
+function check_station_led_info()
+{
+	var station_led_date="";
+/*
+	var station_led_info="D4:63:FE:D0:6D:D1@0,00:0C:43:28:80:97@0";//demo
+	var toplogy_info = { "nodes": [ 
+		{ "device_mac": "D4:63:FE:D0:6D:D1", "device_name": "WIFI_D1", "device_id": "D4:63:FE:D0:6D:D6", "device_ip": "192.168.1.3", "bssid_2g": "D4:63:FE:D0:6D:D2", "essid_2g": "HOMEZZAP_2222", "bssid_5g": "", "essid_5g": "", "parent_id": "NULL", "child_id": "00:0C:43:28:80:9C", "child_num": "1", "sta_num": "0", "connect_type": "", "model_name": "NULL" }, 
+		{ "device_mac": "00:0C:43:28:80:97", "device_name": "WIFI_97", "device_id": "00:0C:43:28:80:9C", "device_ip": "192.168.1.4", "bssid_2g": "00:0C:43:28:80:98", "essid_2g": "HOMEZZAP_1111", "bssid_5g": "", "essid_5g": "", "parent_id": "D4:63:FE:D0:6D:D6", "child_id": "NULL", "child_num": "0", "sta_num": "0", "connect_type": "5G", "model_name": "NULL" }, 
+		] };
+*/
+
+	for(var i=0; i<toplogy_info.nodes.length; i++ )
+	{
+		var device_name = toplogy_info.nodes[i].device_name;
+		var led = station_led_info.split(",");
+		station_led_date += device_name + '@' + led[i] + ",";
+	}
+
+	station_led_date = station_led_date.substring(0,station_led_date.length-1);//remove string last ','
+
+//get all_led_date_info
+	var led_all_tmp = station_led_date.split(',');
+	var led_all_tmp1 = led_all_tmp[0].split('@')[2];
+	var station_all_date = "";
+	for(var j=0; j < led_all_tmp.length; j++)
+	{
+		var tmp =  led_all_tmp[j].split('@');
+		if (tmp[2] == led_all_tmp1)
+		{
+			station_all_date = "all@null@" + led_all_tmp1;
+		}
+		else
+		{
+			station_all_date = "all@null@2";
+		}
+	}
+	
+//Final data
+	station_led_date = station_all_date + ',' + station_led_date;
+	return station_led_date;
+}
+
+
+var led_date_info = new Array();//save webUI led date
+var led_all_date_info = "";//save webUI all led date
+var mac_array = new Array();
+var name_array = new Array();
+var name_real_array = new Array();
+var led_array = new Array();
+function write_led_bar_info()
+{
+	var bar_date = check_station_led_info(); //"Wi-Fi_Disc_A4@D4:63:FE:D0:6D:D1@1 ,Wi-Fi_Disc_A6@00:0C:43:28:80:97@0";
+	//var bar_date = "all@null@1,RE1@E4:3E:D7:DB:44:3B@2,RE2@E4:3E:D7:78:B0:26@1";
+	var tmp_date = new Array();
+	tmp_date = bar_date.split(",");
+
+	for(var i=1; i< tmp_date.length; i++)
+	{
+		var tmp = tmp_date[i].split("@");
+		var name = tmp[0].replace(/[^a-z]+/ig,"") + tmp[0].replace(/[^0-9]+/ig,"");
+		name_array.push(name);
+		name_real_array.push(tmp[0]);
+		mac_array.push(tmp[1]);
+		led_array.push(tmp[2]);
+	}
+
+
+	for(var j=1,i=0; j< tmp_date.length; j++,i++)
+	{
+		var wifi_div_id_msg = "wifi_div_" + name_array[i];
+		var wifi_disc_id_msg = "wifi_disc_" + name_array[i];
+		var bar_flag_left_id_msg = "bar_flag_left_" + name_array[i];
+		var bar_flag_middle_id_msg = "bar_flag_middle_" + name_array[i];
+		var bar_flag_right_id_msg = "bar_flag_right_" + name_array[i];
+		var bar_flag_text_id_msg = "bar_flag_text_" + name_array[i];
+
+		$('#bar_box').append('<div id=" '+wifi_div_id_msg+' ">\
+									<font id="'+wifi_disc_id_msg+'" style="display:none">'+mac_array[i]+'</font>\
+									<font class="btFontBold2" >'+name_real_array[i]+'</font>\
+									<div class="lanren">\
+										<div class="bar_flag_left" id="'+bar_flag_left_id_msg+'"  onclick="led_click('+bar_flag_left_id_msg+',\''+name_array[i]+'\',0)">\
+											<div class="bar_flag_left_tmp"></div>\
+										</div>\
+										<div class="bar_flag_middle" id="'+bar_flag_middle_id_msg+'"  onclick="led_click('+bar_flag_middle_id_msg+',\''+name_array[i]+'\',1)">\
+											<div class="bar_flag_left_tmp"></div>\
+										</div>\<div class="bar_flag_right" id="'+bar_flag_right_id_msg+'"  onclick="led_click('+bar_flag_right_id_msg+',\''+name_array[i]+'\',2)">\
+											<div class="bar_flag_left_tmp"></div>\
+										</div>\
+									</div><br/>\
+									<div>\
+										<span class="bar_flag_text" style="padding-left:92px;"  onclick="led_click('+bar_flag_left_id_msg+',\''+name_array[i]+'\',0)">Off</span>\
+										<span class="bar_flag_text" style="padding-left:228px;"  onclick="led_click('+bar_flag_middle_id_msg+',\''+name_array[i]+'\',1)">Dim</span>\
+										<span class="bar_flag_text" style="padding-left:215px;"  onclick="led_click('+bar_flag_right_id_msg+',\''+name_array[i]+'\',2)">Normal</span>\
+									</div>\
+									<br/><br/>\
+									<span id="'+bar_flag_text_id_msg+'" style="visibility:hidden;"><font class="btFont2" id="360"></font></span>\
+							  </div><br/><br/>');
+	}
+
+	var gg = 0;
+}	
+
+function set_led_value(name, value)
+{
+
+//set other css color
+	var bar_left = document.getElementById("bar_flag_left_" + name); //0
+	bar_left.style.background = "#57399C";
+	bar_left.style.width = "1px";
+	bar_left.style.border =" 1px solid #57399C"; 
+	
+	var bar_middle = document.getElementById("bar_flag_middle_" + name);//1
+	bar_middle.style.background = "#57399C";
+	bar_middle.style.width = "1px";
+	bar_middle.style.border =" 1px solid #57399C"; 
+	
+	var bar_right = document.getElementById("bar_flag_right_" + name);//2
+	bar_right.style.background = "#57399C";
+	bar_right.style.width = "1px";
+	bar_right.style.border =" 1px solid #57399C"; 
+
+
+//set no_id css color
+
+	var msg_tmp = "";
+	if(value == 0)
+	{
+		msg_tmp = "left";
+	}
+	else if(value == 1)
+	{
+		msg_tmp = "middle";
+	}
+	else if(value == 2)
+	{
+		msg_tmp = "right";
+	}
+	var msg = "bar_flag_" + msg_tmp + "_" + name;
+	
+	var bar_id = document.getElementById(msg);
+
+	bar_id.style.background = "white";
+	bar_id.style.width = "4px";
+	bar_id.style.border =" 2px solid #57399C"; 
+	//bar_id.style.marginLeft =" -2px"; 
+
+
+//hide or show text
+	var bar_flag_text_id_msg = "bar_flag_text_" + name;
+	if(value == 0)
+	{
+		DisplayObjectVi(bar_flag_text_id_msg);
+	}
+	else
+	{
+		HiddenObjectVi(bar_flag_text_id_msg);
+	}
+
+
+//get save date
+	var mac_id = "wifi_disc_" + name;
+	var mac_add = document.getElementById(mac_id).innerText;
+
+	for(var item in led_date_info)
+	{
+		if(led_date_info[item] == mac_add)
+		{
+			led_date_info.splice(item,2);
+			//led_date_info.splice(item+1,1);
+		}
+	}
+	
+	if(name == "all")
+	{
+		led_all_date_info = "all" + ',' + value;
+	}
+	else
+	{
+		led_date_info.push(mac_add);
+		led_date_info.push(value);
+	}
+
+
+	var ddd =77;
+	
+}
+
+
+function led_click(no_id, re_name, position)
+{
+//alert(no_id + "/" + re_name + "/" + position);	
+//set other css color
+	var bar_left = document.getElementById("bar_flag_left_" + re_name);
+	bar_left.style.background = "#57399C";
+	bar_left.style.width = "1px";
+	bar_left.style.border =" 1px solid #57399C"; 
+	
+	var bar_middle = document.getElementById("bar_flag_middle_" + re_name);
+	bar_middle.style.background = "#57399C";
+	bar_middle.style.width = "1px";
+	bar_middle.style.border =" 1px solid #57399C"; 
+	
+	var bar_right = document.getElementById("bar_flag_right_" + re_name);
+	bar_right.style.background = "#57399C";
+	bar_right.style.width = "1px";
+	bar_right.style.border =" 1px solid #57399C"; 
+
+
+//set no_id css color
+	no_id.style.background = "white";
+	no_id.style.width = "4px";
+	no_id.style.border =" 2px solid #57399C"; 
+	//no_id.style.marginLeft =" -2px"; 
+
+
+//hide or show text
+	var bar_flag_text_id_msg = "bar_flag_text_" + re_name;
+	if(position == 0)
+	{
+		DisplayObjectVi(bar_flag_text_id_msg);
+	}
+	else
+	{
+		HiddenObjectVi(bar_flag_text_id_msg);
+
+	}
+
+
+//get save date
+	var mac_id = "wifi_disc_" + re_name;
+	var mac_add = document.getElementById(mac_id).innerText;
+
+	for(var item in led_date_info)
+	{
+		if(led_date_info[item] == mac_add)
+		{
+			led_date_info.splice(item,2);
+			//led_date_info.splice(item+1,1);
+		}
+	}
+	
+	if(re_name == "all")
+	{
+		led_all_date_info = "all" + ',' + position;
+	}
+	else
+	{
+		led_date_info.push(mac_add);
+		led_date_info.push(position);
+	}
+	var ddd =88;
+	
+}
+
+
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+	HiddenObject("submit_disabled_id");
+	init_write_led_bar_info();
+	ShowMenu();
+	init_ledValue();
+	reSetHelpUrl("LEDID");
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:30px;margin-top:25px"><font id="358" class="btFontBold1"></font></p>
+<!-- Page left-->
+<!-- main page--><br/>
+<form name="tF0" action="/cgi-bin/statusprocess.exe" method="post" target="OUTfrm">
+<table width="90%" border="0" cellspacing="0" cellpadding="10" align="center" style="margin-left:10px;">
+<tr>
+	<td>
+		<div style="margin-left:10px; width:1000px;"> <!--border:1px solid #b8dcff;-->
+			<div class="slider_normal">
+				<font class="btFont2" id="359"></font><br/><br/><!--You can adjust... -->
+				<font class="btFont2" id="405"></font><!--Select All to change the setting for all discs or Individual ... -->
+			</div>
+
+			<table border="0" cellspacing="1" cellpadding="0" id="tb_re_change" style="margin-left:0px;">
+				<tr>
+					<td width="70" class="normalText"><font class="btFont2" id="400"></font></td><!--You can adjust... -->
+					<td class="tdText" id="Wifi_select_id">
+						<select class="" name="LedREx" id="LedREx"  onChange="led_select_onchange()">
+						<option value="all">All</option>
+						<option value="individual">Individual</option>	
+						</select>
+					</td>
+				</tr>
+			</table>
+	<br/>
+
+	<div id="wifi_div_all">
+		<font id="wifi_disc_all" style="display:none">all</font>  
+		<div class="lanren">
+			<div class="bar_flag_left" id="bar_flag_left_all"  onclick="led_click(bar_flag_left_all,'all','0')">
+				<div class="bar_flag_left_tmp"></div>
+			</div>
+				
+			<div class="bar_flag_middle" id="bar_flag_middle_all"  onclick="led_click(bar_flag_middle_all,'all','1')">
+				<div class="bar_flag_left_tmp"></div>
+			</div>
+			
+			<div class="bar_flag_right" id="bar_flag_right_all"  onclick="led_click(bar_flag_right_all,'all','2')">
+				<div class="bar_flag_left_tmp"></div>
+			</div>
+		</div>
+		<br/>
+			<div>
+				<span class="bar_flag_text" style="padding-left:92px;"  onclick="led_click(bar_flag_left_all,'all','0')">Off</span>
+				<span class="bar_flag_text" style="padding-left:228px;"  onclick="led_click(bar_flag_middle_all,'all','1')">Dim</span>
+				<span class="bar_flag_text" style="padding-left:215px;"  onclick="led_click(bar_flag_right_all,'all','2')">Normal</span>
+				<br/><br/>
+				<span id="bar_flag_text_all" style="visibility:hidden;"><font class="btFont2" id="360"></font></span><!--Critical status information... -->
+			</div>
+	</div>
+
+
+
+	<div id="bar_box">
+	</div>
+
+	
+	<div class="slider_button" align="right" id="submit_disabled_id" >
+		<input type="button" class="btpurple" onClick="submitLED()" name="save" id="100001" disabled="true">
+	</div>
+	<div class="slider_button" align="right" id="submit_enabled_id" >
+		<input type="button" class="btpurple" onClick="submitLED()" name="save" id="100001">
+	</div>
+	
+</div>
+</td></tr>
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+
+</body>
+</html>
+
+
+

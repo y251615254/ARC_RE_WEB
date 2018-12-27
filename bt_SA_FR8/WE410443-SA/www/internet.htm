@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["internet"];var CGIs=["internet"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<script language="JavaScript">
+	
+//===================================
+// Submit
+//===================================
+/*
+function evaltF_bck(){
+	var f=document.tF;
+	var nInternet=f.internet.value;
+	var httoken_val = ArcBase._t();
+
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	
+	$.ajax({
+		type: "POST",
+		url: "/cgi-bin/toplogy.cgi",
+		dataType: "text",
+		data: { httoken:httoken_val,
+					cmd:"syncinternetconfig",
+					data:nInternet
+		}
+	})
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+				 frm:f,
+				 uploadtype: 0,
+				 wait: 10
+			  });
+		}else{
+			alert("syncinternetconfig msg send error.");			
+			return false;		
+		}
+	});	
+}
+*/
+	
+function evaltF(){
+	var f=document.tF;
+	var nInternet=f.internet.value;
+	var date_internet="NULL";
+	//alert(nInternet);
+	if(nInternet == "1")
+	{
+		date_internet = "On";
+	}
+	else if(nInternet == "0")
+	{
+		date_internet = "Off";
+	}
+	
+	var httoken_val = ArcBase._t();
+
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+
+	//alert(date_internet);
+
+	$.ajax({
+		type: "POST",
+		url: "/cgi-bin/set_control_internet.cgi",
+		dataType: "text",
+		data: { httoken:httoken_val,
+					cmd:"sync_control_internet",
+					data:date_internet
+		}
+	})
+	.done(function( data ){
+		if(data == "ok"){
+			return subForm({
+				 frm:f,
+				 uploadtype: 0,
+				 wait: 10
+			  });
+		}else{
+			alert("sync_control_internet msg send error.");			
+			return false;		
+		}
+	});	
+}
+
+
+
+function onChangeInternet(index){
+	document.tF.internet.value=index;
+	var internet_control_station_info={ "internet_control_status": "On" };
+	var internet_control = internet_control_station_info.internet_control_status; 
+	//alert(index);
+	if(index == "1")//enable  1 display
+	{
+		HiddenObject("tr_internet_pause");
+		//DisplayObject("tb_all_device");
+		DisplayObject("tr_internet_enable");
+	}
+	else
+	{
+		HiddenObject("tr_internet_enable");
+		//HiddenObject("tb_all_device");
+		DisplayObject("tr_internet_pause");
+	}
+}
+
+
+function init_ChangeInternet(){
+	//document.tF.internet.value=index;
+	//var internet_control_station_info={ "internet_control_status": "On" };
+	var internet_control = internet_control_station_info.internet_control_status; 
+	//alert(index);
+	if(internet_control == "On")//enable  1 show //Play (triangle), pause (two vertical), stop (square) 
+	{
+		HiddenObject("tr_internet_pause");
+		//DisplayObject("tb_all_device");
+		DisplayObject("tr_internet_enable");
+	}
+	else   
+	{
+		HiddenObject("tr_internet_enable");
+		//HiddenObject("tb_all_device");
+		DisplayObject("tr_internet_pause");
+	}
+}
+	
+function check_unpause_config_by_profileid(profileid)
+{
+	var unpause = 0;
+	if(profileid == "pause_imm_not")
+		return 1;
+	var acp_length = access_control_profile.profile.length;
+	for(var i=0; i < acp_length; i++)
+	{
+		var pid_value = access_control_profile.profile[i].pid;
+		if(pid_value == profileid)
+		{
+			var profile_configs_length = access_control_profile.profile[i].configs.length;
+			for(var j=0; j < profile_configs_length; j++)
+			{
+				var profile_configs_id = access_control_profile.profile[i].configs[j].id;
+				var profile_configs_eable = access_control_profile.profile[i].configs[j].enable;
+				var profile_configs_day = access_control_profile.profile[i].configs[j].day;
+				if((profile_configs_id == "00000") && (profile_configs_eable == "0") && (profile_configs_day == "1111111"))
+					unpause = 1;
+			}
+			break;
+		}
+	}
+	if(unpause == 1)
+		return 1;
+	else
+		return 0;
+}		
+
+var access_control_block_arry = new Array();
+function check_access_control_status()
+{
+	var internetflag = internet_control_station_info.internet_control_status; 
+	var station_length = station_info.stations.length;
+	for(var j=0; j < station_length; j++)
+	{
+		var station_mac = station_info.stations[j].station_mac;
+		var station_pid = station_info.stations[j].pid;
+		var station_connect_type = station_info.stations[j].connect_type;
+		if((station_pid == "NULL") || (station_pid == "pause_imm"))
+			continue;
+		if((station_connect_type == "2.4G_guest") || (station_connect_type == "5G_guest"))
+			continue;
+		if(check_unpause_config_by_profileid(station_pid) == 0)
+			continue;
+
+		var device_name = station_info.stations[j].alias_name;
+		if(device_name == "NULL")
+		{
+			device_name = station_info.stations[j].station_name;
+		}
+		if(device_name == "NULL")
+		{
+			device_name = "Unknown";
+		}
+		var total = device_name + '@' +  station_mac + '@'  + station_connect_type;
+		access_control_block_arry.push(total);						
+	}
+}
+
+function show_access_control_table()
+{
+	var re_rowcnt=0;
+	var c1,c2,c3,c4,c5,cpic;
+	var pic;
+	
+	for(var i = 0; i < access_control_block_arry.length; i++)
+	{
+		
+		re_rowcnt=0;
+		var tmp = access_control_block_arry[i];
+		var tmp_arry = tmp.split('@');
+	
+		c1=tmp_arry[0];//Name
+		c2=tmp_arry[1];//MAC Address
+		//c3=tmp_arry[2];//Status
+		//c4=tmp_arry[3];//Type
+		//c5=tmp_arry[4];//Timing
+		cpic=tmp_arry[2];//connect_type
+
+		if((cpic == "2.4G") ||(cpic == "2.4G_guest"))
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else if((cpic == "5G") ||(cpic == "5G_guest"))
+		{
+			pic = "<img src='images/wireless.png' style='height:25px;width:25px;'>";
+		}
+		else
+		{
+			pic = "<img src='images/ethernet.png' style='height:24px;width:22px;'>";
+		}
+		
+		RowCell=[[1,pic],[1,c1],[1,c2],[null,null]];
+		re_rowcnt+=Table_add_row("tb_station_info",[[3,re_rowcnt,1],RowCell]);	
+		
+	}
+	return 0;
+}
+
+function write_access_control_internet_enabled_table()
+{
+	for(var i=0; i<1; i++ )
+	{		
+		$("#tb_all_device").append("\
+		<tr>\
+			<td colspan=\"2\" valign=\"top\">\
+				<table class=\"vox20_tablec\" width=80% cellspacing=1 cellpadding=5 border=0 id=\"tb_station_info\">\
+					<tr>\
+						<td width=10% nowrap ><font id=\"\" class=btFontBold2></font></td>\
+						<td width=45% nowrap ><font id=\"2005\" class=btFontBold2></font></td>\
+						<td width=45% nowrap ><font id=\"2006\" class=btFontBold2></font></td>\
+					</tr>\
+				</table>\
+			</td>\
+		</tr>");
+	}	
+
+}
+//"
+
+function init_access_control_table()
+{
+	var internetflagbck=getCfg("internet_enable");
+	var internetflag = internet_control_station_info.internet_control_status; 
+
+	write_access_control_internet_enabled_table();
+	check_access_control_status();
+	show_access_control_table();
+
+/*	
+	if( internetflag == "On")//enable 
+	{
+		DisplayObject("tb_all_device");
+	}
+	else
+	{
+		HiddenObject("tb_all_device");
+
+	}
+*/	
+}
+
+
+//===================================
+// init
+//===================================
+function init(){
+
+	var f=document.tF;
+	var internetflag=getCfg("internet_enable");
+
+	f.internet.value =internetflag;
+	//onChangeInternet(internetflag);
+	init_ChangeInternet();
+	init_access_control_table();
+	HiddenObject("submit_disabled_id");
+	ShowMenu();
+	reSetHelpUrl("PauseInternetID"); 
+
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="2001" class="btFontBold1"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF" action="/cgi-bin/internet.exe" method="post" target="OUTfrm">
+<input type="hidden" name="internet" value="">
+<table border="0" cellspacing="0" cellpadding="10" width="100%">
+	<tr>
+		<td valign="top">
+			<p class=normalText><font class="btFont2" id="2002"></font></p>
+			<p class=normalText><font class="btFont2" id="2007"></font></p>
+			<table class="vox20_table_nbl" border="0" cellspacing="1" cellpadding="5" style="margin-left: 0px;">
+				<tr id="tr_internet_enable">
+					<td width="10" class="normalText">
+					<a href="javascript: void(0)" onClick="onChangeInternet('0');"><img src="images/interneton.png"></a></td>
+					<td class="normalText"><font class="btFont2" id="2003"></font></td>
+				</tr>
+				<tr id="tr_internet_pause">
+					<td width="10" class="normalText">
+					<a href="javascript: void(0)" onClick="onChangeInternet('1');"><img src="images/internetoff.png"></a></td>
+					<td class="normalText"><font class="btFont2" id="2004"></font></td>				
+				</tr>
+				<tr>
+					<td colspan="2" height="370">&nbsp;</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td width="250"></td>
+					<td align="right" id="submit_disabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+					</td>
+					<td align="right" id="submit_enabled_id">
+						<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001">&nbsp;
+					</td>
+				</tr>
+			</table>
+		</td>
+	</tr>
+</table>
+
+<table width="50%" border="0" cellspacing="0" cellpadding="10" align="legth" id="tb_all_device">
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

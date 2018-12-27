@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["tl_sys"];var CGIs=["sys_p"];</script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/checkpswstrong.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style>
+/* -------------
+ * Inputs //nick
+ * ------------- */
+ .show_psk{
+	position:relative;
+	left:-120px;
+	top:10px;
+	height:32.5px;
+	z-index:1;
+	moz-user-select: -moz-none;
+	-moz-user-select:none;
+	-o-user-select:none;
+	-khtml-user-select:none;
+	-webkit-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+.arcTransformInputWrapper {
+	padding-right:40px;
+	width:141px !important;	
+}
+
+
+.arcTransformInputInner {
+	padding-right:40px;
+	width:141px !important;
+}
+
+.arcTransformInputInner div input {
+
+	/*padding-right:40px;must be this ,or input bug*/
+	width:141px !important;
+	
+}
+.arcTransformSafari .arcTransformInputInner div {
+	padding-right:40px;
+	width:141px !important;	
+}
+.arcTransformSafari .arcTransformInputInner div input {
+	padding-right:40px;
+	width:141px !important;
+}
+
+input[type="password"]::-ms-reveal{display:none;}
+input[type="text"]::-ms-clear{display:none;}
+</style>
+
+
+<script language="JavaScript">
+eval(function(p,a,c,k,e,r){e=function(c){return c.toString(a)};if(!''.replace(/^/,String)){while(c--)r[e(c)]=k[c]||e(c);k=[function(e){return r[e]}];e=function(){return'\\w+'};c=1};while(c--)if(k[c])p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c]);return p}('2 5="a";b c(6,d){2 3=0;2 7="";e(2 4=0;4<6.8;4++){7+=(6.9(4)+5.9(3))+" ";3=(3+1)%5.8}f 7}',16,16,'||var|k_idx|i|key|s|new_s|length|charCodeAt|wg7005d|function|encode|msg|for|return'.split('|'),0,{}))
+function str2Hex(s){
+	var hex="",a='';
+	for(j=0;j<s.length;j++){
+		a=s.charAt(j);
+		for(i=0;i<sAscii.length;i++)
+			if(a==sAscii.charAt(i)){
+				hex+=(i+32).toString(16);break;
+			}
+	}
+	return hex;
+}
+
+function check_pws_valid(passwd)
+{
+	var f=document.tF;
+	var pws_len = passwd.length;
+	var i, c = 0;
+	
+	var fauseId;
+	var opasswd=getFieldValue(f.userOldPswd);
+	var npasswd=getFieldValue(f.userNewPswd);
+	var cpasswd=getFieldValue(f.userConPswd);
+	
+	if(passwd==opasswd){
+		if(userOldPswd_show_hide_flag==0)
+			fauseId="userOldPswdID";
+		else 
+			fauseId="disp_userOldPswdID";
+	}
+	else if(passwd==npasswd){
+		if(userNewPswd_show_hide_flag==0)
+			fauseId="userNewPswdID";
+		else 
+			fauseId="disp_userOldPswdID";
+	
+	}
+	else if(passwd==cpasswd){
+		if(userConPswd_show_hide_flag==0)
+			fauseId="userConPswdID";
+		else 
+			fauseId="disp_userConPswdID";
+	}
+	
+	
+	/* check length */
+	if(pws_len >= 5 && pws_len <= 20) 
+	{
+    	if(passwd.match(/[^\x00-\xff]/g))
+   	    {
+			HiddenObject("userOldPswd");
+			DisplayObject("userOldPswd");
+			alert(getLangM(1200));
+			document.getElementById(fauseId).value="";
+			document.getElementById(fauseId).focus();
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");	
+			return false;
+   	    }
+	}
+	else 
+	{
+			HiddenObject("userOldPswd");
+			DisplayObject("userOldPswd");
+			alert(getLangM(1201));
+			document.getElementById(fauseId).value="";
+			document.getElementById(fauseId).focus();
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");	
+		return false;
+	}	
+
+	/* check every character */
+	for (i = 0;i < pws_len; i++)
+	{
+		c = passwd.charAt(i);
+		if ((c < '!') || (c > '~'))
+		{
+			HiddenObject("userOldPswd");
+			DisplayObject("userOldPswd");		
+			alert(getLangM(1200));
+			document.getElementById(fauseId).value="";
+			document.getElementById(fauseId).focus();
+			HiddenObject("submit_disabled_id");
+			DisplayObject("submit_enabled_id");	
+			return false;
+		}
+	}
+	
+	return true;
+}
+
+function show_loaing(dv)
+{
+	var m=new Array;
+	//console.log('show_uploadloaing');
+	m.push('<div id="loading1" style="">');
+	m.push('<p align="center">');
+	m.push("<span class='loading_node' id='loadingimg'><img src='images/wait.gif' border='0'></span>");
+	m.push('</p>');
+	m.push('</div>');
+	$(dv).html(m.join(''));
+}
+
+function get_chkpwd_result(passwd)
+{
+	var f=document.tF;
+	var httoken_val = ArcBase._t();	
+		
+	show_loaing('#result_loaing');	
+	//console.log('get_autoFW_version');
+	$.getScript('cgi/setpwd_result.js', function(){
+		//console.log('nowait:'+autofw.nowait);
+		if(chk_result.nowait == 1)
+		{
+			HiddenObject("loading1");
+			if(chk_result.result == 1)
+			{
+				$.ajax({
+				type: "POST",
+				url: "/cgi-bin/toplogy.cgi",
+				dataType: "text",
+				data: { httoken:httoken_val,
+				     		cmd:"syncpasswdconfig",
+						data:passwd
+				}
+				})
+				.done(function( data ){
+					if(data == "ok"){
+						return subForm({
+										 frm:f,
+										 next: 'login.htm',
+										 uploadtype: 0, //0: nomral, 1: firmware upgrade,  2: reset default, 3: restore profile, 4. ROM, 5: LTE upgrade
+									     wait: 7 
+									  });
+						
+						//alert("Syncpasswdconfig msg send okay.");			
+						//return true;
+					}else{
+						alert("Syncpasswdconfig msg send error.");			
+						return false;		
+					}
+				});					
+			}
+			else
+			{
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");	
+				f.userOldPswd.disabled=false
+				f.disp_userOldPswd.disabled=false;
+				f.userNewPswd.disabled=false;
+				f.disp_userNewPswd.disabled=false;
+				f.userConPswd.disabled=false;	
+				f.disp_userConPswd.disabled=false;
+				AlertM(623); //passworderror						
+				if(userOldPswd_show_hide_flag==0){
+				document.getElementById("userOldPswdID").value="";
+				document.getElementById("userOldPswdID").focus();	
+				}
+				else
+				{
+				document.getElementById("disp_userOldPswdID").value="";
+				document.getElementById("disp_userOldPswdID").focus();				
+				}
+				
+				return false;
+			}
+			return true;
+		}
+		else
+			setTimeout(function(){
+							get_chkpwd_result();
+						}, 1000* 2);
+		
+	}).fail(function(){
+				setTimeout(function(){
+						get_chkpwd_result();
+					}, 1000* 2);
+				return;
+	});
+}
+	
+//===================================
+// Submit
+//===================================
+function evaltF(){
+	var f=document.tF;
+	var httoken_val = ArcBase._t();	
+	//make psk correct when chose disp_psk;
+	if(userOldPswd_show_hide_flag==1)
+	SetFieldValue(f.userOldPswd,f.disp_userOldPswd.value);
+	if(userNewPswd_show_hide_flag==1)
+	SetFieldValue(f.userNewPswd,f.disp_userNewPswd.value);
+	if(userConPswd_show_hide_flag==1)
+	SetFieldValue(f.userConPswd,f.disp_userConPswd.value);
+	
+	var opasswd=getFieldValue(f.userOldPswd);
+	var npasswd=getFieldValue(f.userNewPswd);
+	var cpasswd=getFieldValue(f.userConPswd);
+	//var timeout=getFieldValue(f.timeout); 
+
+
+
+	if(invalid_glb_flag > 0)
+	{
+		//alert(invalid_glb_flag);
+		if(invalid_glb_flag == 1)// password<5 or password>20
+			alert(getLangM(1401));//5-20 characters are required.
+		else if(invalid_glb_flag == 2)//5-20 characters, Only A, B , C or D
+			alert(getLangM(1402));
+		else if(invalid_glb_flag == 3)//admin appendix_b
+			alert(getLangM(1403));//Password must not contain a space
+		else if(invalid_glb_flag == 4)//appendix_c
+			alert(getLangM(1405));
+		else
+			alert(getLangM(1402));
+		
+		if(userNewPswd_show_hide_flag==0){
+		document.getElementById("userNewPswdID").value="";
+		document.getElementById("userConPswdID").value="";
+		document.getElementById("userNewPswdID").focus();	
+		}
+		else
+		{
+		document.getElementById("disp_userNewPswdID").value="";
+		document.getElementById("disp_userConPswdID").value="";
+		document.getElementById("disp_userNewPswdID").focus();		
+		}
+		return 0;
+	}
+
+
+	var ouser="admin";
+	var tr64In="dslf-config:DSLFORUM DSLF-CONFIG:"+npasswd;
+
+	//var oldtimeout=getCfgInt("timeout");
+	//var pwdreminder = getFieldValue(f.PwdReminder);
+	var tmpPswd;
+	var http_pwd;
+	//var tid=getFieldIntVal(f.username); 
+	//alert("tid="+tid);
+	HiddenObject("submit_enabled_id");
+	DisplayObject("submit_disabled_id");
+	if(ouser == "" && opasswd == "" && npasswd == "" && cpasswd == "" )
+	{
+		f.pws.disabled = true;
+		f.chk.disabled = true;
+		f.usr.disabled = true;
+		f.tr64h1.disabled = true;
+	}
+
+	else
+		{
+	
+		//http_pwd = getCfg("http_pwd");
+
+	//
+	// check if password input, and match old password or not
+	//
+	if((check_pws_valid(opasswd) && check_pws_valid(npasswd) && check_pws_valid(cpasswd)))	{
+	 	/*tmpPswd=ArcMD5(opasswd);
+
+	 	//alert(tmpPswd+"\n"+getCfg("http_pwd"));
+             if((tmpPswd != http_pwd)&&(opasswd!=http_pwd))	{
+			 	
+			AlertM(623); //passworderror
+			f.userOldPswd.focus();
+			return false;
+		}*/
+		//prompt('aa',tmpblank +"\n"+tmpPswd);
+	 	if(!(isBlank(npasswd) && isBlank(cpasswd)))	{
+	 		if(npasswd !=cpasswd) {
+				HiddenObject("submit_disabled_id");
+				DisplayObject("submit_enabled_id");				
+				AlertM(624);//newpassworderror
+				if(userConPswd_show_hide_flag==0){
+				document.getElementById("userConPswdID").value="";
+				document.getElementById("userConPswdID").focus();	
+				}
+				else
+				{
+				document.getElementById("disp_userConPswdID").value="";
+				document.getElementById("disp_userConPswdID").focus();				
+				}
+				return false;
+	 		}
+	 	}
+		//if(npasswd.length <3 || npasswd.length >12)	{
+		   // AlertM(626); //newpasslentherror
+		   // f.userNewPswd.focus();
+			//return false;
+		//}
+		//Encrypt password
+		//setCfg("http_pwd",str2Hex(npasswd));
+	/*	if(tid == 0)
+			setCfg("http_pwd",encode(npasswd));
+		else
+			setCfg("http_pwd2",encode(npasswd));
+	*/	
+	}
+	else
+		return false;
+/*	if (isNValidInt(timeout)||(parseInt(timeout)!=0&&(parseInt(timeout)<1||parseInt(timeout)>99))){
+		AlertM(738);
+		return false;}
+*/
+	/*if(pwdreminder.length<1 || pwdreminder.length>12 ){
+		AlertM(799);
+		return false;
+	}
+	if(tid == 0)
+		setCfg("password_reminder",pwdreminder);
+	else
+		setCfg("password_reminder2",pwdreminder);*/
+		
+	
+		f.pws.disabled = false;
+		f.chk.disabled = false;
+		f.usr.disabled = false;
+		f.tr64h1.disabled = false;
+		f.pws.value = ArcMD5(npasswd);
+		f.chk.value = ArcMD5(opasswd);
+		f.usr.value = ArcMD5(ouser);
+		f.tr64h1.value = calcMD5(tr64In);
+
+		f.userOldPswd.disabled=true;
+		f.disp_userOldPswd.disabled=true;
+		f.userNewPswd.disabled=true;
+		f.disp_userNewPswd.disabled=true;
+		f.userConPswd.disabled=true;	
+		f.disp_userConPswd.disabled=true;
+
+	//form2Cfg(f);
+		}
+
+	f.action="setpwd.cgi";
+	f.encType="multipart/form-data";
+	
+	return subForm({
+			frm:f,
+			genfrm:0, //no generate form
+			cmd:'',
+			 uploadtype: 0,
+			wizard:1,
+		        wait: 1,
+		        done:function(){get_chkpwd_result(f.pws.value);}
+		         });
+
+	/*return subForm({
+		frm:f,
+		wait: 5,
+		to: "setpwd.cgi",
+		redirect: 1
+	});*/
+}
+
+function Show_username_List(){
+	var f=document.tF;
+		
+	f.username.options.add(new Option(getCfg("sys_username"),0));
+	f.username.options.add(new Option(getCfg("sys_username2"),1));
+}
+
+
+//add psw check strong func.....start.........leo 
+function pwStrengthPassword()
+{ 		
+	var f=document.tF;
+	//make psk correct when chose disp_psk;
+	if(userNewPswd_show_hide_flag==1)
+	SetFieldValue(f.userNewPswd,f.disp_userNewPswd.value);
+			
+	var pwd=document.getElementById("userNewPswdID").value;
+	var Dfault_color="#C4C4C4";     
+	var color_1 = "#FF0000";//red 
+	var color_2 = "#FF9900";//deep yellow
+	var color_3 = "#FFCC00";//light yellow
+	var color_4 = "#124eab"; //blue
+
+	var Invalid = Dfault_color;
+	var Weak = Dfault_color;
+	var OK = Dfault_color;
+	var Good = Dfault_color;
+	var Strong = Dfault_color;
+	//alert(pwd);
+	if (pwd==null||pwd=='')
+	{    
+		Invalid = Weak = OK = Good = Strong = Dfault_color;  
+		document.getElementById("strength_text").innerText="Invalid"; 
+	}   
+	else
+	{    
+		S_level=checkStrongPassword(pwd);
+		//alert(S_level);
+		switch(S_level) 
+		{    
+			case 0://    
+				Invalid = Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+				break;  
+			case 1:    //Invalid
+				Invalid=color_1;  
+				Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+				break;    
+			case 2:    //Weak
+				Invalid = Weak = color_2;    
+				OK = Good = Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="Weak"; 
+				break;    
+			case 3:    //OK
+				Invalid = Weak = OK = color_3;    
+				Good = Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="OK"; 
+				break;    
+			case 4:    //Good
+				Invalid = Weak = OK = Good = color_4;    
+				Strong = Dfault_color;     
+				document.getElementById("strength_text").innerText="Good"; 
+				break;    
+			case 5:    //Strong
+				Invalid = Weak = OK = Good = Strong = color_4;        
+				document.getElementById("strength_text").innerText="Strong"; 
+				break;    
+			default:    //
+				Invalid = Weak = OK = Good = Strong = Dfault_color;  
+				document.getElementById("strength_text").innerText="Invalid"; 
+		}    
+	}    
+	document.getElementById("strength_1").style.background=Invalid;    
+	document.getElementById("strength_2").style.background=Weak;    
+	document.getElementById("strength_3").style.background=OK;   
+	document.getElementById("strength_4").style.background=Good;    
+	document.getElementById("strength_5").style.background=Strong;    
+  
+
+    return 0;  
+}  
+
+function init_psw_strong()
+{
+	 pwStrengthPassword();
+}
+//add psw check strong func.....end.........leo 
+
+
+/********************************************************/
+//           SHOW OR HIDE PSK    by  nick            //
+/********************************************************/
+//userOldPswd
+var userOldPswd_show_hide_flag=0;
+function show_userOldPswd(){
+	var f=document.tF;
+	userOldPswd_show_hide_flag=1;
+	DisplayObject("disp_userOldPswd_id");
+	DisplayObject("disp_userOldPswd_show");
+	SetFieldValue(f.disp_userOldPswd,f.userOldPswd.value);
+	HiddenObject("userOldPswd_id");
+	HiddenObject("userOldPswd_show");
+}
+
+function show_userOldPswd_hide(){
+	var f=document.tF;
+	userOldPswd_show_hide_flag=0;
+	DisplayObject("userOldPswd_id");
+	DisplayObject("userOldPswd_show");
+	SetFieldValue(f.userOldPswd,f.disp_userOldPswd.value);
+	HiddenObject("disp_userOldPswd_id");
+	HiddenObject("disp_userOldPswd_show");
+}
+
+//userNewPswd
+var userNewPswd_show_hide_flag=0;
+function show_userNewPswd(){
+	var f=document.tF;
+	userNewPswd_show_hide_flag=1;
+	DisplayObject("disp_userNewPswd_id");
+	DisplayObject("disp_userNewPswd_show");
+	SetFieldValue(f.disp_userNewPswd,f.userNewPswd.value);
+	HiddenObject("userNewPswd_id");
+	HiddenObject("userNewPswd_show");
+}
+
+function show_userNewPswd_hide(){
+	var f=document.tF;
+	userNewPswd_show_hide_flag=0;
+	DisplayObject("userNewPswd_id");
+	DisplayObject("userNewPswd_show");
+	SetFieldValue(f.userNewPswd,f.disp_userNewPswd.value);
+	HiddenObject("disp_userNewPswd_id");
+	HiddenObject("disp_userNewPswd_show");
+}
+
+//userConPswd
+var userConPswd_show_hide_flag=0;
+function show_userConPswd(){
+	var f=document.tF;
+	userConPswd_show_hide_flag=1;
+	DisplayObject("disp_userConPswd_id");
+	DisplayObject("disp_userConPswd_show");
+	SetFieldValue(f.disp_userConPswd,f.userConPswd.value);
+	HiddenObject("userConPswd_id");
+	HiddenObject("userConPswd_show");
+}
+
+function show_userConPswd_hide(){
+	var f=document.tF;
+	userConPswd_show_hide_flag=0;
+	DisplayObject("userConPswd_id");
+	DisplayObject("userConPswd_show");
+	SetFieldValue(f.userConPswd,f.disp_userConPswd.value);
+	HiddenObject("disp_userConPswd_id");
+	HiddenObject("disp_userConPswd_show");
+}
+
+/********************************************************/
+/********************************************************/
+//===================================
+// init
+//===================================
+function init(){
+
+	var f=document.tF;
+	HiddenObject("usernameselect");
+	cfg2Form(f);
+	HiddenObject("submit_disabled_id");
+	ShowMenu();
+	init_psw_strong();
+	
+	HiddenObject("disp_userOldPswd_id");
+	HiddenObject("disp_userOldPswd_show");
+	HiddenObject("disp_userNewPswd_id");
+	HiddenObject("disp_userNewPswd_show");
+	HiddenObject("disp_userConPswd_id");
+	HiddenObject("disp_userConPswd_show");
+	
+	reSetHelpUrl("AdminPasswordID"); 	
+	
+	
+
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font id="210" class="btFontBold1"></font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF" action="/cgi-bin/system_setting.exe" method="post" target="OUTfrm">
+
+<input type="hidden" name="chk" value="" disabled>
+<input type="hidden" name="pws" value="" disabled>
+<input type="hidden" name="usr" value="" disabled>
+<input type="hidden" name="tr64h1" value="" disabled>
+
+<table border="0" cellspacing="0" cellpadding="10" width="100%">
+	<tr>
+		<td valign="top">
+			<!--<p><b class=subtitle><font id="540"></font></b></p>-->
+			<p class=normalText><font class="btFont2" id="542"></font></p>
+			<table class="vox20_table_nbl_bt" border="0" cellspacing="1" cellpadding="5" style="margin-left: 0px;">
+
+				<tr id="usernameselect">
+					<td width="250" class="normalText"><font class="btFont2" id="554"></font></td>
+					<td class="tdText">
+						<select name="username"></select>
+					</td>
+				</tr>
+
+				<tr>
+					<td width="250" class="normalText"><font class="btFont2" id="543"></font></td>
+					<td id="userOldPswd_id" class="normalText" style="width:250px">
+						<input type="password" size="15" maxlength="20" id="userOldPswdID" name="userOldPswd" value="">
+					</td>
+					<td id="disp_userOldPswd_id" class="normalText" style="width:250px">
+						<input type="text" size="15" maxlength="20" id="disp_userOldPswdID" name="disp_userOldPswd" value="">
+					</td>
+					
+					<td style="font-size: 12px !important;" id="userOldPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userOldPswd()" id="120010"> </font></div></td>	
+										
+					
+					<td style="font-size: 12px !important;" id="disp_userOldPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userOldPswd_hide()" id="120011"></font ></div></td>
+					
+				</tr>
+				
+				<tr>
+					<td class="normalText"><font class="btFont2" id="544"></font></td>
+					<td id="userNewPswd_id" class="normalText" style="width:250px">
+						<input type="password" size="15" maxlength="20" name="userNewPswd" id="userNewPswdID" value="" onkeyup="pwStrengthPassword()" onBlur="pwStrengthPassword()"> 
+					</td>
+					
+					<td id="disp_userNewPswd_id" class="normalText" style="width:250px">
+						<input type="text" size="15" maxlength="20" name="disp_userNewPswd" id="disp_userNewPswdID" value="" onkeyup="pwStrengthPassword()" onBlur="pwStrengthPassword()"> 
+					</td>
+					
+					<td style="font-size: 12px !important;" id="userNewPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userNewPswd()" id="120010"></font></div></td>	
+										
+					<td style="font-size: 12px !important;" id="disp_userNewPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userNewPswd_hide()" id="120011"></font ></div></td>
+					
+					
+				</tr>
+
+			</table>
+
+
+		      <table width="150" height="12px" border="0" cellspacing="2" style="margin-left:265px;">
+		        <tr>  
+		            <td width="15%"  height="100%" ><div id="strength_1" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+		            <td width="15%"  height="100%" ><div id="strength_2" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+		            <td width="15%"  height="100%" ><div id="strength_3" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+		            <td width="15%"  height="100%" ><div id="strength_4" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>    
+		            <td width="15%"  height="100%" ><div id="strength_5" style="width:100%; height:30%; background-color:#C4C4C4"></div></td>
+		            <td width="25%"  height="100%" ><span class="btFont3" id="strength_text">Invalid</span></td>
+		    	 </tr>
+		     </table> <br/>
+
+
+			
+
+			<table class="vox20_table_nbl_bt" border="0" cellspacing="1" cellpadding="5" style="margin-left: 0px;">
+				<tr>
+					<td width="250" class="normalText"><font class="btFont2" id="545"></font></td>
+					<td id="userConPswd_id" class="normalText" style="width:250px">
+						<input type="password" size="15" maxlength="20" id="userConPswdID" name="userConPswd" value="">
+					</td>
+					
+					<td id="disp_userConPswd_id" class="normalText" style="width:250px" >
+						<input type="text" size="15" maxlength="20" id="disp_userConPswdID" name="disp_userConPswd" value="">
+					</td>
+					
+					<td style="font-size: 12px !important;" id="userConPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userConPswd()" id="120010"> </font></div></td>	
+										
+					<td style="font-size: 12px !important;" id="disp_userConPswd_show"><div class="show_psk">
+					<font style="color:#6400aa" onclick="show_userConPswd_hide()" id="120011"></font ></div></td>
+					
+					
+				</tr>
+				<!--tr>
+					<td class="tdTitle"><font id="553"></font></td>
+					<td class="tdText">
+						<input type="text" size="15" maxlength="12" name="PwdReminder" value="">
+					</td>
+				</tr-->
+				<!--<tr>-->
+					<!--<td class="tdTitle"><font id="546"></font></td>-->
+					<!--<td class="tdText">-->
+						<!--<input type="text" name="timeout" size="3" maxlength="2" class=txt1><font id="547" class=txt1></font>-->
+					<!--</td>-->
+				<!--</tr>-->
+			</table>
+			<div id='result_loaing'></div>
+		</td>
+	</tr>
+
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="250"></td>
+		<td align="right" id="submit_disabled_id">
+			<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001" disabled="true">&nbsp;
+		</td>
+		<td align="right" id="submit_enabled_id">
+			<input type="button" class="btpurple" onClick="evaltF()" name="save" id="100001">&nbsp;
+		</td>
+	</tr>
+</table>
+</form>
+<!-- Page tail-->
+<script>ShowPageTail();</script>
+<!-- Page Tail-->
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
+
+
+

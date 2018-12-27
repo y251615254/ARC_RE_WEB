@@ -1,0 +1,18 @@
+LangM.push({
+'800':'Steering',
+'801':'This page enables you to adjust the way your BT Whole Home Wi-Fi system manages devices to get the best connection. These should only be changed in the event of an issue.',
+'802':'Enabled',
+'803':'Disabled',
+'804':'AP Steering:',
+'805':'Band Steering:',
+'806':'All Steering:',
+'807':'Disabling access point steering means that your devices will not be steered by your Whole Home Wi-Fi system to the best disc',
+'808':'Disabling band steering means that your devices will not be steered by your Whole Home Wi-Fi system to the best band (2.4GHz or 5GHz).',
+'809':'Disabling all steering will leave your devices to choose their preferred connection and your Whole Home Wi-Fi system will no longer steer them to the best connection.',
+'810':'Legacy Steering:',
+'811':'Disabling legacy steering means that only devices supporting IEEE 802.11k and 802.11v are steered by your Whole Home Wi-Fi system to the best connection.',
+'812':'Period :',
+'813':'Legacy device detect activity period(10secs-120secs, default 10secs).',
+'814':'Thresh :',
+'815':'Legacy device detect activity packet counts threshold(1pkts-10000pkts, default 10pkts).',
+'':null});

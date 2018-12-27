@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]-->
+<!--[if gt IE 8]><!--><html lang="en" class="gt-ie8"><!--<![endif]-->
+<!--[if lt IE 10]><meta http-equiv="X-UA-Compatible" content="IE=edge" /><![endif]-->
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/arctransform.css">
+<!--[if lt IE 9]>
+<link rel="stylesheet" type="text/css" media="screen" href="css/ie.css">
+<![endif]-->
+<script language="javascript">var LangJ=["status"];var CGIs=["toplogy_info_and_discs"];</script>
+<script type="text/javascript" src="js/init_data.js"></script>
+<script language="javascript" src="js/global.js"></script>
+<script language="javascript" src="js/routine.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="js/jquery.arctransform.js"></script>
+<style>
+.progressbar-fw_all {
+background: #e60050; /* Old browsers */
+  	
+	width:100%;
+	height:27px;
+	float: left;
+	display:block;
+	z-index: 100;
+	
+	border: solid 1px white; /*#0071A6;*/	
+	overflow: hidden;
+	display:inline-block;
+	vertical-align: middle;
+
+}
+</style>
+<script language="JavaScript">
+var setTimeoutFlag;
+function Optimise_msg(i){
+	if(toplogy_info.nodes[i].device_name != "")
+		device_name="Optimise"+" "+toplogy_info.nodes[i].device_name;
+	else
+		device_name="Optimise"+" "+"Wi-Fi Disc "+i;				
+	msgbox(0,device_name,'<br>In some situations, a disc can perform better when connected using Wi-Fi instead of Ethernet. <br><br>Your Whole Home system can run a series of tests to decide the best connection type.<br><br>Press the optimise button below to start a test. The disc will temporarily lose connection.<br><br>','Optimising_msg('+i+')',1,1);
+	
+}
+function Optimising_msg(i){
+	if(toplogy_info.nodes[i].device_name != "")
+		device_name="Optimising"+" "+toplogy_info.nodes[i].device_name;
+	else
+		device_name="Optimising"+" "+"Wi-Fi Disc "+i;
+			
+	msgbox(1,device_name,'<br>Please wait while your Whole Home Wi-Fi network checks the connection.<br><br>','close_Optimise_msg()',1,1);
+	getOptimisingStatus(i);
+	check_Optimising();
+}
+function close_Optimise_msg(){
+	clearTimeout(setTimeoutFlag);
+	window.location.reload(); //if no use reload  it will be bug when use function in msg box
+}
+function do_nothing(){
+}
+function do_reload(){
+	window.location.reload(); 
+}
+var t=0;
+function check_Optimising(){
+
+	$.getScript('cgi/check_optimising.js', function(){
+		if(optimising == 1)
+		{
+		check_Optimising_msg_wifi();
+			return true;
+		}
+		else if(optimising == 2)
+		{		
+		check_Optimising_msg_ether	();
+			return true;
+		}
+		else
+		{
+			t=t+1;
+			if(t<6){
+					setTimeout(function(){
+						check_Optimising();
+						}, 1000* 2);
+					return ;
+				}
+			else
+				{
+					check_Optimising_msg_ether();
+					return true;
+				}
+				
+		}
+	}).fail(function(){
+					setTimeout(function(){
+						check_Optimising();
+						}, 1000* 2);
+					return;
+	});
+		
+}
+
+function check_Optimising_msg_wifi(){
+		remove();
+		msgbox(2,device_name,'<br>Wi-Fi Disc A5 will perform best with a Wi-Fi connection. Please unplug the Ethernet cable between your router and Wi-Fi Disc A5 to switch to Wi-Fi.<br><br>','do_reload()',1,1);
+
+}
+function check_Optimising_msg_ether(){
+		remove();
+		msgbox(2,device_name,'<br>Wi-Fi Disc A5 will perform best with an Ethernet connection. You can continue using Ethernet for this disc<br><br>','do_reload()',1,1);
+
+}
+
+function getOptimisingStatus(i){
+
+	var f=document.tF1;
+	var httoken_val = ArcBase._t();
+	var data_tmp=0;
+	var re_mac;
+	var dev_name;	
+
+	data_tmp=toplogy_info.nodes[0].device_ip;
+	
+	re_mac=toplogy_info.nodes[i].device_mac;
+
+	if(toplogy_info.nodes[i].device_name != "")
+		dev_name=toplogy_info.nodes[i].device_name;
+	else
+		dev_name="Wi-Fi Disc "+i;	
+	
+	$.ajax({
+		type: "POST",
+		url: "/cgi-bin/toplogy.cgi",
+		dataType: "text",
+		data: { httoken:httoken_val,
+		     		cmd:"getdiscoptimising",
+		      		data:data_tmp,
+		      		mac:re_mac,
+		      		name:dev_name
+		}
+		})
+		.done(function( data ){
+			if(data == "ok"){		
+
+				return true;
+			}else{
+				alert("slive  msg send error.");			
+				return false;		
+			}
+		});	
+}
+	
+//msg box
+window.getHeight= function(){  
+    if(window.innerHeight!= undefined){  
+        return window.innerHeight;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientHeight, B.clientHeight);  
+    }  
+}  
+window.getWidth= function(){  
+    if(window.innerWidth!= undefined){  
+        return window.innerWidth;  
+    }  
+    else{  
+        var B= document.body, D= document.documentElement;  
+        return Math.min(D.clientWidth, B.clientWidth);  
+    }  
+}  
+function msgbox(flag,title,content,func,cancel,focus){
+		create_mask();
+		var temp="<div style=\"width:400px;border: 0px solid #37B6D1;background-color: #fff; padding:0px 15px 0px 15px; \" >"
+		if(title!=null){temp+="<div style=\"line-height:25px;text-align:center;color:#666666; padding:0px 5px;font-size:14pt;\">"+title+"</div>"}
+		if(flag==0){
+		temp+="<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 0px; \"></td>"
+			  	+"<td ><div style=\"background-color: #fff; color:#666666;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:center;\">"+content
+				+"</div></td></tr></table>"
+				+"<div style=\"text-align:center; padding:0px 0px 6px;background-color: #fff;\"><input type='button' class='btpurple' value='Optimise'id=\"msgconfirmb\"   onclick=\"remove();"+func+";\">";
+		if(null!=cancel){temp+="&nbsp;&nbsp;&nbsp;<input type='button' class='btpurple' value='Cancel'  id=\"msgcancelb\"   onClick='remove()'>";}
+		temp+="</div></div>";
+		create_msgbox(400,200,temp);
+		if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+		else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}	
+		do_arcTrans('#msgbox');		
+		}
+		else if(flag==1)
+		{
+		temp+="<br><span><span class='progresspanel-fw' id='progresspanel'><div class='progressbar-fw' id='progressbar'></div></span><br>";
+		temp+="<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 0px; \"></td>"
+			  	+"<td ><div style=\"background-color: #fff; color:#666666;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:center;\">"+content
+				+"</div></td></tr></table>"
+				+"<div style=\"text-align:center; padding:0px 0px 6px;background-color: #fff;\"><input type='button' class='btpurple' value='close'id=\"msgconfirmb\"   onclick=\"remove();"+func+";\">";
+		if(null!=cancel){temp+="&nbsp;&nbsp;&nbsp;<input type='hidden'  class='btpurple' value='Cancel'  id=\"msgcancelb\"   onClick='remove()'>";}
+		temp+="</div></div>";
+		create_msgbox(400,200,temp);
+		ShowProgress(10, function(){do_nothing()});
+		
+		if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+		else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}	
+		
+						
+		do_arcTrans('#msgbox');	
+		
+
+		}	
+		else if(flag==2){
+		temp+="<br><span><span class='progresspanel-fw' id='progresspanel'><div class='progressbar-fw_all' id='progressbar'></div></span><br>";
+		temp+="<table  cellspacing=\"0\" border=\"0\"><tr><td style=\" padding:0px 0px 0px 0px; \"></td>"
+			  	+"<td ><div style=\"background-color: #fff; color:#666666;font-weight:normal;font-size: 12pt;font-family:Calibri; text-align:center;\">"+content
+				+"</div></td></tr></table>"
+				+"<div style=\"text-align:center; padding:0px 0px 6px;background-color: #fff;\"><input type='button' class='btpurple' value='close'id=\"msgconfirmb\"   onclick=\"remove();"+func+";\">";
+		if(null!=cancel){temp+="&nbsp;&nbsp;&nbsp;<input type='hidden'  class='btpurple' value='Cancel'  id=\"msgcancelb\"   onClick='remove()'>";}
+		temp+="</div></div>";
+		create_msgbox(400,200,temp);
+		
+		if(focus==0||focus=="0"||null==focus){document.getElementById("msgconfirmb").focus();}
+		else if(focus==1||focus=="1"){document.getElementById("msgcancelb").focus();}							
+		do_arcTrans('#msgbox');				
+		}
+	
+		
+	}
+	function get_width(){
+		return (window.getWidth()+document.body.scrollLeft);
+	}
+	function get_height(){
+		return (window.getHeight()+document.body.scrollTop);
+	}
+	function get_left(w){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		w=parseFloat(w);
+		return (bw/2-w/2+document.body.scrollLeft);
+	}
+	function get_top(h){
+		var bw=document.body.clientWidth;
+		var bh=document.body.clientHeight;
+		h=parseFloat(h);
+		return (bh/2-h/2+document.body.scrollTop);
+	}
+	function create_mask(){
+		var mask=document.createElement("div");
+		mask.id="mask";
+		mask.style.position="absolute";
+		mask.style.filter="progid:DXImageTransform.Microsoft.Alpha(style=4,opacity=25)";
+		mask.style.opacity=0.4;
+		mask.style.background="white";
+		mask.style.top="0px";
+		mask.style.left="0px";
+		mask.style.width=get_width()+'px';
+		mask.style.height=get_height()+'px';
+		mask.style.zIndex=1000;
+		document.body.appendChild(mask);
+	}
+	function create_msgbox(w,h,t){
+		var box=document.createElement("div")	;
+		box.id="msgbox";
+		box.style.position="absolute";
+		box.style.width=w;
+		box.style.height=h;
+		box.style.overflow="visible";
+		box.innerHTML=t;
+		box.style.zIndex=1001;
+		box.style.left=window.getWidth()/3-w/2 + 'px';
+		document.body.appendChild(box);
+		box.style.top=window.getHeight()/2.5-box.offsetHeight/2 + 'px';
+		re_pos();
+	}
+	function re_mask(){
+		var mask=document.getElementById("mask")	;
+		if(null==mask)return;
+		mask.style.width=get_width()+"px";
+		mask.style.height=get_height()+"px";
+	}
+	function re_pos(){
+		var box=document.getElementById("msgbox");
+		if(null!=box){
+			var w=box.style.width;
+			var h=box.style.height;
+			box.style.left=get_left(w)+"px";
+			box.style.top=get_top(h)+"px";
+		}
+	}
+	function remove(){
+		var mask=document.getElementById("mask");
+		var msgbox=document.getElementById("msgbox");
+		if(null==mask&&null==msgbox)return;
+		document.body.removeChild(mask);
+		document.body.removeChild(msgbox);
+	}
+	
+	function re_show(){
+		re_pos();
+		re_mask();	
+	}
+	function load_func(){
+		window.onresize=re_show;
+		window.onscroll=re_show;	
+	}
+
+
+//msg box end
+
+
+
+function timeStamp( second_time ){
+	if(parseInt(second_time) >1)
+	var time = parseInt(second_time) + " secs";  
+	else 
+	var time = parseInt(second_time) + " sec";  
+	
+	if( parseInt(second_time )> 60){  
+	  
+		var second = parseInt(second_time) % 60;  
+		var min = parseInt(second_time / 60);  
+
+		if(second>1)
+			var show_second=" secs";
+		else 
+			var show_second=" sec";
+
+		if(min>1)
+			var show_min=" mins";
+		else 
+			var show_min=" min";
+		
+		time = min + show_min+", " + second + show_second; 
+		  
+		if( min > 60 ){  
+			min = parseInt(second_time / 60) % 60;  
+			var hour = parseInt( parseInt(second_time / 60) /60 );  
+
+
+			if(min>1)
+				var show_min=" mins";
+			else 
+				var show_min=" min";
+
+			if(hour>1)
+				var show_hour=" hours";
+			else 
+				var show_hour=" hour";			
+
+	  		time = hour + show_hour+", " + min +show_min +", "+ second + show_second;  
+			
+			if( hour > 24 ){  
+				hour = parseInt( parseInt(second_time / 60) /60 ) % 24;  
+				var day = parseInt( parseInt( parseInt(second_time / 60) /60 ) / 24 );  
+
+				if(hour>1)
+					var show_hour=" hours";
+				else 
+					var show_hour=" hour";
+				
+				if(day>1)
+					var show_day=" days";
+				else 
+					var show_day=" day";	
+					
+				
+				time = day + show_day +", "+ hour + show_hour +", "+ min + show_min+", " + second + show_second;  
+			}  
+		}  		  	  
+	}  
+  
+return time;          
+}  
+//goto #IDdevice_name* when click overview picture by nick yang 
+function goID(){
+
+	var thisURL = document.URL;    	
+	thisURL+="?flag=0";
+	window.parent.frames["leftFrame"].window.discsChangeFlag();//change menu 	
+	var getval =thisURL.split('?')[1];  
+	var showval= getval.split("=")[1];  
+
+	 if(showval!=0)
+	 window.location.href="#IDdevice_name"+showval;
+}
+
+
+function showDiscsStatus(){
+
+	for(var i in toplogy_info.nodes)
+	{	
+		var connect_ps;
+		if(i==0){
+			if(toplogy_info.nodes[i].device_name != "")
+				$('#device_name'+i).text(toplogy_info.nodes[i].device_name+" (Primary)");
+			else
+				$('#device_name'+i).text("Wi-Fi Disc "+i+" (Primary)");
+						
+			setIdVal("uptime"+i,  timeStamp(toplogy_info.nodes[i].uptime));
+			if(toplogy_info.nodes[i].connect_type=="Ether")//green
+			{
+				connect_ps = "Excellent";
+			}
+			else if(toplogy_info.nodes[i].connect_rssi[0] == '3')//orange
+			{
+				connect_ps = "Poor";
+			}
+			else if(toplogy_info.nodes[i].connect_rssi[0] == '2')//red
+			{
+				connect_ps = "No"; 
+			}
+			else												//green
+			{
+				connect_ps = "Excellent";
+			}
+			
+			
+			setIdVal("connect_status"+i, connect_ps);
+			if(toplogy_info.nodes[i].connect_type=="Ether")
+			setIdVal("connect_type"+i,"Ethernet");
+			
+			setIdVal("data_usage"+i, "");
+			}
+		else if(i>0){
+			if(toplogy_info.nodes[i].device_name != "")
+				$('#device_name'+i).text(toplogy_info.nodes[i].device_name);
+			else
+				$('#device_name'+i).text("Wi-Fi Disc "+i);								
+					
+			
+			setIdVal("uptime"+i,  timeStamp(toplogy_info.nodes[i].uptime));
+			
+			if(toplogy_info.nodes[i].connect_type=="Ether")//green
+			{
+				connect_ps = "Excellent";
+			}
+			else if(toplogy_info.nodes[i].connect_rssi[0] == '3')//orange
+			{
+				connect_ps = "Poor";
+			}
+			else if(toplogy_info.nodes[i].connect_rssi[0] == '2')//red
+			{
+				connect_ps = "No"; 
+			}
+			else												//green
+			{
+				connect_ps = "Good";
+			}
+			setIdVal("connect_status"+i, connect_ps);
+			if(toplogy_info.nodes[i].connect_type!="Ether"){
+				if((toplogy_info.nodes[i].connect_type=="2.4G")||(toplogy_info.nodes[i].connect_type=="2.4G_guest"))
+					setIdVal("connect_type"+i, "Wi-Fi (2.4GHz)");
+				else
+					setIdVal("connect_type"+i, "Wi-Fi (5GHz)");	
+				}
+			else
+			setIdVal("connect_type"+i,"Ethernet");		
+			}
+	}
+	
+	for(var j in toplogy_info.nodes){
+		if(j>0){
+			var connectrssi=toplogy_info.nodes[j].connect_rssi;
+			connectrssi="-"+connectrssi.substring(1,connectrssi.length);
+			setIdVal("rssi"+j, connectrssi+"dBm");
+			}
+		
+		}
+		
+}
+//	<input type="button" class="btpurple" onClick="Optimise_msg('+i+')" name="Optimise" value="Optimise" >&nbsp;\
+function write_info_table(){
+		var i=0;
+		var tmp;				
+		tmp='<tr><td valign="top">\
+		<br><br>\
+		<table width="80%" class="vox20_table_nbl" border="0" cellspacing="0" cellpadding="5" align="left" style="margin-left: 10px;margin-bottom:20px;">\
+		<tr>\
+		<td><p style="margin-top:0px;margin-left:0px;"><font class="btFontBold2" id="device_name'+i+'"></font></p></td>';
+		if(toplogy_info.nodes[i].connect_type== 'Ether')//green
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80.png" ></div></td>';
+		}
+		else if(toplogy_info.nodes[i].connect_rssi[0] == '3')//orange
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80_orange.png" ></div></td>';
+		}
+		else if(toplogy_info.nodes[i].connect_rssi[0] == '2')//red
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80_red.png" ></div></td>';
+		}
+		else												//green
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80.png" ></div></td>';
+		}
+									
+		tmp+='</tr>\
+		<tr>\
+		<td style="padding-left:5px;" width="300"><font  class="btFont2">Uptime</font>: </td>\
+		<td><font class="btFont2" id="uptime'+i+'"></font></td>\
+		</tr>\
+		<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Connection Status</font>: </td>\
+		<td><font class="btFont2" id="connect_status'+i+'"></font></td>\
+		</tr>\
+		<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Connection Type</font>:</td>\
+		<td><font class="btFont2" id="connect_type'+i+'"></font></td>\
+		</tr>\
+		</table>\
+		</td></tr>';
+		$('#info_table').append(tmp);
+		
+		//<tr>\
+		//<td><b><font class="btFont2" >Data Usage(Previous 31 days) </font>: </b></td>\
+		//<td><font class="btFont2" id="data_usage'+i+'"></font></td>\
+		//</tr>
+		
+	for(var i=1; i<toplogy_info.nodes.length; i++ )
+	{		
+		var tmp;
+		tmp='<tr><td valign="top"><a name="IDdevice_name'+i+'" id="IDdevice_name'+i+'"></a>\
+		<br><br>\
+		<table width="80%" class="vox20_table_nbl" border="0" cellspacing="0" cellpadding="5" align="left" style="margin-left: 10px;margin-bottom:20px;">\
+		<tr>\
+		<td>\
+		<p style="margin-top:0px;margin-left:0px;"><font class="btFontBold2" id="device_name'+i+'"></font></p></td>';
+		if(toplogy_info.nodes[i].connect_type== 'Ether')//green
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80.png" ></div></td>';
+		}
+		else if(toplogy_info.nodes[i].connect_rssi[0] == '3')//orange
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80_orange.png" ></div></td>';
+		}
+		else if(toplogy_info.nodes[i].connect_rssi[0] == '2')//red
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80_red.png" ></div></td>';
+		}
+		else												//green
+		{
+			tmp+='<td><div style="position:relative;top:-70px;height:60px;weight:80px;z-index:-1;moz-user-select: -moz-none;-moz-user-select:none;-o-user-select:none;-khtml-user-select:none;-webkit-user-select:none;-ms-user-select:none;user-select:none;">\
+			<img src="images/ap_80.png" ></div></td>';
+		}
+		
+		tmp+='</tr>\
+		<tr>\
+		<td style="padding-left:5px;" width="300"><font  class="btFont2">Uptime</font>: </td>\
+		<td><font class="btFont2" id="uptime'+i+'"></font></td>\
+		</tr>\
+		<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Connection Status</font>: </td>\
+		<td><font class="btFont2" id="connect_status'+i+'"></font></td>\
+		</tr>';		
+		if(toplogy_info.nodes[i].connect_type== 'Ether')//green
+			{
+		tmp+='<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Connection Type</font>:</td>\
+		<td><font class="btFont2" id="connect_type'+i+'"></font>\
+		&nbsp;\
+		&nbsp;\
+		&nbsp;\
+		</td>\
+		</tr>\
+		</table>\
+		</td></tr>';	
+			
+		//<tr>\
+		//<td><b><font class="btFont2" >Data Usage(Previous 31 days) </font>: </b></td>\
+		//<td><font class="btFont2" id="data_usage'+i+'"></font></td>\
+		//</tr>
+		    }		
+		else {
+		tmp+='<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Connection Type</font>:</td>\
+		<td><font class="btFont2" id="connect_type'+i+'"></font></td>\
+		</tr>\
+		<tr>\
+		<td style="padding-left:5px;" ><font class="btFont2" >Signal Strength</font>: </td>\
+		<td><font class="btFont2" id="rssi'+i+'"></font></td>\
+		</tr>\
+		</table>\
+		</td></tr>';
+			}
+		
+		$('#info_table').append(tmp);
+	}	
+}
+//===================================
+// init
+//===================================
+function init(){
+	var f=document.tF0;
+	write_info_table();
+	showDiscsStatus();
+	//put before showMenu()
+	top.G_menu_title="Discs";
+
+	ShowMenu();
+	//reSetHelpUrl("");	 
+	//goID();
+}
+</script>
+</head>
+<body bgcolor="#ffffff" text="#000000" leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" onLoad="pre_init()">
+<!-- Page left-->
+<script>ShowPageMenu();</script>
+<p style="margin-left:10px"><font class="btFontBold1">Discs Status</font></p>
+<!-- Page left-->
+<!-- main page-->
+<form name="tF0" action="/cgi-bin/statusprocess.exe" method="post" target="OUTfrm">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" align="center" id="info_table">
+</table>
+</form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+
+</body>
+</html>

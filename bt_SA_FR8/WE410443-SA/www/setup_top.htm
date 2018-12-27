@@ -1,0 +1,184 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="stylesheet" type="text/css" media="screen" href="css/c_voda_top.css">
+
+<style type="text/css">
+	.nav_right_sel,.nav_left_sel,.nav_middle_sel{ border-bottom-color:white !important;}
+	
+
+	.nav_span_logout{ float:right; display: inline-block;margin:0 30px; margin-right:5px; margin-top:-7px ;}
+	.nav_span_help{ float:right; display: inline-block;margin:0 30px;  margin-top:-7px ;}
+	
+	#top_nav_menu a div{  color:white; background-image: none !important;padding:5px 0px 6px 0px; border-bottom-width:3px; border-bottom-color: #6400aa; border-bottom-style:solid; width:auto; margin:0 30px;margin-top:10px; line-height: 17px; font-family:Calibri,Arial, Verdana, sans-serif;}
+	body{ background:#6400aa; background-image:none; margin-top: 0; }
+
+	#top_nav_menu a div:hover{ border-color:#6400aa; }
+	#top_nav_menu, .nav_span_logout{padding-top: 16px;font-family:Calibri, Helvetica;font-size:20px}
+	#top_nav_menu, .nav_span_help{padding-top: 16px;font-family:Calibri, Helvetica;font-size:20px}
+	
+	.helpClass{ 
+	 	line-height:16px;
+		height:16px;
+		width:16px;
+		color:#ffffff;
+		background-color:#6400aa;
+		font-size:16px;
+		font-weight:100;
+		font-family:Arial;
+		border:2px solid #ffffff;
+		-webkit-border-top-left-radius:17px;
+		-moz-border-radius-topleft:17px;
+		border-top-left-radius:17px;
+		-webkit-border-top-right-radius:17px;
+		-moz-border-radius-topright:17px;
+		border-top-right-radius:17px;
+		-webkit-border-bottom-left-radius:17px;
+		-moz-border-radius-bottomleft:17px;
+		border-bottom-left-radius:17px;
+		-webkit-border-bottom-right-radius:17px;
+		-moz-border-radius-bottomright:17px;
+		border-bottom-right-radius:17px;
+		-moz-box-shadow:0px 0px 0px 0px #ffffff;
+		-webkit-box-shadow:0px 0px 0px 0px #ffffff;
+		box-shadow:0px 0px 0px 0px #ffffff;
+		text-align:center;
+		display:inline-block;
+		text-decoration:none;
+	}
+
+</style>
+
+<script language="javascript">var G_counter=0;var LangJ=["menulist"];var CGIs=[];</script>
+<script language="JavaScript" src="js/init_data.js"></script>
+<script language="JavaScript" src="js/global.js"></script>
+<script language="JavaScript" src="js/menu.js"></script>
+<script type="text/javascript" src="js/jquery-1.8.3.min.js"></script>
+<script language="javascript">
+var curr_lang_idx = 1;
+var custom_page_flag =2;
+var lanip_user = 1;
+var wanip_user = 0;
+</script>
+<script language="JavaScript">
+var refreshId;
+function doLogout(){
+	var f=document.tF_Logout;
+	if(top.G_prog !=0) return false;
+	if(top.ItemIdx==-1) return false;
+/*DEMO*/
+	f.action="login.htm";
+/*END_DEMO*/
+	return subForm({
+ 					frm:f,
+ 					genfrm:0, //direct submit
+ 					wait:2,
+ 					noprogress:1 //no progress
+	});
+	return true;
+}
+function setLogout(){
+	if(top.ItemIdx!=-1){return false;}
+	var obj=document.getElementById("u_login");
+	obj.className=obj.className+" gray";
+}
+
+// keep [idx], [title],[class]
+var nav_menu=[];
+var nav_cnt=-1; //if mach level 0, increate first!
+function JumpGroup(idx){
+	if(top.G_prog !=0) return false;
+	if(top.ItemIdx==-1) return false;
+
+	for(var i=0; i <= nav_cnt; i++)
+	{
+		var obj=$I("id_nav_"+i); //find menu id
+		var cls=obj.className.split(" "); // we may has hover, two class exist, nav_middle nav_hover, we only change first only
+		if(idx ==i){
+			if(cls[0].indexOf("_sel")==-1) cls[0]+='_sel';
+			top.ItemIdx=-1*(nav_menu[i][0]+1); // the MenuList really index
+		}else{
+			cls[0]=cls[0].replace('_sel','');
+		}
+		cls=cls.join(" ");
+		obj.className=cls;
+	}
+	return false;
+}
+function g_M_over(obj,flag){
+	var cls=(obj.className+" nav_hover").split(" ");
+	obj.className=cls[0];
+	if(flag){
+		obj.className+=" "+cls[1];
+	}
+}
+function ShowTopMenu(){
+	if(top.ItemIdx==-1) return false;
+	var len=MenuList.length; // skip last node
+	var cls="nav_middle";
+	var h='';
+	// <a href="menu.htm" onClick="return JumpGroup([group])" target="menuFrame">
+	//     <div class="[class]" onmouseover="g_M_over(this,1)" onmouseout="g_M_over(this,0)"> [title]</div>
+	// </a>
+	// where
+	//   [group]: index
+	//   [class]: nav_left_sel, nav_middle, nav_right
+	//   [title]: the title
+	//
+	// keep [idx], [title],[class]
+	nav_menu=[];
+    nav_cnt=-1; //if mach level 0, increate first!
+	for(var i=0; i < len ; i++){
+		if(!MenuList[i]) continue;
+		if(MenuList[i][MENU_LVL] == "0"){
+			nav_cnt++;
+			cls="nav_middle";
+			if(nav_cnt==0){	cls="nav_left_sel"};
+			nav_menu[nav_cnt]=[i,getLangM(MenuList[i][MENU_TITL]), cls];
+		}
+	}
+	// maked last menu as right
+	nav_menu[nav_cnt][2]="nav_right";
+
+	for(var i=0; i <= nav_cnt; i++){
+		h+='<a href="menu.htm" onClick="return JumpGroup('+i+')" target="leftFrame">'+
+	          '<div class="'+nav_menu[i][2]+'" id="id_nav_'+i+'" onmouseover="g_M_over(this,1)" onmouseout="g_M_over(this,0)">'+nav_menu[i][1]+'</div>'+
+	       '</a>';
+	}
+	setIdVal("top_nav_menu",h);
+}
+
+function init(){
+	ShowTopMenu();
+	setLogout();
+	// if no more 1 language hiden button
+	if(Lang_List.length < 2){
+		HiddenObject("u_lang");
+	}
+}
+</script>
+</head>
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0"  onload="pre_init()">
+<div id="hiddenmenu">
+	<div class="logo"><img src="images/logo.png" valign="middle" style="height:46px;width:96px;"></div>
+	<div id="top_nav_menu"></div>
+	
+	
+	<a href="javascript: void(0)" onClick="return doLogout();"><span id="u_login" class="nav_span_logout"><font color="white">Logout</span></a>	
+	<a href='help.htm' id="HelpBtId" target="_parent" ><span class="nav_span_help"><font color="white">Help</span></a>
+	<!--<span class="nav_span_help"><a href='help.htm' id="HelpBtId" target="_parent" class=""><img src="images/help.png" border="none" height="20" width="20"></a></span>-->
+</div>
+<form ACTION="/cgi-bin/changef.exe" method="post" name="tFF" target="_top">
+<input type="hidden" name="language_flag" value="1">
+<input type="hidden" name="menupage" value="">
+<input type="hidden" name="httoken" value="">
+<input type="hidden" name="lang" value="">
+</form>
+<form method="post" action="logout.cgi" name="tF_Logout" target="_top" terget="OUTfrm"></form>
+<!--REAL <% IMG_TOKEN(r); %> REAL-->
+<!--DEMO--><img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7MTkzMTI4MjAz" border=0><!--END_DEMO-->
+</body>
+</html>
